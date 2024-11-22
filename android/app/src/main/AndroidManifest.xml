@@ -1,4 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Haptics Permission -->
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
     <application
         android:label="showbox"
         android:name="${applicationName}"
