@@ -3,9 +3,9 @@ import 'package:dio/dio.dart';
 import 'package:showbox/src/app_config/dio/dio_client.dart';
 
 class ApiRepo {
-    static apiPost(url, params) async {
+  static apiPost(apiPath,params, [apiName]) async {
     try {
-      var response = await dio.post(url, data: params);
+      var response = await dio.post(apiPath, data: params);
       if (response.statusCode == 200) {
         return response.data;
       }
@@ -16,12 +16,15 @@ class ApiRepo {
     }
   }
 
-  static apiGet(url) async {
+  static apiGet(apiPath,queryParameters, [apiName, showErrorToast]) async {
     try {
-      var response = await dio.get(url);
-      return response.data;
+      var response = await dio.get(apiPath, queryParameters: queryParameters==''?{}:queryParameters);
+      if (response.statusCode == 200) {
+        return response.data;
+      } 
     } on DioException  catch (e) {
       log(e.toString());
+      return;
     } catch (e) {
       log(e.toString());
     }
