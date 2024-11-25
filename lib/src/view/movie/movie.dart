@@ -57,7 +57,9 @@ class MovieList extends StatelessWidget {
                           final movie = movieCon.moviesList[index];
                           return GestureDetector(
                             onTap: () {
-                              Get.to(() => const ExactImageSlider());
+                              Get.to(() => MovieDetailsPage(
+                                movieId: movie["id"],
+                              ));
                             },
                             child: MovieCard(
                               title: movie["title"],

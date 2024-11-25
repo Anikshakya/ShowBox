@@ -1,105 +1,210 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:showbox/src/controller/movies_controller.dart';
 
-class ExactImageSlider extends StatefulWidget {
-  const ExactImageSlider({super.key});
+class MovieDetailsPage extends StatelessWidget {
+  final int movieId;
 
-  @override
-  State<ExactImageSlider> createState() => _ExactImageSliderState();
-}
-
-class _ExactImageSliderState extends State<ExactImageSlider> {
-  final PageController _pageController = PageController(viewportFraction: 0.55);
-  double _currentPage = 0.0;
-
-  @override
-  void initState() {
-    super.initState();
-    _pageController.addListener(() {
-      setState(() {
-        _currentPage = _pageController.page!;
-      });
-    });
-  }
+  const MovieDetailsPage({super.key, required this.movieId});
 
   @override
   Widget build(BuildContext context) {
-    final images = [
-      "https://image.tmdb.org/t/p/w500/8UlWHLMpgZm9bx6QYh0NFoq67TZ.jpg",
-      "https://image.tmdb.org/t/p/w500/6ELCZlTA5lGUops70hKdB83WJxH.jpg",
-      "https://image.tmdb.org/t/p/w500/d5NXSklXo0qyIYkgV94XAgMIckC.jpg",
-      "https://image.tmdb.org/t/p/w500/fjwFTrGMzPZOEPdO49N6UvDfv3V.jpg",
-      "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
-    ];
+    final MovieController controller = Get.put(MovieController());
+
+    // Fetch movie details
+    controller.getMovieDetails(id: movieId);
 
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-              child: Text(
-                "Popular Movies",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+      appBar: AppBar(
+        title: const Text('Movie Details'),
+        backgroundColor: Colors.black,
+      ),
+      body: Obx(() {
+        if (controller.isMovieDetailsLoading.value) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        final movie = controller.movieDetails;
+
+        if (movie.isEmpty) {
+          return const Center(
+            child: Text(
+              'Failed to load movie details.',
+              style: TextStyle(fontSize: 18, color: Colors.red),
+            ),
+          );
+        }
+
+        return SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Backdrop Image
+              Stack(
+                children: [
+                  Image.network(
+                    movie["backdrop_url"] ?? '',
+                    fit: BoxFit.cover,
+                    height: 200,
+                    width: double.infinity,
+                    errorBuilder: (context, error, stackTrace) =>
+                        const Center(child: Text('Image not available')),
+                  ),
+                  Positioned(
+                    bottom: 10,
+                    left: 10,
+                    child: Text(
+                      movie["title"] ?? '',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        shadows: [
+                          Shadow(
+                            offset: Offset(2, 2),
+                            blurRadius: 3,
+                            color: Colors.black,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 16),
+
+              // Tagline
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(
+                  movie["tagline"] ?? '',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontStyle: FontStyle.italic,
+                    color: Colors.grey,
+                  ),
                 ),
               ),
-            ),
-            Expanded(
-              child: PageView.builder(
-                controller: _pageController,
-                itemCount: images.length,
-                itemBuilder: (context, index) {
-                  return _buildImageCard(images, index);
-                },
+
+              const SizedBox(height: 16),
+
+              // Overview
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(
+                  movie["overview"] ?? '',
+                  style: const TextStyle(fontSize: 14),
+                ),
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
-  Widget _buildImageCard(List<String> images, int index) {
-    double scale = 1.0;
-    double offset = 0.0;
+              const SizedBox(height: 16),
 
-    if (_currentPage != index) {
-      scale = 0.8;
-      offset = 20.0;
-    }
+              // Genres
+              if (movie["genres"] != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Wrap(
+                    spacing: 8.0,
+                    runSpacing: 4.0,
+                    children: List<Chip>.generate(
+                      movie["genres"].length,
+                      (index) => Chip(
+                        label: Text(movie["genres"][index]),
+                      ),
+                    ),
+                  ),
+                ),
 
-    return Transform.translate(
-      offset: Offset(offset, 0),
-      child: Transform.scale(
-        scale: scale,
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 8.0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            image: DecorationImage(
-              image: NetworkImage(images[index]),
-              fit: BoxFit.cover,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.4),
-                blurRadius: 8,
-                offset: const Offset(0, 4),
+              const SizedBox(height: 16),
+
+              // Release Date and Runtime
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Release Date: ${movie["release_date"] ?? ''}'),
+                    Text('Runtime: ${movie["runtime"] ?? ''} mins'),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Budget and Revenue
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Budget: \$${movie["budget"]}'),
+                    Text('Revenue: \$${movie["revenue"]}'),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Production Companies
+              if (movie["production_companies"] != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Production Companies:',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 8),
+                      ...movie["production_companies"].map<Widget>((company) {
+                        return Text('- $company');
+                      }).toList(),
+                    ],
+                  ),
+                ),
+
+              const SizedBox(height: 16),
+
+              // Homepage Link
+              if (movie["homepage"] != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: InkWell(
+                    onTap: () {
+                      // Open the movie's homepage
+                      Get.toNamed(movie["homepage"]);
+                    },
+                    child: const Text(
+                      'Visit Homepage',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ),
+
+              const SizedBox(height: 16),
+
+              // Vote Average and Count
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Rating: ${movie["vote_average"] ?? ''}/10'),
+                    Text('${movie["vote_count"] ?? ''} Votes'),
+                  ],
+                ),
               ),
             ],
           ),
-        ),
-      ),
+        );
+      }),
     );
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
   }
 }
