@@ -10,7 +10,7 @@ void main() async{
   runApp(
     GetMaterialApp(
       theme: ThemeData.dark(),
-      home: const FloatingBottomNavBar(),
+      home: const BottomNav(),
     )
   );
 }

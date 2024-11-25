@@ -3,33 +3,31 @@ import 'package:showbox/src/app_config/api_repo.dart';
 import 'package:showbox/src/constant/constants.dart';
 
 class HomeController extends GetxController{
-  late RxBool isLoading = false.obs;
-  dynamic movieData = [];
+  late RxBool isTrendingListLoading = false.obs;
 
-   // Start Loading
-  startLoading(){
-    isLoading(true);
-    update();
+  // Trending List
+  var trendingList = [].obs;
+
+  // Initialize data
+  void initialize() async {
+    if (trendingList.isEmpty) {
+      await getTrendingList();
+    }
   }
 
-  // Stop Loading
-  stopLoading(){
-    isLoading(false);
-    update();
-  }
-
-  // Get Movie List
-  getMovieList() async {
+  // Get Trend List
+  getTrendingList() async {
     try {
-      startLoading();
-      var response = await ApiRepo.apiGet(AppConstants.movieListUrl, "", "Get Movie List");
-      if(response != null && response['code'] == 200) {
-        stopLoading();
+      isTrendingListLoading(true);
+      var response = await ApiRepo.apiGet(AppConstants.trendingUrl, "", "Get Trending List");
+      if(response != null) {
+        trendingList.value = response['results'];
+        isTrendingListLoading(false);
       }
     } catch (e) {
-      stopLoading();
-    } finally{
-      stopLoading();
+      isTrendingListLoading(false);
+    } finally {
+      isTrendingListLoading(false);
     }
   }
 }

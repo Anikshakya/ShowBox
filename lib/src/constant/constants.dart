@@ -21,4 +21,7 @@ class AppConstants {
 
   //MISC 
   static String posterUrl = 'https://image.tmdb.org/t/p/original';
+
+  // ---------- TRENDING ----------
+  static String trendingUrl = '$baseUrl/trending/all/day';
 }

@@ -2,25 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:showbox/src/controller/bottom_nav_controller.dart';
-import 'package:showbox/src/view/movie.dart';
+import 'package:showbox/src/view/home.dart';
+import 'package:showbox/src/view/movie/movie.dart';
 
-class FloatingBottomNavBar extends StatefulWidget {
-  const FloatingBottomNavBar({super.key});
+class BottomNav extends StatefulWidget {
+  const BottomNav({super.key});
 
   @override
-  State<FloatingBottomNavBar> createState() => _FloatingBottomNavBarState();
+  State<BottomNav> createState() => _BottomNavState();
 }
 
-class _FloatingBottomNavBarState extends State<FloatingBottomNavBar> {
+class _BottomNavState extends State<BottomNav> {
   // Get Controller
   BottomNavController movieCon = Get.put(BottomNavController());
 
-  List pages = [
-    const MovieList(pageTitle: 'Page 3', color: Colors.blue),
-    const PageContent(pageTitle: 'Page 3', color: Colors.green),
-    const PageContent(pageTitle: 'Page 3', color: Colors.green),
-    const PageContent(pageTitle: 'Page 4', color: Colors.orange),
-  ];
+  List pages = [];
 
   int _selectedIndex = 0;
   final ScrollController _scrollController = ScrollController();
@@ -35,6 +31,13 @@ class _FloatingBottomNavBarState extends State<FloatingBottomNavBar> {
   @override
   void initState() {
     super.initState();
+
+    pages = [
+      HomePage(scrollController: _scrollController),
+      MovieList(scrollController: _scrollController),
+      const PageContent(pageTitle: 'Page 3', color: Colors.green),
+      const PageContent(pageTitle: 'Page 4', color: Colors.orange),
+    ];
 
     // Add a listener to the ScrollController
     movieCon.toggleBottomNavAccToScroll(scrollController:_scrollController);
@@ -93,7 +96,7 @@ class _FloatingBottomNavBarState extends State<FloatingBottomNavBar> {
                           label: '',
                         ),
                         BottomNavigationBarItem(
-                          icon: Icon(Icons.search),
+                          icon: Icon(Icons.video_collection_sharp),
                           label: '',
                         ),
                         BottomNavigationBarItem(
@@ -128,26 +131,28 @@ class PageContent extends StatelessWidget {
     return Container(
       color: color,
       padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            pageTitle,
-            style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-          const SizedBox(height: 20),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(), // Prevent nested scrolling
-            itemCount: 30,
-            itemBuilder: (context, index) {
-              return ListTile(
-                leading: const Icon(Icons.circle, color: Colors.white),
-                title: Text('Item #$index', style: const TextStyle(color: Colors.white)),
-              );
-            },
-          ),
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              pageTitle,
+              style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
+            ),
+            const SizedBox(height: 20),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(), // Prevent nested scrolling
+              itemCount: 30,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  leading: const Icon(Icons.circle, color: Colors.white),
+                  title: Text('Item #$index', style: const TextStyle(color: Colors.white)),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
