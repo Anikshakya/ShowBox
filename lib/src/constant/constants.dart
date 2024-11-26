@@ -20,7 +20,7 @@ class AppConstants {
   static String showEmbedUrl = 'https://vidsrc.xyz/embed/tv';
 
   //MISC 
-  static String posterUrl = 'https://image.tmdb.org/t/p/original';
+  static String imageUrl = 'https://image.tmdb.org/t/p/original';
 
   // ---------- TRENDING ----------
   static String trendingUrl = '$baseUrl/trending/all/day';

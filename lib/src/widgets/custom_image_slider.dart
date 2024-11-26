@@ -59,37 +59,41 @@ class _CustomImageSliderState extends State<CustomImageSlider> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        // Image Slider
-        SizedBox(
-          height: widget.height,
-          width: widget.width,
-          child: PageView.builder(
-            controller: _pageController,
-            itemCount: _shouldLoop ? null : widget.images.length,
-            itemBuilder: (context, index) {
-              int imageIndex = _shouldLoop ? index % widget.images.length : index;
-              bool isActive = index == _currentPage;
-              return GestureDetector(
-                onTap: (){
-                  widget.onTap!(index);
+    return SizedBox(
+      height: widget.height + 20,
+      child: Center(                                                           
+        child: Stack(
+          children: [
+            // Image Slider
+            SizedBox(
+              width: widget.width,
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: _shouldLoop ? null : widget.images.length,
+                itemBuilder: (context, index) {
+                  int imageIndex = _shouldLoop ? index % widget.images.length : index;
+                  bool isActive = index == _currentPage;
+                  return GestureDetector(
+                    onTap: (){
+                      widget.onTap!(index);
+                    },
+                    child: _buildImageCard(widget.images[imageIndex], isActive),
+                  );
                 },
-                child: _buildImageCard(widget.images[imageIndex], isActive),
-              );
-            },
-          ),
+              ),
+            ),
+            // Conditional rendering of indicator based on `showIndicator`
+            if (widget.showIndicator)
+              Positioned(
+                top: widget.indicatorTop,
+                left: widget.indicatorLeft,
+                right: widget.indicatorRight,
+                bottom: widget.indicatorBottom,
+                child: _buildDots(),
+              ),
+          ],
         ),
-        // Conditional rendering of indicator based on `showIndicator`
-        if (widget.showIndicator)
-          Positioned(
-            top: widget.indicatorTop,
-            left: widget.indicatorLeft,
-            right: widget.indicatorRight,
-            bottom: widget.indicatorBottom,
-            child: _buildDots(),
-          ),
-      ],
+      ),
     );
   }
 
@@ -99,7 +103,7 @@ class _CustomImageSliderState extends State<CustomImageSlider> {
       scale: scale,
       duration: const Duration(milliseconds: 300),
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 8),
+        margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 12),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(widget.cornerRadius),
           boxShadow: [
@@ -111,7 +115,9 @@ class _CustomImageSliderState extends State<CustomImageSlider> {
           ],
         ),
         child: CustomImageNetworkWidget(
+          height: widget.height,
           imagePath: imageUrl,
+          fit: BoxFit.cover,
         ),
       ),
     );

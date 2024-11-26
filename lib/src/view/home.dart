@@ -19,8 +19,7 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Movies', style: GoogleFonts.poppins(fontSize: 24)),
-        backgroundColor: Colors.black,
+        title: Text('ShowBox', style: GoogleFonts.poppins(fontSize: 24)),
         centerTitle: true,
         actions: [
           IconButton(
@@ -34,17 +33,19 @@ class HomePage extends StatelessWidget {
         controller: scrollController,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const SizedBox(height: 20,),
             Obx(()=> homeCon.isTrendingListLoading.isTrue
               ? const Center(
-                  child: CircularProgressIndicator(color: Colors.red),
+                  child: CircularProgressIndicator(),
                 )
               : CustomImageSlider(
                 height: 240.0,
                 cornerRadius: 15.0,
                 showIndicator: false,
                 onTap: (index) {},
-                images: homeCon.trendingList.map((item) => item['poster_path']).where((path) => path != null).map((path) => '${AppConstants.posterUrl}$path').toList()
+                images: homeCon.trendingList.map((item) => item['poster_path']).where((path) => path != null).map((path) => '${AppConstants.imageUrl}$path').toList()
               ),
             ),
             const SizedBox(height: 20),

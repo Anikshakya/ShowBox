@@ -9,7 +9,9 @@ void main() async{
 
   runApp(
     GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(),
+      themeMode: ThemeMode.system,
       home: const BottomNav(),
     )
   );

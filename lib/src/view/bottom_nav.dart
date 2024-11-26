@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:showbox/src/controller/bottom_nav_controller.dart';
 import 'package:showbox/src/view/home.dart';
-import 'package:showbox/src/view/movie/movie.dart';
+import 'package:showbox/src/view/movie/movies_list.dart';
 
 class BottomNav extends StatefulWidget {
   const BottomNav({super.key});
@@ -14,7 +14,7 @@ class BottomNav extends StatefulWidget {
 
 class _BottomNavState extends State<BottomNav> {
   // Get Controller
-  BottomNavController movieCon = Get.put(BottomNavController());
+  BottomNavController bottomNavCon = Get.put(BottomNavController());
 
   List pages = [];
 
@@ -40,7 +40,7 @@ class _BottomNavState extends State<BottomNav> {
     ];
 
     // Add a listener to the ScrollController
-    movieCon.toggleBottomNavAccToScroll(scrollController:_scrollController);
+    bottomNavCon.toggleBottomNavAccToScroll(scrollController:_scrollController);
   }
 
   @override
@@ -58,13 +58,13 @@ class _BottomNavState extends State<BottomNav> {
           pages[_selectedIndex],
           Obx(()=>
             Positioned(
-              bottom: movieCon.isNavVisible.isTrue ? 0 : -80, // Position the nav bar to fall down
+              bottom: bottomNavCon.isNavVisible.isTrue ? 0 : -80, // Position the nav bar to fall down
               left: 0,
               right: 0,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
                 child: Container(
-                  height: 48,
+                  height: 50,
                   decoration: BoxDecoration(
                     color:Colors.black.withOpacity(0.6), // Semi-transparent background
                     borderRadius: BorderRadius.circular(16), // Rounded corners

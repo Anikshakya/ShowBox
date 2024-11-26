@@ -1,6 +1,7 @@
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:showbox/src/app_config/api_repo.dart';
 import 'package:showbox/src/constant/constants.dart';
+import 'package:showbox/src/models/movie_details_model.dart';
 
 class MovieController extends GetxController {
   RxBool isMovieListLoading = false.obs;
@@ -11,7 +12,7 @@ class MovieController extends GetxController {
   RxBool showAdult = false.obs;
 
   var moviesList = <dynamic>[].obs;
-  var movieDetails = {}.obs;
+  MovieDetails? movieDetails;  // Declare as Rx<Movie>
 
   // Initialize data
   void initialize() async {
@@ -52,6 +53,7 @@ class MovieController extends GetxController {
       );
       if (response != null) {
         moviesList.addAll(response['results']);
+        isMovieListPaginationLoading(false);
       }
     } catch (e) {
       // Handle error
@@ -61,30 +63,17 @@ class MovieController extends GetxController {
   }
 
   // Get Movie Details
-  getMovieDetails ({id}) async {
+  getMovieDetails({required int id}) async {
     try {
       isMovieDetailsLoading(true);
-      var response = await ApiRepo.apiGet("${AppConstants.movieDetailUrl}/$id","","Get Movie Details",);
+      var response = await ApiRepo.apiGet(
+        "${AppConstants.movieDetailUrl}/$id",
+        "",
+        "Get Movie Details",
+      );
       if (response != null) {
-        // Map and process the response
-        movieDetails.value = {
-          "title": response["title"],
-          "tagline": response["tagline"],
-          "overview": response["overview"],
-          "genres": response["genres"].map((genre) => genre["name"]).toList(),
-          "release_date": response["release_date"],
-          "runtime": response["runtime"],
-          "budget": response["budget"],
-          "revenue": response["revenue"],
-          "homepage": response["homepage"],
-          "vote_average": response["vote_average"],
-          "vote_count": response["vote_count"],
-          "poster_url": "${AppConstants.posterUrl}${response['poster_path']}",
-          "backdrop_url": "${AppConstants.posterUrl}${response['backdrop_path']}",
-          "production_companies": response["production_companies"]
-              .map((company) => company["name"])
-              .toList(),
-        };
+        movieDetails = MovieDetails.fromJson(response);
+        isMovieDetailsLoading(false);
       }
     } catch (e) {
       // Handle error

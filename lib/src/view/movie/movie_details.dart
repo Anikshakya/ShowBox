@@ -1,210 +1,185 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:showbox/src/constant/constants.dart';
 import 'package:showbox/src/controller/movies_controller.dart';
+import 'package:showbox/src/widgets/custom_image_widget.dart';
+import 'package:showbox/src/widgets/custom_webview.dart';
 
-class MovieDetailsPage extends StatelessWidget {
+class MovieDetailsPage extends StatefulWidget {
   final int movieId;
 
   const MovieDetailsPage({super.key, required this.movieId});
 
   @override
-  Widget build(BuildContext context) {
-    final MovieController controller = Get.put(MovieController());
+  State<MovieDetailsPage> createState() => _MovieDetailsPageState();
+}
 
+class _MovieDetailsPageState extends State<MovieDetailsPage> {
+  final MovieController movieCon = Get.put(MovieController());
+
+  late Color textColor;
+  late Color subtitleColor;
+  dynamic movie;
+
+  @override
+  void initState() {
+    initialize();
+    super.initState();
+  }
+
+  initialize() async {
     // Fetch movie details
-    controller.getMovieDetails(id: movieId);
+    await movieCon.getMovieDetails(id: widget.movieId);
+    // Once the movie details are fetched
+    movie = movieCon.movieDetails!;
+  }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Movie Details'),
-        backgroundColor: Colors.black,
-      ),
-      body: Obx(() {
-        if (controller.isMovieDetailsLoading.value) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
+  @override
+  Widget build(BuildContext context) {
+    // Get current theme text color
+    textColor = Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
+    subtitleColor = Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey;
 
-        final movie = controller.movieDetails;
-
-        if (movie.isEmpty) {
-          return const Center(
-            child: Text(
-              'Failed to load movie details.',
-              style: TextStyle(fontSize: 18, color: Colors.red),
-            ),
-          );
-        }
-
-        return SingleChildScrollView(
+    return Obx(()=> movieCon.isMovieDetailsLoading.isTrue
+      ? const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      )
+      : Scaffold(
+        appBar: AppBar(
+          title: Text(movie.title ?? ''),
+        ),
+        body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Backdrop Image
-              Stack(
-                children: [
-                  Image.network(
-                    movie["backdrop_url"] ?? '',
-                    fit: BoxFit.cover,
-                    height: 200,
-                    width: double.infinity,
-                    errorBuilder: (context, error, stackTrace) =>
-                        const Center(child: Text('Image not available')),
-                  ),
-                  Positioned(
-                    bottom: 10,
-                    left: 10,
-                    child: Text(
-                      movie["title"] ?? '',
+              SizedBox(
+                height: 280,
+                child: CustomWebView(
+                  initialUrl: "${AppConstants.movieEmbedUrl}/${movie.imdbId}",
+                  showAppBar: false,
+                  errorImageUrl: "${AppConstants.imageUrl}${movie.backdropPath}",
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Movie Title
+                    Text(
+                      movie.title ?? '',
                       style: const TextStyle(
-                        color: Colors.white,
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        shadows: [
-                          Shadow(
-                            offset: Offset(2, 2),
-                            blurRadius: 3,
-                            color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    // Tagline
+                    if (movie.tagline != null)
+                      Text(
+                        movie.tagline ?? '',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontStyle: FontStyle.italic,
+                          color: subtitleColor,
+                        ),
+                      ),
+                    const SizedBox(height: 16),
+                    // Poster and details
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Poster image
+                        if (movie.posterPath != null)
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: CustomImageNetworkWidget(
+                              imagePath: '${AppConstants.imageUrl}/${movie.posterPath}',
+                              height: 100,
+                              width: 70,
+                            ),
                           ),
-                        ],
-                      ),
+                        const SizedBox(width: 16),
+                        // Other movie details
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Release Date: ${movie.releaseDate ?? 'N/A'}",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: textColor,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                "Rating: ${movie.voteAverage ?? 'N/A'}",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: textColor,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                "Runtime: ${movie.runtime} minutes",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: textColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 16),
-
-              // Tagline
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Text(
-                  movie["tagline"] ?? '',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontStyle: FontStyle.italic,
-                    color: Colors.grey,
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Overview
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Text(
-                  movie["overview"] ?? '',
-                  style: const TextStyle(fontSize: 14),
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Genres
-              if (movie["genres"] != null)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Wrap(
-                    spacing: 8.0,
-                    runSpacing: 4.0,
-                    children: List<Chip>.generate(
-                      movie["genres"].length,
-                      (index) => Chip(
-                        label: Text(movie["genres"][index]),
-                      ),
-                    ),
-                  ),
-                ),
-
-              const SizedBox(height: 16),
-
-              // Release Date and Runtime
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Release Date: ${movie["release_date"] ?? ''}'),
-                    Text('Runtime: ${movie["runtime"] ?? ''} mins'),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Budget and Revenue
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Budget: \$${movie["budget"]}'),
-                    Text('Revenue: \$${movie["revenue"]}'),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Production Companies
-              if (movie["production_companies"] != null)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Production Companies:',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 8),
-                      ...movie["production_companies"].map<Widget>((company) {
-                        return Text('- $company');
-                      }).toList(),
-                    ],
-                  ),
-                ),
-
-              const SizedBox(height: 16),
-
-              // Homepage Link
-              if (movie["homepage"] != null)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: InkWell(
-                    onTap: () {
-                      // Open the movie's homepage
-                      Get.toNamed(movie["homepage"]);
-                    },
-                    child: const Text(
-                      'Visit Homepage',
+                    const SizedBox(height: 16),
+                    // Genres
+                    const Text(
+                      "Genres:",
                       style: TextStyle(
-                        color: Colors.blue,
-                        decoration: TextDecoration.underline,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                ),
-
-              const SizedBox(height: 16),
-
-              // Vote Average and Count
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Rating: ${movie["vote_average"] ?? ''}/10'),
-                    Text('${movie["vote_count"] ?? ''} Votes'),
+                    const SizedBox(height: 8),
+                    if (movie.genres != null && movie.genres!.isNotEmpty)
+                      Wrap(
+                        spacing: 8.0,
+                        runSpacing: 4.0,
+                        children: List<Chip>.generate(
+                          movie.genres!.length,
+                          (index) => Chip(
+                            label: Text(movie.genres![index].name ?? 'Unknown'),
+                          ),
+                        ),
+                      ),
+                    const SizedBox(height: 16),
+                    // Overview
+                    const Text(
+                      "Overview:",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      movie.overview ?? 'No description available.',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: subtitleColor,
+                      ),
+                    ),
                   ],
                 ),
               ),
             ],
           ),
-        );
-      }),
+        )
+      ),
     );
   }
 }
