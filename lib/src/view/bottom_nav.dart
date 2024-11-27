@@ -82,7 +82,7 @@ class _BottomNavState extends State<BottomNav> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16),
                     child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
+                      filter: ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0),
                       child: BottomNavigationBar(
                         selectedLabelStyle: const TextStyle(fontSize: 0),
                         unselectedLabelStyle: const TextStyle(fontSize: 0),
