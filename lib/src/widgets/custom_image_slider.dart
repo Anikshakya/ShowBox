@@ -90,40 +90,39 @@ class _CustomImageSliderState extends State<CustomImageSlider> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: widget.height + 20,
-      child: Center(
-        child: Stack(
-          children: [
-            // Image Slider
-            SizedBox(
-              width: widget.width,
-              child: PageView.builder(
-                controller: _pageController,
-                itemCount: _loopedImages.length,
-                onPageChanged: _handlePageChange,
-                itemBuilder: (context, index) {
-                  final imageIndex = (index - 1) % widget.images.length;
-                  final isActive = index == _currentPage;
-                  return GestureDetector(
-                    onTap: () {
-                      widget.onTap?.call(imageIndex);
-                    },
-                    child: _buildImageCard(_loopedImages[index], isActive),
-                  );
-                },
-              ),
+      height: widget.showIndicator == true ? widget.height + 60 : widget.height + 20,
+      child: Stack(
+        children: [
+          // Image Slider
+          SizedBox(
+            height: widget.height + 20,
+            width: widget.width,
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: _loopedImages.length,
+              onPageChanged: _handlePageChange,
+              itemBuilder: (context, index) {
+                final imageIndex = (index - 1) % widget.images.length;
+                final isActive = index == _currentPage;
+                return GestureDetector(
+                  onTap: () {
+                    widget.onTap?.call(imageIndex);
+                  },
+                  child: _buildImageCard(_loopedImages[index], isActive),
+                );
+              },
             ),
-            // Conditional rendering of indicator based on `showIndicator`
-            if (widget.showIndicator)
-              Positioned(
-                top: widget.indicatorTop,
-                left: widget.indicatorLeft,
-                right: widget.indicatorRight,
-                bottom: widget.indicatorBottom,
-                child: _buildDots(),
-              ),
-          ],
-        ),
+          ),
+          // Conditional rendering of indicator based on `showIndicator`
+          if (widget.showIndicator)
+            Positioned(
+              top: widget.indicatorTop,
+              left: widget.indicatorLeft,
+              right: widget.indicatorRight,
+              bottom: widget.indicatorBottom,
+              child: _buildDots(),
+            ),
+        ],
       ),
     );
   }
