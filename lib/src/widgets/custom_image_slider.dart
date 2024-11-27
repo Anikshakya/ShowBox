@@ -89,8 +89,9 @@ class _CustomImageSliderState extends State<CustomImageSlider> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: widget.showIndicator == true ? widget.height + 60 : widget.height + 20,
+    return Container(
+      height: widget.showIndicator == true ? widget.height + 60 : widget.height + 30,
+      alignment: widget.showIndicator != true ? Alignment.center : null,
       child: Stack(
         children: [
           // Image Slider
