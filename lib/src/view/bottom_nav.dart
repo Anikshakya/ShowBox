@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:showbox/src/controller/bottom_nav_controller.dart';
 import 'package:showbox/src/view/home.dart';
 import 'package:showbox/src/view/movie/movies_list.dart';
+import 'package:showbox/src/view/series/series_list.dart';
 
 class BottomNav extends StatefulWidget {
   const BottomNav({super.key});
@@ -37,7 +38,7 @@ class _BottomNavState extends State<BottomNav> {
     pages = [
       HomePage(scrollController: _scrollController),
       MovieList(scrollController: _scrollController),
-      const PageContent(pageTitle: 'Page 3', color: Colors.green),
+      const SeriesListPage(),
       const PageContent(pageTitle: 'Page 4', color: Colors.orange),
     ];
 
