@@ -59,7 +59,8 @@ class _BottomNavState extends State<BottomNav> {
         children: [
           pages[_selectedIndex],
           Obx(()=>
-            Positioned(
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 160),
               bottom: bottomNavCon.isNavVisible.isTrue ? 0 : -80, // Position the nav bar to fall down
               left: 0,
               right: 0,
@@ -73,7 +74,7 @@ class _BottomNavState extends State<BottomNav> {
                     boxShadow: [
                       BoxShadow(
                         color: Theme.of(context).primaryColor.withOpacity(0.3),
-                        blurRadius: 10,
+                        blurRadius: 2,
                         offset: const Offset(0, 0),
                       ),
                     ],
@@ -81,7 +82,7 @@ class _BottomNavState extends State<BottomNav> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16),
                     child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0),
+                      filter: ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
                       child: BottomNavigationBar(
                         selectedLabelStyle: const TextStyle(fontSize: 0),
                         unselectedLabelStyle: const TextStyle(fontSize: 0),

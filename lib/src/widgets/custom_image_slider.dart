@@ -1,8 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:showbox/src/widgets/custom_image_widget.dart';
 
 class CustomImageSlider extends StatefulWidget {
-  final List images;
+  final List<String> images;
   final double height;
   final double width;
   final double cornerRadius;
@@ -16,14 +17,14 @@ class CustomImageSlider extends StatefulWidget {
   const CustomImageSlider({
     super.key,
     required this.images,
-    this.height = 280.0,
+    this.height = 300.0,
     this.width = double.infinity,
     this.cornerRadius = 20.0,
     this.showIndicator = true,
     this.indicatorTop = 0.0,
     this.indicatorLeft = 0.0,
     this.indicatorRight = 0.0,
-    this.indicatorBottom = 0.0, 
+    this.indicatorBottom = 0.0,
     required this.onTap,
   });
 
@@ -33,35 +34,64 @@ class CustomImageSlider extends StatefulWidget {
 
 class _CustomImageSliderState extends State<CustomImageSlider> {
   late PageController _pageController;
-  int _currentPage = 0;
-  bool get _shouldLoop => widget.images.length > 2;
+  Timer? _timer;
+  int _currentPage = 1; // Start at the first real item
+
+  List<String> get _loopedImages => [
+        widget.images.last, // Dummy first item
+        ...widget.images,
+        widget.images.first, // Dummy last item
+      ];
 
   @override
   void initState() {
     super.initState();
-
-    // Start at index 0 for small lists, else start from the middle
-    _currentPage = _shouldLoop ? widget.images.length : 0;
     _pageController = PageController(
       viewportFraction: 0.5,
       initialPage: _currentPage,
     );
 
-    _pageController.addListener(() {
-      int next = _pageController.page!.round();
-      if (_currentPage != next) {
-        setState(() {
-          _currentPage = next;
-        });
+    // Start the auto-slide timer
+    _startAutoSlideTimer();
+  }
+
+  void _startAutoSlideTimer() {
+    _timer?.cancel(); // Cancel any existing timer
+    _timer = Timer.periodic(const Duration(seconds: 8), (timer) {
+      if (widget.images.isNotEmpty) {
+        _pageController.nextPage(
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
       }
     });
+  }
+
+  void _handlePageChange(int index) {
+    if (index == 0) {
+      // Jump to the last real image
+      Future.delayed(const Duration(milliseconds: 500), () {
+        _pageController.jumpToPage(widget.images.length);
+      });
+    } else if (index == _loopedImages.length - 1) {
+      // Jump to the first real image
+      Future.delayed(const Duration(milliseconds: 500), () {
+        _pageController.jumpToPage(1);
+      });
+    }
+    setState(() {
+      _currentPage = index;
+    });
+
+    // Reset the timer after user interaction
+    _startAutoSlideTimer();
   }
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: widget.height + 20,
-      child: Center(                                                           
+      child: Center(
         child: Stack(
           children: [
             // Image Slider
@@ -69,15 +99,16 @@ class _CustomImageSliderState extends State<CustomImageSlider> {
               width: widget.width,
               child: PageView.builder(
                 controller: _pageController,
-                itemCount: _shouldLoop ? null : widget.images.length,
+                itemCount: _loopedImages.length,
+                onPageChanged: _handlePageChange,
                 itemBuilder: (context, index) {
-                  int imageIndex = _shouldLoop ? index % widget.images.length : index;
-                  bool isActive = index == _currentPage;
+                  final imageIndex = (index - 1) % widget.images.length;
+                  final isActive = index == _currentPage;
                   return GestureDetector(
-                    onTap: (){
-                      widget.onTap!(index);
+                    onTap: () {
+                      widget.onTap?.call(imageIndex);
                     },
-                    child: _buildImageCard(widget.images[imageIndex], isActive),
+                    child: _buildImageCard(_loopedImages[index], isActive),
                   );
                 },
               ),
@@ -98,19 +129,20 @@ class _CustomImageSliderState extends State<CustomImageSlider> {
   }
 
   Widget _buildImageCard(String imageUrl, bool isActive) {
-    double scale = isActive ? 1.0 : 0.8;
+    double scale = isActive ? 1.0 : 0.7;
     return AnimatedScale(
       scale: scale,
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 350),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 12),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(widget.cornerRadius),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Theme.of(context).primaryColor.withOpacity(0.4),
               blurRadius: 8,
-              offset: const Offset(0, 4),
+              spreadRadius: 1,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -129,7 +161,7 @@ class _CustomImageSliderState extends State<CustomImageSlider> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(
         widget.images.length,
-        (index) => _buildDot(index == (_currentPage % widget.images.length)),
+        (index) => _buildDot(index == (_currentPage - 1) % widget.images.length),
       ),
     );
   }
@@ -148,6 +180,7 @@ class _CustomImageSliderState extends State<CustomImageSlider> {
 
   @override
   void dispose() {
+    _timer?.cancel();
     _pageController.dispose();
     super.dispose();
   }

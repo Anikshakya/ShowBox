@@ -41,7 +41,7 @@ class HomePage extends StatelessWidget {
                   child: CircularProgressIndicator(),
                 )
               : CustomImageSlider(
-                height: 240.0,
+                height: 268,
                 cornerRadius: 15.0,
                 showIndicator: false,
                 onTap: (index) {},
