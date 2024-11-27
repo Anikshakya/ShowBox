@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -64,50 +66,53 @@ class _BottomNavState extends State<BottomNav> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
                 child: Container(
-                  height: 50,
+                  height: 56,
                   decoration: BoxDecoration(
                     color:Colors.black.withOpacity(0.6), // Semi-transparent background
                     borderRadius: BorderRadius.circular(16), // Rounded corners
                     boxShadow: [
                       BoxShadow(
-                        color: const Color.fromARGB(255, 37, 35, 39).withOpacity(0.2),
-                        blurRadius: 16,
-                        offset: const Offset(0, 5),
+                        color: Theme.of(context).primaryColor.withOpacity(0.3),
+                        blurRadius: 10,
+                        offset: const Offset(0, 0),
                       ),
                     ],
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16),
-                    child: BottomNavigationBar(
-                      selectedLabelStyle: const TextStyle(fontSize: 0),
-                      unselectedLabelStyle: const TextStyle(fontSize: 0),
-                      showSelectedLabels: false,
-                      showUnselectedLabels: false,
-                      backgroundColor: Colors.transparent, // Transparent background
-                      elevation: 0, // Remove shadow
-                      type: BottomNavigationBarType.fixed,
-                      selectedItemColor: Colors.white,
-                      unselectedItemColor: const Color.fromARGB(255, 185, 185, 185),
-                      currentIndex: _selectedIndex,
-                      onTap: _onItemTapped,
-                      items: const [
-                        BottomNavigationBarItem(
-                          icon: Icon(Icons.home),
-                          label: '',
-                        ),
-                        BottomNavigationBarItem(
-                          icon: Icon(Icons.video_collection_sharp),
-                          label: '',
-                        ),
-                        BottomNavigationBarItem(
-                          icon: Icon(Icons.grid_view),
-                          label: '',
-                        ),
-                        BottomNavigationBarItem(
-                          icon: Icon(Icons.person),
-                          label: '',
-                        ),
-                      ],
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0),
+                      child: BottomNavigationBar(
+                        selectedLabelStyle: const TextStyle(fontSize: 0),
+                        unselectedLabelStyle: const TextStyle(fontSize: 0),
+                        showSelectedLabels: false,
+                        showUnselectedLabels: false,
+                        backgroundColor: Colors.black.withOpacity(0.5), // Transparent background
+                        elevation: 0, // Remove shadow
+                        type: BottomNavigationBarType.fixed,
+                        selectedItemColor: Colors.white,
+                        unselectedItemColor: const Color.fromARGB(255, 185, 185, 185),
+                        currentIndex: _selectedIndex,
+                        onTap: _onItemTapped,
+                        items: const [
+                          BottomNavigationBarItem(
+                            icon: Icon(Icons.home),
+                            label: '',
+                          ),
+                          BottomNavigationBarItem(
+                            icon: Icon(Icons.video_collection_sharp),
+                            label: '',
+                          ),
+                          BottomNavigationBarItem(
+                            icon: Icon(Icons.grid_view),
+                            label: '',
+                          ),
+                          BottomNavigationBarItem(
+                            icon: Icon(Icons.person),
+                            label: '',
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

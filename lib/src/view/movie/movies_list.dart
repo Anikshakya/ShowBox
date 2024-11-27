@@ -77,7 +77,7 @@ class MovieList extends StatelessWidget {
         ),
         // Loading spinner in the center
         const Center(
-          child: CircularProgressIndicator(color: Colors.orange),
+          child: CircularProgressIndicator(),
         ),
       ],
     );
