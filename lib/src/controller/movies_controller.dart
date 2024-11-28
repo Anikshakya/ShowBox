@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:showbox/src/app_config/api_repo.dart';
 import 'package:showbox/src/constant/constants.dart';
@@ -7,17 +9,38 @@ class MovieController extends GetxController {
   RxBool isMovieListLoading = false.obs;
   RxBool isMovieListPaginationLoading = false.obs;
   RxBool isMovieDetailsLoading = false.obs;
+  RxBool isTrendingMoviesLoading = false.obs;
 
   RxInt movielistPage = 1.obs;
   RxBool showAdult = false.obs;
 
   var moviesList = <dynamic>[].obs;
+  var trendingMovieList = <dynamic>[].obs;
   MovieDetails? movieDetails;  // Declare as Rx<Movie>
 
   // Initialize data
   void initialize() async {
     if (moviesList.isEmpty) {
       await getMovieList();
+    }
+    if (trendingMovieList.isEmpty) {
+      await getTrendingMoviesList();
+    }
+  }
+
+  // Get Trending Movies
+  getTrendingMoviesList() async {
+    try {
+      isTrendingMoviesLoading(true);
+      var response = await ApiRepo.apiGet(AppConstants.trendingMovieUrl, "");
+      if(response != null) {
+        trendingMovieList.value = response['results'];
+        isTrendingMoviesLoading( false);
+      }
+    } catch (e) {
+      log('Error fetching trending movies: $e');
+    } finally {
+      isTrendingMoviesLoading(false);
     }
   }
 
@@ -45,6 +68,7 @@ class MovieController extends GetxController {
   Future<void> fetchNextPage() async {
     try {
       isMovieListPaginationLoading(true);
+      update();
       movielistPage.value++;
       var response = await ApiRepo.apiGet(
         '${AppConstants.movieListUrl}?page=${movielistPage.value}&sort_by=popularity.desc&include_adult=$showAdult',
@@ -54,11 +78,13 @@ class MovieController extends GetxController {
       if (response != null) {
         moviesList.addAll(response['results']);
         isMovieListPaginationLoading(false);
+        update();
       }
     } catch (e) {
       // Handle error
     } finally {
       isMovieListPaginationLoading(false);
+      update();
     }
   }
 

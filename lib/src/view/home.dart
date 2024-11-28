@@ -1,6 +1,5 @@
   import 'package:flutter/material.dart';
   import 'package:get/get.dart';
-  import 'package:google_fonts/google_fonts.dart';
   import 'package:showbox/src/constant/constants.dart';
   import 'package:showbox/src/controller/home_controller.dart';
 import 'package:showbox/src/view/movie/movie_details.dart';
@@ -20,239 +19,228 @@ import 'package:showbox/src/view/series/series_details.dart';
       homeCon.initialize();
 
       return Scaffold(
-        appBar: AppBar(
-          title: Text('ShowBox', style: GoogleFonts.poppins(fontSize: 24)),
-          centerTitle: true,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.search),
-              onPressed: () {},
-            ),
-          ],
-        ),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            controller: scrollController,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(height: 20),
-                // Trending Movies/Series
-                Obx(() => homeCon.isTrendingListLoading.isTrue
-                    ? const Center(child: CircularProgressIndicator())
-                    : CustomImageSlider(
-                        height: 280,
-                        cornerRadius: 15.0,
-                        showIndicator: false,
-                        onTap: (index) {
-                          if( homeCon.trendingList[index]["media_type"] == "movie"){
-                            Get.to(()=> MovieDetailsPage(movieId: homeCon.trendingList[index]["id"]));
-                          }
-
-                          if( homeCon.trendingList[index]["media_type"] == "tv"){
-                            Get.to(()=> SeriesDetailPage(
-                              id:  homeCon.trendingList[index]["id"],
-                            ));
-                          }
-                        },
-                        images: homeCon.trendingList.map((item) {
-                          return item['poster_path'] != null
-                              ? '${AppConstants.imageUrl}${item['poster_path']}'
-                              : '';
-                        }).toList(),
+        body: SingleChildScrollView(
+          controller: scrollController,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // For App Bar
+              const SizedBox(height: 100),
+              // Trending Movies/Series
+              Obx(() => homeCon.isTrendingListLoading.isTrue
+                  ? const Center(child: CircularProgressIndicator())
+                  : CustomImageSlider(
+                      height: 280,
+                      cornerRadius: 2.0,
+                      showIndicator: false,
+                      onTap: (index) {
+                        if( homeCon.trendingList[index]["media_type"] == "movie"){
+                          Get.to(()=> MovieDetailsPage(movieId: homeCon.trendingList[index]["id"]));
+                        }
+                                 
+                        if( homeCon.trendingList[index]["media_type"] == "tv"){
+                          Get.to(()=> SeriesDetailPage(
+                            id:  homeCon.trendingList[index]["id"],
+                          ));
+                        }
+                      },
+                      images: homeCon.trendingList.map((item) {
+                        return item['poster_path'] != null
+                            ? '${AppConstants.imageUrl}${item['poster_path']}'
+                            : '';
+                      }).toList(),
+                    ),
+              ),
+              const SizedBox(height: 20),
+              // Top Rated Movies
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Top Rated Movies",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
                       ),
-                ),
-                const SizedBox(height: 20),
-                // Top Rated Movies
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Top Rated Movies",
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Obx(() => homeCon.isTopRatedMoviesLoading.isTrue
-                          ? const Center(child: CircularProgressIndicator())
-                          : SizedBox(
-                              height: 240,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: homeCon.topRatedMovies.length,
-                                itemBuilder: (context, index) {
-                                  final movie = homeCon.topRatedMovies[index];
-                                  return GestureDetector(
-                                    onTap: (){
-                                      Get.to(()=> MovieDetailsPage(
-                                        movieId: movie.id,
-                                      ));
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(right: 16),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(16),
-                                        child: Container(
-                                          width: 160,
-                                          decoration: BoxDecoration(
-                                            color: Colors.black,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Theme.of(context).primaryColor.withOpacity(0.3),
-                                                spreadRadius: 1,
-                                                blurRadius: 10,
-                                                offset: const Offset(0, 2),
+                    ),
+                    const SizedBox(height: 12),
+                    Obx(() => homeCon.isTopRatedMoviesLoading.isTrue
+                        ? const Center(child: CircularProgressIndicator())
+                        : SizedBox(
+                            height: 240,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: homeCon.topRatedMovies.length,
+                              itemBuilder: (context, index) {
+                                final movie = homeCon.topRatedMovies[index];
+                                return GestureDetector(
+                                  onTap: (){
+                                    Get.to(()=> MovieDetailsPage(
+                                      movieId: movie.id,
+                                    ));
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(right: 16),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(16),
+                                      child: Container(
+                                        width: 160,
+                                        decoration: BoxDecoration(
+                                          color: Colors.black,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Theme.of(context).primaryColor.withOpacity(0.3),
+                                              spreadRadius: 1,
+                                              blurRadius: 10,
+                                              offset: const Offset(0, 2),
+                                            ),
+                                          ],
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              child: Image.network(
+                                                '${AppConstants.imageUrl}${movie.posterPath}',
+                                                fit: BoxFit.cover,
+                                                width: double.infinity,
+                                                height: double.infinity,
                                               ),
-                                            ],
-                                          ),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Expanded(
-                                                child: Image.network(
-                                                  '${AppConstants.imageUrl}${movie.posterPath}',
-                                                  fit: BoxFit.cover,
-                                                  width: double.infinity,
-                                                  height: double.infinity,
-                                                ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                movie.title ?? 'N/A',
+                                                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                                      fontSize: 16,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.white,
+                                                    ),
+                                                overflow: TextOverflow.ellipsis,
                                               ),
-                                              Padding(
-                                                padding: const EdgeInsets.all(8.0),
-                                                child: Text(
-                                                  movie.title ?? 'N/A',
-                                                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                                        fontSize: 16,
-                                                        fontWeight: FontWeight.bold,
-                                                        color: Colors.white,
-                                                      ),
-                                                  overflow: TextOverflow.ellipsis,
-                                                ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                                              child: Text(
+                                                '⭐ ${movie.voteAverage?.toDouble() ?? 0.0}',
+                                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                                      fontSize: 14,
+                                                      color: Colors.white,
+                                                    ),
                                               ),
-                                              Padding(
-                                                padding: const EdgeInsets.symmetric(horizontal: 8),
-                                                child: Text(
-                                                  '⭐ ${movie.voteAverage?.toDouble() ?? 0.0}',
-                                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                                        fontSize: 14,
-                                                        color: Colors.white,
-                                                      ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),
-                                  );
-                                },
-                              ),
+                                  ),
+                                );
+                              },
                             ),
-                      ),
-                    ],
-                  ),
+                          ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 20),
-                // Top Rated Series Section
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Top Rated Series",
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w600,
-                        ),
+              ),
+              const SizedBox(height: 20),
+              // Top Rated Series Section
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Top Rated Series",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
                       ),
-                      const SizedBox(height: 12),
-                      Obx(() => homeCon.isTopRatedSeriesLoading.isTrue
-                          ? const Center(child: CircularProgressIndicator())
-                          : SizedBox(
-                              height: 240,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: homeCon.topRatedSeries.length,
-                                itemBuilder: (context, index) {
-                                  final series = homeCon.topRatedSeries[index];
-                                  return GestureDetector(
-                                    onTap: (){
-                                      Get.to(()=> SeriesDetailPage(
-                                        id: series.id,
-                                      ));
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(right: 16),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(16),
-                                        child: Container(
-                                          width: 160,
-                                          decoration: BoxDecoration(
-                                            color: Colors.black,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black.withOpacity(0.3),
-                                                spreadRadius: 1,
-                                                blurRadius: 10,
-                                                offset: const Offset(0, 2),
+                    ),
+                    const SizedBox(height: 12),
+                    Obx(() => homeCon.isTopRatedSeriesLoading.isTrue
+                        ? const Center(child: CircularProgressIndicator())
+                        : SizedBox(
+                            height: 240,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: homeCon.topRatedSeries.length,
+                              itemBuilder: (context, index) {
+                                final series = homeCon.topRatedSeries[index];
+                                return GestureDetector(
+                                  onTap: (){
+                                    Get.to(()=> SeriesDetailPage(
+                                      id: series.id,
+                                    ));
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(right: 16),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(16),
+                                      child: Container(
+                                        width: 160,
+                                        decoration: BoxDecoration(
+                                          color: Colors.black,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(0.3),
+                                              spreadRadius: 1,
+                                              blurRadius: 10,
+                                              offset: const Offset(0, 2),
+                                            ),
+                                          ],
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              child: Image.network(
+                                                '${AppConstants.imageUrl}${series.posterPath}',
+                                                fit: BoxFit.cover,
+                                                width: double.infinity,
+                                                height: double.infinity,
                                               ),
-                                            ],
-                                          ),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Expanded(
-                                                child: Image.network(
-                                                  '${AppConstants.imageUrl}${series.posterPath}',
-                                                  fit: BoxFit.cover,
-                                                  width: double.infinity,
-                                                  height: double.infinity,
-                                                ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                series.name ?? 'N/A',
+                                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                                      fontSize: 16,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.white,
+                                                    ),
+                                                overflow: TextOverflow.ellipsis,
                                               ),
-                                              Padding(
-                                                padding: const EdgeInsets.all(8.0),
-                                                child: Text(
-                                                  series.name ?? 'N/A',
-                                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                                        fontSize: 16,
-                                                        fontWeight: FontWeight.bold,
-                                                        color: Colors.white,
-                                                      ),
-                                                  overflow: TextOverflow.ellipsis,
-                                                ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                                              child: Text(
+                                                '⭐ ${series.voteAverage?.toDouble() ?? 0.0}',
+                                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                                      fontSize: 14,
+                                                      color: Colors.white,
+                                                    ),
                                               ),
-                                              Padding(
-                                                padding: const EdgeInsets.symmetric(horizontal: 8),
-                                                child: Text(
-                                                  '⭐ ${series.voteAverage?.toDouble() ?? 0.0}',
-                                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                                        fontSize: 14,
-                                                        color: Colors.white,
-                                                      ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),
-                                  );
-                                },
-                              ),
+                                  ),
+                                );
+                              },
                             ),
-                      ),
-                    ],
-                  ),
+                          ),
+                    ),
+                  ],
                 ),
-                // Upcomming Movies
-                // UpComming Series
-              ],
-            ),
+              ),
+              // Upcomming Movies
+              // UpComming Series
+            ],
           ),
         ),
       );

@@ -24,4 +24,6 @@ class AppConstants {
 
   // ---------- TRENDING ----------
   static String trendingUrl = '$baseUrl/trending/all/day';
+  static String trendingMovieUrl = '$baseUrl/trending/movie/day';
+  static String trendingSeriesUrl = '$baseUrl/trending/tv/day';
 }

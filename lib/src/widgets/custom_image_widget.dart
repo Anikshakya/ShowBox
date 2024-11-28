@@ -44,7 +44,9 @@ class _CustomImageNetworkWidgetState extends State<CustomImageNetworkWidget> {
                         height: widget.height,
                         child: Stack(
                           children: [
-                            const CustomShimmer(),
+                            CustomShimmer(
+                              borderRadius: widget.borderRadius,
+                            ),
                             Center(
                               child: CircularProgressIndicator(
                                 strokeWidth: 1,

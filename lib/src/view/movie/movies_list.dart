@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:showbox/src/constant/constants.dart';
-import 'package:showbox/src/controller/bottom_nav_controller.dart';
 import 'package:showbox/src/controller/movies_controller.dart';
 import 'package:showbox/src/view/movie/movie_details.dart';
 import 'package:showbox/src/widgets/custom_image_widget.dart';
+import 'package:showbox/src/widgets/custom_slider.dart';
 
 class MovieList extends StatelessWidget {
   final ScrollController scrollController;
@@ -18,101 +18,118 @@ class MovieList extends StatelessWidget {
   Widget build(BuildContext context) {
     // Get Controller
     final movieController = Get.put(MovieController());
-    BottomNavController bottomNavCon = Get.put(BottomNavController());
 
     movieController.initialize(); // Pre-fetch initial movie data
 
     return Scaffold(
-      body: Obx(
-        () => movieController.isMovieListLoading.isTrue
-            // Display a loading spinner while the movie list is loading
-            ? const Center(
-                child: CircularProgressIndicator(),
-              )
-            : Stack(
-                children: [
-                  Positioned.fill(
-                    // Listen To Scroll
-                    child: NotificationListener<ScrollNotification>(
-                      onNotification: (scrollNotification) {
-                        // Trigger pagination when the user scrolls to the bottom
-                        if (scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent && !movieController.isMovieListPaginationLoading.value) {
-                          bottomNavCon.isNavVisible.value = true;
-                          movieController.fetchNextPage();
-                        }
-                        return true;
-                      },
-                      child: Stack(
-                        children: [
-                          // Movie grid
-                          movieGrid(movieController),
-                          // Pagination Loading
-                          if (movieController.isMovieListPaginationLoading.isTrue)
-                            paginationLoading(),
-                        ],
-                      ),
+      body: Obx(() => movieController.isMovieListLoading.isTrue
+        // Display a loading spinner while the movie list is loading
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : NotificationListener<ScrollNotification>(
+          onNotification: (scrollNotification) {
+            // Trigger pagination when the user scrolls to the bottom
+            if (scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent && !movieController.isMovieListPaginationLoading.value) {
+              movieController.isMovieListPaginationLoading(true);
+              movieController.fetchNextPage();
+            }
+            return true;
+          },
+          child: SingleChildScrollView(
+            controller: scrollController,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // For App Bar
+                const SizedBox(height: 120),
+                // Trending
+                const Padding(
+                  padding: EdgeInsets.only(left: 8.0),
+                  child: Text(
+                    "Trending Movies",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                  // Search Bar
-                  Positioned(
-                    top: 30,
-                    left: 20,
-                    right: 20,
-                    child: _buildSearchBar(movieController),
+                ),
+                // Trending Slider
+                Center(
+                  child: CustomItemSlider(
+                    height: 260,
+                    cornerRadius: 2,
+                    unActiveScale: 0.9,
+                    autoSlide: true,
+                    setLoop: false                                   ,
+                    itemMargin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                    items: [
+                      ...List.generate(
+                        movieController.trendingMovieList.length,
+                        (index) {
+                          var movie = movieController.trendingMovieList[index];
+                        return GestureDetector(
+                          onTap: (){
+                            Get.to(()=> MovieDetailsPage(movieId: movie["id"]));
+                          },
+                          child: MovieCard(
+                            title: movie["title"],
+                            year: movie["release_date"].split("-")[0], // Extract year
+                            rating: movie["vote_average"],
+                            image: movie["poster_path"],
+                          ),
+                        );
+                        },
+                      ),
+                    ],
+                  )
+                ),
+                const SizedBox(height: 30,),
+                // All Movies
+                const Padding(
+                  padding: EdgeInsets.only(left: 8.0),
+                  child: Text(
+                    "All Movies",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 10,),
+                // Movie List Grid
+                movieGrid(movieController),
+                // Pagination Loading
+                paginationLoading(movieController),
+              ],
+            ),
+          )
+        ),
       ),
-    );
-  }
-
-  paginationLoading() {
-    return Stack(
-      children: [
-        // Transparent full-screen layer
-        Container(
-          color: Colors.black.withOpacity(0.5), // Semi-transparent black background
-          width: double.infinity,
-          height: double.infinity,
-        ),
-        // Loading spinner in the center
-        const Center(
-          child: CircularProgressIndicator(),
-        ),
-      ],
     );
   }
 
   movieGrid(MovieController movieController) {
     return GridView.builder(
-      controller: scrollController,
-      padding: const EdgeInsets.only(
-        top: 120, // Leave space for the search bar
-        left: 8,
-        right: 8,
-      ),
-      gridDelegate:
-          const SliverGridDelegateWithFixedCrossAxisCount(
+      physics: const NeverScrollableScrollPhysics(), // Disable internal scrolling
+      shrinkWrap: true, // Adjust to fit content
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
         mainAxisSpacing: 8,
         crossAxisSpacing: 8,
-        childAspectRatio: 0.7, // Adjust card size
+        childAspectRatio: 0.7,
       ),
       itemCount: movieController.moviesList.length,
       itemBuilder: (context, index) {
-        final movie =
-            movieController.moviesList[index];
+        final movie = movieController.moviesList[index];
         return GestureDetector(
           onTap: () {
-            // Navigate to the movie details page
-            Get.to(() => MovieDetailsPage(
-                  movieId: movie["id"],
-                ));
+            Get.to(() => MovieDetailsPage(movieId: movie["id"]));
           },
           child: MovieCard(
             title: movie["title"],
-            year: movie["release_date"]
-                .split("-")[0], // Extract year
+            year: movie["release_date"].split("-")[0], // Extract year
             rating: movie["vote_average"],
             image: movie["poster_path"],
           ),
@@ -121,39 +138,15 @@ class MovieList extends StatelessWidget {
     );
   }
 
-  // Builds the search bar with filtering functionality
-  Widget _buildSearchBar(MovieController movieController) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.7), // Semi-transparent background
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 10,
-            offset: const Offset(0, 5), // Shadow position
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(10.0),
-      child: TextField(
-        onChanged: (query) {
-          // Implement search functionality
-          // movieController.filterMovies(query);
-        },
-        decoration: InputDecoration(
-          hintText: 'Search Movies...',
-          hintStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
-          filled: true,
-          fillColor: Colors.transparent, // Transparent text field background
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20),
-            borderSide: BorderSide(color: Colors.white.withOpacity(0.7)),
-          ),
-          prefixIcon: const Icon(Icons.search, color: Colors.white),
+  paginationLoading(MovieController movieController) {
+    return Obx(()=> movieController.isMovieListPaginationLoading.isTrue
+      ? const SizedBox(
+        height: 100,
+        child: Center(
+          child: CircularProgressIndicator(),
         ),
-        style: const TextStyle(color: Colors.white),
-      ),
+      )
+      : const SizedBox(),
     );
   }
 }
@@ -178,15 +171,16 @@ class MovieCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(2),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(2),
         child: Stack(
           fit: StackFit.expand,
           children: [
             // Movie image
             CustomImageNetworkWidget(
+              borderRadius: 2,
               imagePath: "${AppConstants.imageUrl}$image",
             ),
             // Display the release year at the top-left corner
@@ -215,7 +209,7 @@ class MovieCard extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: Colors.orange.withOpacity(0.9),
+                  color: const Color.fromARGB(255, 233, 198, 0).withOpacity(0.9),
                   borderRadius: const BorderRadius.only(
                       bottomLeft: Radius.circular(8)),
                 ),

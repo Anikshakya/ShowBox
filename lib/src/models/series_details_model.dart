@@ -1,18 +1,18 @@
 // To parse this JSON data, do
 //
-//     final seriesDetailModel = seriesDetailModelFromJson(jsonString);
+//     final showDetailModel = showDetailModelFromJson(jsonString);
 
 import 'dart:convert';
 
-SeriesDetailModel seriesDetailModelFromJson(String str) => SeriesDetailModel.fromJson(json.decode(str));
+SeriesDetailModel showDetailModelFromJson(String str) => SeriesDetailModel.fromJson(json.decode(str));
 
-String seriesDetailModelToJson(SeriesDetailModel data) => json.encode(data.toJson());
+String showDetailModelToJson(SeriesDetailModel data) => json.encode(data.toJson());
 
-class SeriesDetailModel {
+class SeriesDetailModel {   
     bool? adult;
     String? backdropPath;
     List<CreatedBy>? createdBy;
-    List<int>? episodeRunTime;
+    List<dynamic>? episodeRunTime;
     String? firstAirDate;
     List<Genre>? genres;
     String? homepage;
@@ -79,9 +79,9 @@ class SeriesDetailModel {
 
     factory SeriesDetailModel.fromJson(Map<String, dynamic> json) => SeriesDetailModel(
         adult: json["adult"],
-        backdropPath: json["backdrop_path"] ?? "",
+        backdropPath: json["backdrop_path"] ?? '',
         createdBy: List<CreatedBy>.from(json["created_by"].map((x) => CreatedBy.fromJson(x))),
-        episodeRunTime: List<int>.from(json["episode_run_time"].map((x) => x)),
+        episodeRunTime: List<dynamic>.from(json["episode_run_time"].map((x) => x)),
         firstAirDate: json["first_air_date"],
         genres: List<Genre>.from(json["genres"].map((x) => Genre.fromJson(x))),
         homepage: json["homepage"],
@@ -91,7 +91,7 @@ class SeriesDetailModel {
         lastAirDate: json["last_air_date"],
         lastEpisodeToAir: TEpisodeToAir.fromJson(json["last_episode_to_air"]),
         name: json["name"],
-        nextEpisodeToAir: TEpisodeToAir.fromJson(json["next_episode_to_air"]),
+        nextEpisodeToAir: json["next_episode_to_air"] == null ? TEpisodeToAir() : TEpisodeToAir.fromJson(json["next_episode_to_air"]),
         networks: List<Network>.from(json["networks"].map((x) => Network.fromJson(x))),
         numberOfEpisodes: json["number_of_episodes"],
         numberOfSeasons: json["number_of_seasons"],
@@ -99,8 +99,8 @@ class SeriesDetailModel {
         originalLanguage: json["original_language"],
         originalName: json["original_name"],
         overview: json["overview"],
-        popularity: json["popularity"].toDouble(),
-        posterPath: json["poster_path"],
+        popularity: json["popularity"]?.toDouble(),
+        posterPath: json["poster_path"] ?? '',
         productionCompanies: List<Network>.from(json["production_companies"].map((x) => Network.fromJson(x))),
         productionCountries: List<ProductionCountry>.from(json["production_countries"].map((x) => ProductionCountry.fromJson(x))),
         seasons: List<Season>.from(json["seasons"].map((x) => Season.fromJson(x))),
@@ -108,13 +108,13 @@ class SeriesDetailModel {
         status: json["status"],
         tagline: json["tagline"],
         type: json["type"],
-        voteAverage: json["vote_average"].toDouble(),
+        voteAverage: json["vote_average"] != null ? json["vote_average"]?.toDouble() : 0.0,
         voteCount: json["vote_count"],
     );
 
     Map<String, dynamic> toJson() => {
         "adult": adult,
-        "backdrop_path": backdropPath,
+        "backdrop_path": backdropPath ?? '',
         "created_by": List<dynamic>.from(createdBy!.map((x) => x.toJson())),
         "episode_run_time": List<dynamic>.from(episodeRunTime!.map((x) => x)),
         "first_air_date": firstAirDate,
@@ -124,9 +124,9 @@ class SeriesDetailModel {
         "in_production": inProduction,
         "languages": List<dynamic>.from(languages!.map((x) => x)),
         "last_air_date": lastAirDate,
-        "last_episode_to_air": lastEpisodeToAir,
+        "last_episode_to_air": lastEpisodeToAir!.toJson(),
         "name": name,
-        "next_episode_to_air": nextEpisodeToAir,
+        "next_episode_to_air": nextEpisodeToAir!.toJson(),
         "networks": List<dynamic>.from(networks!.map((x) => x.toJson())),
         "number_of_episodes": numberOfEpisodes,
         "number_of_seasons": numberOfSeasons,
@@ -152,6 +152,7 @@ class CreatedBy {
     int? id;
     String? creditId;
     String? name;
+    String? originalName;
     int? gender;
     String? profilePath;
 
@@ -159,6 +160,7 @@ class CreatedBy {
         this.id,
         this.creditId,
         this.name,
+        this.originalName,
         this.gender,
         this.profilePath,
     });
@@ -167,14 +169,16 @@ class CreatedBy {
         id: json["id"],
         creditId: json["credit_id"],
         name: json["name"],
+        originalName: json["original_name"],
         gender: json["gender"],
-        profilePath: json["profile_path"],
+        profilePath: json["profile_path"] ?? '',
     );
 
     Map<String, dynamic> toJson() => {
         "id": id,
         "credit_id": creditId,
         "name": name,
+        "original_name": originalName,
         "gender": gender,
         "profile_path": profilePath,
     };
@@ -208,7 +212,12 @@ class TEpisodeToAir {
     int? voteCount;
     String? airDate;
     int? episodeNumber;
+    String? episodeType;
+    String? productionCode;
+    int? runtime;
     int? seasonNumber;
+    int? showId;
+    String? stillPath;
 
     TEpisodeToAir({
         this.id,
@@ -218,18 +227,28 @@ class TEpisodeToAir {
         this.voteCount,
         this.airDate,
         this.episodeNumber,
+        this.episodeType,
+        this.productionCode,
+        this.runtime,
         this.seasonNumber,
+        this.showId,
+        this.stillPath,
     });
 
     factory TEpisodeToAir.fromJson(Map<String, dynamic> json) => TEpisodeToAir(
         id: json["id"],
         name: json["name"],
         overview: json["overview"],
-        voteAverage: json["vote_average"].toDouble(),
+        voteAverage: json["vote_average"],
         voteCount: json["vote_count"],
         airDate: json["air_date"],
         episodeNumber: json["episode_number"],
+        episodeType: json["episode_type"],
+        productionCode: json["production_code"],
+        runtime: json["runtime"],
         seasonNumber: json["season_number"],
+        showId: json["show_id"],
+        stillPath: json["still_path"],
     );
 
     Map<String, dynamic> toJson() => {
@@ -240,34 +259,39 @@ class TEpisodeToAir {
         "vote_count": voteCount,
         "air_date": airDate,
         "episode_number": episodeNumber,
+        "episode_type": episodeType,
+        "production_code": productionCode,
+        "runtime": runtime,
         "season_number": seasonNumber,
+        "show_id": showId,
+        "still_path": stillPath,
     };
 }
 
 class Network {
     int? id;
-    String? name;
     String? logoPath;
+    String? name;
     String? originCountry;
 
     Network({
         this.id,
-        this.name,
         this.logoPath,
+        this.name,
         this.originCountry,
     });
 
     factory Network.fromJson(Map<String, dynamic> json) => Network(
         id: json["id"],
+        logoPath: json["logo_path"] ?? '',
         name: json["name"],
-        logoPath: json["logo_path"],
         originCountry: json["origin_country"],
     );
 
     Map<String, dynamic> toJson() => {
         "id": id,
-        "name": name,
         "logo_path": logoPath,
+        "name": name,
         "origin_country": originCountry,
     };
 }
@@ -300,6 +324,7 @@ class Season {
     String? overview;
     String? posterPath;
     int? seasonNumber;
+    double? voteAverage;
 
     Season({
         this.airDate,
@@ -309,16 +334,18 @@ class Season {
         this.overview,
         this.posterPath,
         this.seasonNumber,
+        this.voteAverage,
     });
 
     factory Season.fromJson(Map<String, dynamic> json) => Season(
-        airDate: json["air_date"],
+        airDate: json["air_date"] ?? '',
         episodeCount: json["episode_count"],
         id: json["id"],
         name: json["name"],
         overview: json["overview"],
-        posterPath: json["poster_path"],
+        posterPath: json["poster_path"] ?? '',
         seasonNumber: json["season_number"],
+        voteAverage: json["vote_average"]?.toDouble(),
     );
 
     Map<String, dynamic> toJson() => {
@@ -329,6 +356,7 @@ class Season {
         "overview": overview,
         "poster_path": posterPath,
         "season_number": seasonNumber,
+        "vote_average": voteAverage,
     };
 }
 

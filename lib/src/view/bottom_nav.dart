@@ -3,9 +3,11 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:showbox/src/controller/bottom_nav_controller.dart';
 import 'package:showbox/src/view/home.dart';
 import 'package:showbox/src/view/movie/movies_list.dart';
+import 'package:showbox/src/view/search_page.dart';
 import 'package:showbox/src/view/series/series_list.dart';
 
 class BottomNav extends StatefulWidget {
@@ -38,7 +40,7 @@ class _BottomNavState extends State<BottomNav> {
     pages = [
       HomePage(scrollController: _scrollController),
       MovieList(scrollController: _scrollController),
-      const SeriesListPage(),
+      SeriesListPage(scrollController: _scrollController),
       const PageContent(pageTitle: 'Page 4', color: Colors.orange),
     ];
 
@@ -55,10 +57,31 @@ class _BottomNavState extends State<BottomNav> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true, // Ensures the content extends behind the nav bar
+      extendBody: true,
       body: Stack(
         children: [
           pages[_selectedIndex],
+          // App Bar
+          Obx(() => AnimatedPositioned(
+              duration: const Duration(milliseconds: 160),
+              top: bottomNavCon.isAppbarVisible.isTrue ? 0 : -80, // Hide app bar when not visible
+              left: 0,
+              right: 0,
+              child: AppBar(
+                title: Text('ShowBox', style: GoogleFonts.poppins(fontSize: 24)),
+                backgroundColor: Colors.transparent,
+                centerTitle: true,
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.search),
+                    onPressed: () {
+                      Get.to(()=> const SearchPage());
+                    },
+                  ),
+                ],
+              ),
+            )),
+          // Bottom Nav
           Obx(()=>
             AnimatedPositioned(
               duration: const Duration(milliseconds: 160),

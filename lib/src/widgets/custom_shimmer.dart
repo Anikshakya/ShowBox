@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class CustomShimmer extends StatefulWidget {
-  const CustomShimmer({super.key});
+  final double borderRadius;
+
+  const CustomShimmer({super.key, this.borderRadius = 10,});
 
   @override
   State<CustomShimmer> createState() => _CustomShimmerState();
@@ -32,7 +34,7 @@ class _CustomShimmerState extends State<CustomShimmer> with SingleTickerProvider
       builder: (context, child) {
         return Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(widget.borderRadius),
             color: Colors.grey.shade300,
             gradient: LinearGradient(
               colors: [

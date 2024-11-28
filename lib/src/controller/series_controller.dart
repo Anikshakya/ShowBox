@@ -7,45 +7,81 @@ import 'package:showbox/src/constant/constants.dart';
 import 'package:showbox/src/models/series_details_model.dart';
 
 class SeriesController extends GetxController{
-  late RxBool isLoading = false.obs;
-  late RxBool isPageLoading = false.obs;
+  late RxBool isSeriesListLoading = false.obs;
+  late RxBool isSeriesListPaginationLoading = false.obs;
   late RxBool isDetailLoading = false.obs;
   late RxBool isEpisodeLoading = false.obs;
-  int pageNum = 0;
-  dynamic seriesList = [];
+  RxBool isTrendingSeriesLoading = false.obs;
+
+  RxInt seriesListPage = 1.obs;
+  RxBool showAdult = false.obs;
+
+  var seriesList = <dynamic>[].obs;
+  var trendingSeriesList = <dynamic>[].obs;
   dynamic episodeList = [];
   dynamic seriesDetail;
+
+  // Initialize data
+  void initialize() async {
+    if (seriesList.isEmpty) {
+      await getSeriesList();
+    }
+    if (trendingSeriesList.isEmpty) {
+      await getTrendingSeriesList();
+    }
+  }
+
+  // Get Trending Series
+  getTrendingSeriesList() async {
+    try {
+      isTrendingSeriesLoading(true);
+      var response = await ApiRepo.apiGet(AppConstants.trendingSeriesUrl, "");
+      if(response != null) {
+        trendingSeriesList.value = response['results'];
+        isTrendingSeriesLoading( false);
+      }
+    } catch (e) {
+      log('Error fetching trending movies: $e');
+    } finally {
+      isTrendingSeriesLoading(false);
+    }
+  }
 
 
   // Get Series List
   getSeriesList() async {
     try {
-      isLoading(true);
+      isSeriesListLoading(true);
       var response = await ApiRepo.apiGet(AppConstants.showListUrl, "");
       if(response != null) {
-        seriesList = response['results'];
-        isLoading(false);
+        seriesList.value = response['results'];
+        isSeriesListLoading(false);
       }
     } catch (e) {
-      isLoading(false);
+      isSeriesListLoading(false);
     } finally{
-      isLoading(false);
+      isSeriesListLoading(false);
     }
   }
 
-  //series list pagination
-  getPagination() async{
+  // Fetch next page for pagination
+  fetchNextPage() async {  
     try {
-      isPageLoading(true);
-      var response = await ApiRepo.apiGet("${AppConstants.showListUrl}?page=$pageNum&sort_by=popularity.desc&include_adult=true", "");
-      if(response != null) {
+      isSeriesListPaginationLoading(true);
+      seriesListPage.value++;
+      var response = await ApiRepo.apiGet(
+        '${AppConstants.showListUrl}?page=${seriesListPage.value}&sort_by=popularity.desc&include_adult=$showAdult',
+        "",
+        "Get Series List Pagination",
+      );
+      if (response != null) {
         seriesList.addAll(response['results']);
-        isPageLoading(false);
+        isSeriesListPaginationLoading(false);
       }
     } catch (e) {
-      log(e.toString());
-    } finally{
-      isPageLoading(false);
+      // Handle error
+    } finally {
+      isSeriesListPaginationLoading(false);
     }
   }
 
@@ -84,5 +120,4 @@ class SeriesController extends GetxController{
       isEpisodeLoading(false);
     }
   }
-
 }

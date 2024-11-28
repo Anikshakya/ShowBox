@@ -6,12 +6,17 @@ class CustomImageSlider extends StatefulWidget {
   final List<String> images;
   final double height;
   final double width;
+  final double imageWidth;
+  final double imageHeight;
   final double cornerRadius;
   final bool showIndicator;
   final double indicatorTop;
   final double indicatorLeft;
   final double indicatorRight;
   final double indicatorBottom;
+  final double activeScale;
+  final double unActiveScale;
+  final EdgeInsets imageMargin;
   final void Function(int index)? onTap;
 
   const CustomImageSlider({
@@ -20,12 +25,17 @@ class CustomImageSlider extends StatefulWidget {
     this.height = 300.0,
     this.width = double.infinity,
     this.cornerRadius = 20.0,
-    this.showIndicator = true,
+    this.showIndicator = false,
     this.indicatorTop = 0.0,
     this.indicatorLeft = 0.0,
     this.indicatorRight = 0.0,
     this.indicatorBottom = 0.0,
+    this.activeScale = 1.0,
+    this.unActiveScale = 0.7,
+    this.imageMargin = const EdgeInsets.symmetric(horizontal: 2, vertical: 12),
     required this.onTap,
+    this.imageWidth = 100,
+    this.imageHeight = 200,
   });
 
   @override
@@ -129,12 +139,14 @@ class _CustomImageSliderState extends State<CustomImageSlider> {
   }
 
   Widget _buildImageCard(String imageUrl, bool isActive) {
-    double scale = isActive ? 1.0 : 0.7;
+    double scale = isActive ? widget.activeScale : widget.unActiveScale;
     return AnimatedScale(
       scale: scale,
       duration: const Duration(milliseconds: 350),
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 12),
+        height: widget.imageHeight,
+        width: widget.imageWidth,
+        margin: widget.imageMargin,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(widget.cornerRadius),
           boxShadow: [
@@ -147,7 +159,9 @@ class _CustomImageSliderState extends State<CustomImageSlider> {
           ],
         ),
         child: CustomImageNetworkWidget(
-          height: widget.height,
+          borderRadius: widget.cornerRadius,
+          height: widget.imageHeight,
+          width: widget.imageWidth,
           imagePath: imageUrl,
           fit: BoxFit.cover,
         ),
