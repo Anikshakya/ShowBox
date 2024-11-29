@@ -68,6 +68,10 @@ class _BottomNavState extends State<BottomNav> {
                 left: 0,
                 right: 0,
                 child: AppBar(
+                  systemOverlayStyle: SystemUiOverlayStyle(
+                    statusBarColor: Colors.transparent, // Transparent status bar
+                    statusBarIconBrightness: Theme.of(context).brightness == Brightness.light ? Brightness.dark : Brightness.light,
+                  ),
                   title: Text(
                     _getAppBarTitle(_selectedIndex),
                     style: GoogleFonts.poppins(fontSize: 24),
@@ -86,65 +90,72 @@ class _BottomNavState extends State<BottomNav> {
               )),
           // Bottom Nav
           Obx(() => AnimatedPositioned(
-                duration: const Duration(milliseconds: 160),
-                bottom: bottomNavCon.isNavVisible.isTrue ? 0 : -80, // Position the nav bar to fall down
-                left: 0,
-                right: 0,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-                  child: Container(
-                    height: 56,
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.6), // Semi-transparent background
-                      borderRadius: BorderRadius.circular(16), // Rounded corners
-                      boxShadow: [
-                        BoxShadow(
-                          color: Theme.of(context).primaryColor.withOpacity(0.3),
-                          blurRadius: 2,
-                          offset: const Offset(0, 0),
+              duration: const Duration(milliseconds: 160),
+              bottom: bottomNavCon.isNavVisible.isTrue ? 0 : -80, // Position the nav bar to fall down
+              left: 0,
+              right: 0,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+                child: Container(
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.6), // Semi-transparent background
+                    borderRadius: BorderRadius.circular(16), // Rounded corners
+                    boxShadow: [
+                      BoxShadow(
+                        color: Theme.of(context).primaryColor.withOpacity(0.3),
+                        blurRadius: 2,
+                        offset: const Offset(0, 0),
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0),
+                      child: BottomNavigationBar(
+                        selectedLabelStyle: const TextStyle(fontSize: 0),
+                        unselectedLabelStyle: const TextStyle(fontSize: 0),
+                        showSelectedLabels: false,
+                        showUnselectedLabels: false,
+                        backgroundColor: Colors.black.withOpacity(0.5), // Transparent background
+                        elevation: 0, // Remove shadow
+                        type: BottomNavigationBarType.fixed,
+                        selectedItemColor: const Color(0XFFCBA84A),
+                        unselectedItemColor: const Color.fromARGB(255, 185, 185, 185),
+                        currentIndex: _selectedIndex,
+                        selectedIconTheme: const IconThemeData(
+                          size: 28
                         ),
-                      ],
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0),
-                        child: BottomNavigationBar(
-                          selectedLabelStyle: const TextStyle(fontSize: 0),
-                          unselectedLabelStyle: const TextStyle(fontSize: 0),
-                          showSelectedLabels: false,
-                          showUnselectedLabels: false,
-                          backgroundColor: Colors.black.withOpacity(0.5), // Transparent background
-                          elevation: 0, // Remove shadow
-                          type: BottomNavigationBarType.fixed,
-                          selectedItemColor: Colors.white,
-                          unselectedItemColor: const Color.fromARGB(255, 185, 185, 185),
-                          currentIndex: _selectedIndex,
-                          onTap: _onItemTapped,
-                          items: const [
-                            BottomNavigationBarItem(
-                              icon: Icon(Icons.home),
-                              label: '',
-                            ),
-                            BottomNavigationBarItem(
-                              icon: Icon(Icons.video_collection_sharp),
-                              label: '',
-                            ),
-                            BottomNavigationBarItem(
-                              icon: Icon(Icons.grid_view),
-                              label: '',
-                            ),
-                            BottomNavigationBarItem(
-                              icon: Icon(Icons.person),
-                              label: '',
-                            ),
-                          ],
+                        unselectedIconTheme: const IconThemeData(
+                          size: 22
                         ),
+                        onTap: _onItemTapped,
+                        items: const [
+                          BottomNavigationBarItem(
+                            icon: Icon(Icons.home),
+                            label: '',
+                          ),
+                          BottomNavigationBarItem(
+                            icon: Icon(Icons.video_collection_sharp),
+                            label: '',
+                          ),
+                          BottomNavigationBarItem(
+                            icon: Icon(Icons.grid_view),
+                            label: '',
+                          ),
+                          BottomNavigationBarItem(
+                            icon: Icon(Icons.person),
+                            label: '',
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ),
-              )),
+              ),
+            )
+          ),
         ],
       ),
     );

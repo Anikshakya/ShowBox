@@ -23,6 +23,9 @@ class CAppTheme {
     bottomSheetTheme: CBottomSheetTheme.lightBottomSheetTheme,
     outlinedButtonTheme: COutlinedButtonTheme.lightOutlinedButtonTheme,
     inputDecorationTheme: CTextFormFieldTheme.lightInputDecorationTheme,
+    progressIndicatorTheme: const ProgressIndicatorThemeData(
+      color: Color(0XFFCBA84A),
+    ),
   );
 
   static ThemeData darkTheme = ThemeData(
@@ -38,5 +41,8 @@ class CAppTheme {
     bottomSheetTheme: CBottomSheetTheme.darkBottomSheetTheme,
     outlinedButtonTheme: COutlinedButtonTheme.darkOutlinedButtonTheme,
     inputDecorationTheme: CTextFormFieldTheme.darkInputDecorationTheme,
+    progressIndicatorTheme: const ProgressIndicatorThemeData(
+      color: Color(0XFFCBA84A),
+    ),
   );
 }

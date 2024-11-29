@@ -6,10 +6,10 @@ import 'package:get/get.dart' hide FormData, MultipartFile;
   import 'package:showbox/src/models/top_rated_series_model.dart';
 
   class HomeController extends GetxController{
-    late RxBool isTrendingListLoading = false.obs;
-    late RxBool isTopRatedMoviesLoading = false.obs;
-    late RxBool isTopRatedSeriesLoading = false.obs;
-    late RxBool isUpcommingMoviesLoding = false.obs;
+    late RxBool isTrendingListLoading = true.obs;
+    late RxBool isTopRatedMoviesLoading = true.obs;
+    late RxBool isTopRatedSeriesLoading = true.obs;
+    late RxBool isUpcommingMoviesLoding = true.obs;
 
     // Trending List
     var trendingList = [].obs;

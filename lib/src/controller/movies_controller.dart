@@ -8,11 +8,11 @@ import 'package:showbox/src/models/movie_details_model.dart';
 import 'package:showbox/src/models/top_rated_movies_model.dart';
 
 class MovieController extends GetxController {
-  RxBool isMovieListLoading = false.obs;
-  RxBool isMovieListPaginationLoading = false.obs;
-  RxBool isMovieDetailsLoading = false.obs;
-  RxBool isTrendingMoviesLoading = false.obs;
-  late RxBool isTopRatedMoviesLoading = false.obs;
+  RxBool isMovieListLoading = true.obs;
+  RxBool isMovieListPaginationLoading = true.obs;
+  RxBool isMovieDetailsLoading = true.obs;
+  RxBool isTrendingMoviesLoading = true.obs;
+  late RxBool isTopRatedMoviesLoading = true.obs;
 
   RxInt movielistPage = 1.obs;
   RxBool showAdult = false.obs;
@@ -21,7 +21,7 @@ class MovieController extends GetxController {
   var trendingMovieList = <dynamic>[].obs;
   MovieDetails? movieDetails;
   // Top Rated Movies
-    var topRatedMovies = [].obs;
+  var topRatedMovies = [].obs;
 
   // Initialize data
   void initialize() async {
@@ -53,29 +53,29 @@ class MovieController extends GetxController {
   }
 
   // Get Top Rated Movies
-    getTopRatedMovies() async {
-      try {
-        isTopRatedMoviesLoading(true);
-        var response = await ApiRepo.apiGet(
-          'https://api.themoviedb.org/3/movie/top_rated', 
-          '', 
-          'Get Top Rated Movies'
-        );
-        if (response != null) {
-          topRatedMovies.value = (response['results'] as List)
-              .map((item) => TopRatedMoviesModel.fromJson(item))
-              .toList();
-          isTopRatedMoviesLoading(false);
-        }
-      } catch (e) {
-        debugPrint('Error fetching top rated movies: $e');
-      } finally {
+  getTopRatedMovies() async {
+    try {
+      isTopRatedMoviesLoading(true);
+      var response = await ApiRepo.apiGet(
+        'https://api.themoviedb.org/3/movie/top_rated', 
+        '', 
+        'Get Top Rated Movies'
+      );
+      if (response != null) {
+        topRatedMovies.value = (response['results'] as List)
+            .map((item) => TopRatedMoviesModel.fromJson(item))
+            .toList();
         isTopRatedMoviesLoading(false);
       }
+    } catch (e) {
+      debugPrint('Error fetching top rated movies: $e');
+    } finally {
+      isTopRatedMoviesLoading(false);
     }
+  }
 
   // Fetch initial movie list
-  Future<void> getMovieList() async {
+  getMovieList() async {
     try {
       isMovieListLoading(true);
       var response = await ApiRepo.apiGet(
@@ -95,7 +95,7 @@ class MovieController extends GetxController {
   }
 
   // Fetch next page for pagination
-  Future<void> fetchNextPage() async {
+  fetchNextPage() async {
     try {
       isMovieListPaginationLoading(true);
       update();
