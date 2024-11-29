@@ -9,7 +9,7 @@ class CustomImageNetworkWidget extends StatefulWidget {
     this.width,
     this.fit,
     this.fromPage,
-    this.borderRadius = 10, // Add borderRadius parameter with default value of 10
+    this.borderRadius = 10,
   });
 
   final String imagePath;

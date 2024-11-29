@@ -34,20 +34,20 @@ class _SearchPageState extends State<SearchPage> {
             childAspectRatio: 0.7,
           ),
           itemBuilder: (context, index) {
-            var movie = searchCon.searchList[index];
+            var data = searchCon.searchList[index];
             // Extract movie details
-            String title = movie['name'] ?? 'Untitled';
-            String year = (movie['first_air_date'] ?? '').split('-').first;
-            double rating = (movie['vote_average'] ?? 0).toDouble();
-            String image = movie['poster_path'] ?? '';
+            String title = data['name'] ?? 'Untitled';
+            String year = (data['first_air_date'] ?? '').split('-').first;
+            double rating = (data['vote_average'] ?? 0).toDouble();
+            String image = data['poster_path'] ?? '';
             return GestureDetector(
               onTap: (){
-                if( movie["media_type"] == "movie"){
-                  Get.to(()=> MovieDetailsPage(movieId: movie["id"]));
+                if( data["media_type"] == "movie"){
+                  Get.to(()=> MovieDetailsPage(movieId: data["id"]));
                 }
                           
-                if( movie["media_type"] == "tv"){
-                  Get.to(()=> SeriesDetailPage(id:  movie["id"]));
+                if( data["media_type"] == "tv"){
+                  Get.to(()=> SeriesDetailPage(id:  data["id"]));
                 }
               },
               child: MovieCard(

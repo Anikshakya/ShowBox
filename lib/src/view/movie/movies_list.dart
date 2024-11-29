@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:showbox/src/constant/constants.dart';
 import 'package:showbox/src/controller/movies_controller.dart';
 import 'package:showbox/src/view/movie/movie_details.dart';
-import 'package:showbox/src/widgets/custom_image_widget.dart';
+import 'package:showbox/src/widgets/cards/item_card.dart';
 import 'package:showbox/src/widgets/custom_slider.dart';
 
 class MovieList extends StatelessWidget {
@@ -42,27 +42,16 @@ class MovieList extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // For App Bar
-                const SizedBox(height: 120),
-                // Trending
-                const Padding(
-                  padding: EdgeInsets.only(left: 8.0),
-                  child: Text(
-                    "Trending Movies",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
+                const SizedBox(height: 100),
                 // Trending Slider
                 Center(
                   child: CustomItemSlider(
                     height: 260,
                     cornerRadius: 2,
-                    unActiveScale: 0.9,
+                    unActiveScale: 0.95,
                     autoSlide: true,
-                    setLoop: false                                   ,
-                    itemMargin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                    setLoop: false,
+                    itemMargin: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
                     items: [
                       ...List.generate(
                         movieController.trendingMovieList.length,
@@ -72,7 +61,8 @@ class MovieList extends StatelessWidget {
                           onTap: (){
                             Get.to(()=> MovieDetailsPage(movieId: movie["id"]));
                           },
-                          child: MovieCard(
+                          child: ItemCard(
+                            width: 132,
                             title: movie["title"],
                             year: movie["release_date"].split("-")[0], // Extract year
                             rating: movie["vote_average"],
@@ -84,7 +74,51 @@ class MovieList extends StatelessWidget {
                     ],
                   )
                 ),
-                const SizedBox(height: 30,),
+                const SizedBox(height: 20,),
+                // Top Rated Movie Section
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Top Rated Movies",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Obx(() => movieController.isTopRatedMoviesLoading.isTrue
+                        ? const Center(child: CircularProgressIndicator())
+                        : SizedBox(
+                          height: 180,
+                          child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: movieController.topRatedMovies.length,
+                          physics: const BouncingScrollPhysics(),
+                          separatorBuilder:(context, index) => const SizedBox(width: 10,),
+                          itemBuilder: (context, index) {
+                            final movie = movieController.topRatedMovies[index];
+                            return GestureDetector(
+                              onTap: (){
+                                Get.to(()=> MovieDetailsPage(
+                                  movieId: movie.id,
+                                ));
+                              },
+                              child: ItemCard(
+                                width: 134,
+                                title: movie.title, 
+                                year: "", 
+                                rating: movie.voteAverage?.toDouble() ?? 0.0, 
+                                image: '${AppConstants.imageUrl}${movie.posterPath}'
+                              )
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20,),
                 // All Movies
                 const Padding(
                   padding: EdgeInsets.only(left: 8.0),
@@ -127,7 +161,8 @@ class MovieList extends StatelessWidget {
           onTap: () {
             Get.to(() => MovieDetailsPage(movieId: movie["id"]));
           },
-          child: MovieCard(
+          child: ItemCard(
+            width: 132,
             title: movie["title"],
             year: movie["release_date"].split("-")[0], // Extract year
             rating: movie["vote_average"],
@@ -147,81 +182,6 @@ class MovieList extends StatelessWidget {
         ),
       )
       : const SizedBox(),
-    );
-  }
-}
-
-// MovieCard widget to display individual movie details
-class MovieCard extends StatelessWidget {
-  final String title;
-  final String year;
-  final double rating;
-  final String image;
-
-  const MovieCard({
-    super.key,
-    required this.title,
-    required this.year,
-    required this.rating,
-    required this.image,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
-        borderRadius: BorderRadius.circular(2),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(2),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            // Movie image
-            CustomImageNetworkWidget(
-              borderRadius: 2,
-              imagePath: "${AppConstants.imageUrl}$image",
-            ),
-            // Display the release year at the top-left corner
-            Positioned(
-              top: 0,
-              left: 0,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.6),
-                  borderRadius: const BorderRadius.only(
-                      bottomRight: Radius.circular(8)),
-                ),
-                child: Text(
-                  year,
-                  style: const TextStyle(color: Colors.white, fontSize: 12),
-                ),
-              ),
-            ),
-            // Display the rating at the top-right corner
-            Positioned(
-              top: 0,
-              right: 0,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 233, 198, 0).withOpacity(0.9),
-                  borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(8)),
-                ),
-                child: Text(
-                  rating.toStringAsFixed(1), // Format rating to 1 decimal
-                  style: const TextStyle(color: Colors.white, fontSize: 12),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

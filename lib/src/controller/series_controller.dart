@@ -1,10 +1,12 @@
 
 
 import 'dart:developer';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:showbox/src/app_config/api_repo.dart';
 import 'package:showbox/src/constant/constants.dart';
 import 'package:showbox/src/models/series_details_model.dart';
+import 'package:showbox/src/models/top_rated_series_model.dart';
 
 class SeriesController extends GetxController{
   late RxBool isSeriesListLoading = false.obs;
@@ -12,12 +14,15 @@ class SeriesController extends GetxController{
   late RxBool isDetailLoading = false.obs;
   late RxBool isEpisodeLoading = false.obs;
   RxBool isTrendingSeriesLoading = false.obs;
+  late RxBool isTopRatedSeriesLoading = false.obs;
 
   RxInt seriesListPage = 1.obs;
   RxBool showAdult = false.obs;
 
   var seriesList = <dynamic>[].obs;
   var trendingSeriesList = <dynamic>[].obs;
+   // Top Rated Series
+  var topRatedSeries = [].obs;
   dynamic episodeList = [];
   dynamic seriesDetail;
 
@@ -29,6 +34,10 @@ class SeriesController extends GetxController{
     if (trendingSeriesList.isEmpty) {
       await getTrendingSeriesList();
     }
+    if (topRatedSeries.isEmpty) {
+      await getTopRatedSeries();
+    }
+    
   }
 
   // Get Trending Series
@@ -47,6 +56,30 @@ class SeriesController extends GetxController{
     }
   }
 
+  // Get Top Rated Series from API
+  getTopRatedSeries() async {
+    try {
+      isTopRatedSeriesLoading(true);
+
+      // Fetch data from the API
+      var response = await ApiRepo.apiGet(
+        'https://api.themoviedb.org/3/tv/top_rated',
+        "",
+        "Get Top Rated Series"
+      );
+      if (response != null) {
+        topRatedSeries.value = (response['results'] as List)
+          .map((item) => TopRatedSeriesModel.fromJson(item))
+          .toList();
+        isTopRatedSeriesLoading(false);
+      }
+    } catch (e) {
+      isTopRatedSeriesLoading(false);
+      debugPrint('Error fetching top rated series: $e');
+    } finally {
+      isTopRatedSeriesLoading(false);
+    }
+  }
 
   // Get Series List
   getSeriesList() async {
