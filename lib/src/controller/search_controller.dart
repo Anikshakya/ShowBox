@@ -1,33 +1,37 @@
+import 'package:get/get.dart';
 import 'dart:developer';
 
-import 'package:get/get.dart';
 import 'package:showbox/src/app_config/api_repo.dart';
 
-class SearchAllController extends GetxController {
-  late RxBool isSearchListLoading = true.obs;
+class SearchhController extends GetxController {
+  late RxBool isSearchListLoading = false.obs;
+  late RxBool hasSearched = false.obs;
+  dynamic movieSearchList = [].obs;
+  dynamic seriesSearchList = [].obs;
 
-  var searchList = <dynamic>[].obs;
-
-  searchForMovie({keyWord}) async {
+  searchForMovie(String keyword) async {
     isSearchListLoading(true);
-
-    var data = {
-      "query" : keyWord
-    };
-
+    movieSearchList.clear();
+    seriesSearchList.clear();
     try {
       var response = await ApiRepo.apiGet(
-        'https://api.themoviedb.org/3/search/multi',
-        data,
-        "Search"
-      );
+          'https://api.themoviedb.org/3/search/multi?query=$keyword',
+          ""
+        );
       if (response != null) {
-        searchList.value = response['results'];
+        for (var allData in response['results']) {
+          if (allData['media_type'] == "tv") {
+            seriesSearchList.add(allData);
+          } else if (allData['media_type'] == "movie") {
+            movieSearchList.add(allData);
+          }
+        }
       }
     } catch (e) {
-      log(e.toString());
+      log("Error in search: $e");
     } finally {
       isSearchListLoading(false);
+      hasSearched(true);
     }
   }
 }

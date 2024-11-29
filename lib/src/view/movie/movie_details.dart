@@ -50,134 +50,136 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
         appBar: AppBar(
           title: Text(movie.title ?? ''),
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 280,
-                child: CustomWebView(
-                  initialUrl: "${AppConstants.movieEmbedUrl}/${movie.imdbId}",
-                  showAppBar: false,
-                  errorImageUrl: "${AppConstants.imageUrl}${movie.backdropPath}",
-                ),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 280,
+              child: CustomWebView(
+                initialUrl: "${AppConstants.movieEmbedUrl}/${movie.imdbId}",
+                showAppBar: false,
+                errorImageUrl: "${AppConstants.imageUrl}${movie.backdropPath}",
               ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Movie Title
-                    Text(
-                      movie.title ?? '',
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    // Tagline
-                    if (movie.tagline != null)
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Movie Title
                       Text(
-                        movie.tagline ?? '',
+                        movie.title ?? '',
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      // Tagline
+                      if (movie.tagline != null)
+                        Text(
+                          movie.tagline ?? '',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontStyle: FontStyle.italic,
+                            color: subtitleColor,
+                          ),
+                        ),
+                      const SizedBox(height: 16),
+                      // Poster and details
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Poster image
+                          if (movie.posterPath != null)
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: CustomImageNetworkWidget(
+                                imagePath: '${AppConstants.imageUrl}/${movie.posterPath}',
+                                height: 100,
+                                width: 70,
+                              ),
+                            ),
+                          const SizedBox(width: 16),
+                          // Other movie details
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Release Date: ${movie.releaseDate ?? 'N/A'}",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: textColor,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  "Rating: ${movie.voteAverage ?? 'N/A'}",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: textColor,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  "Runtime: ${movie.runtime} minutes",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: textColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      // Genres
+                      const Text(
+                        "Genres:",
                         style: TextStyle(
                           fontSize: 16,
-                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      if (movie.genres != null && movie.genres!.isNotEmpty)
+                        Wrap(
+                          spacing: 8.0,
+                          runSpacing: 4.0,
+                          children: List<Chip>.generate(
+                            movie.genres!.length,
+                            (index) => Chip(
+                              label: Text(movie.genres![index].name ?? 'Unknown'),
+                            ),
+                          ),
+                        ),
+                      const SizedBox(height: 16),
+                      // Overview
+                      const Text(
+                        "Overview:",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        movie.overview ?? 'No description available.',
+                        style: TextStyle(
+                          fontSize: 14,
                           color: subtitleColor,
                         ),
                       ),
-                    const SizedBox(height: 16),
-                    // Poster and details
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Poster image
-                        if (movie.posterPath != null)
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: CustomImageNetworkWidget(
-                              imagePath: '${AppConstants.imageUrl}/${movie.posterPath}',
-                              height: 100,
-                              width: 70,
-                            ),
-                          ),
-                        const SizedBox(width: 16),
-                        // Other movie details
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Release Date: ${movie.releaseDate ?? 'N/A'}",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: textColor,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                "Rating: ${movie.voteAverage ?? 'N/A'}",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: textColor,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                "Runtime: ${movie.runtime} minutes",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: textColor,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    // Genres
-                    const Text(
-                      "Genres:",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    if (movie.genres != null && movie.genres!.isNotEmpty)
-                      Wrap(
-                        spacing: 8.0,
-                        runSpacing: 4.0,
-                        children: List<Chip>.generate(
-                          movie.genres!.length,
-                          (index) => Chip(
-                            label: Text(movie.genres![index].name ?? 'Unknown'),
-                          ),
-                        ),
-                      ),
-                    const SizedBox(height: 16),
-                    // Overview
-                    const Text(
-                      "Overview:",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      movie.overview ?? 'No description available.',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: subtitleColor,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         )
       ),
     );

@@ -30,7 +30,12 @@ import 'package:showbox/src/widgets/cards/item_card.dart';
               const SizedBox(height: 100),
               // Trending Movies/Series
               Obx(() => homeCon.isTrendingListLoading.isTrue
-                  ? const Center(child: CircularProgressIndicator())
+                  ? const SizedBox(
+                      height: 280,
+                      child: Center(
+                        child: CircularProgressIndicator()
+                      )
+                    )
                   : CustomImageSlider(
                       height: 280,
                       cornerRadius: 2.0,
@@ -54,41 +59,46 @@ import 'package:showbox/src/widgets/cards/item_card.dart';
                     ),
               ),
               const SizedBox(height: 20),
-              // Top Rated Movies
+              // UpComming Movies
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    "Top Rated Movies",
+                    "Upcomming Movies",
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 12),
-                  Obx(() => homeCon.isTopRatedMoviesLoading.isTrue
-                    ? const Center(child: CircularProgressIndicator())
+                  Obx(() => homeCon.isUpcommingMoviesLoding.isTrue
+                    ? const SizedBox(
+                      height: 180,
+                      child: Center(
+                        child: CircularProgressIndicator()
+                      )
+                    )
                     : SizedBox(
                         height: 180,
                         child: ListView.separated(
                         scrollDirection: Axis.horizontal,
-                        itemCount: homeCon.topRatedMovies.length,
+                        itemCount: homeCon.upcommingMovies.length,
                         physics: const BouncingScrollPhysics(),
                         separatorBuilder:(context, index) => const SizedBox(width: 10,),
                         itemBuilder: (context, index) {
-                          final movie = homeCon.topRatedMovies[index];
+                          final data = homeCon.upcommingMovies[index];
                           return GestureDetector(
                             onTap: (){
                               Get.to(()=> MovieDetailsPage(
-                                movieId: movie.id,
+                                movieId: data["id"],
                               ));
                             },
                             child: ItemCard(
                               width: 132,
-                              title: movie.title, 
+                              title: data["title"], 
                               year: "", 
-                              rating: movie.voteAverage?.toDouble() ?? 0.0, 
-                              image: '${AppConstants.imageUrl}${movie.posterPath}'
+                              rating: data["vote_average"]?.toDouble() ?? 0.0, 
+                              image: '${AppConstants.imageUrl}${data["poster_path"]}'
                             )
                           );
                         },
@@ -111,7 +121,12 @@ import 'package:showbox/src/widgets/cards/item_card.dart';
                   ),
                   const SizedBox(height: 12),
                   Obx(() => homeCon.isTopRatedSeriesLoading.isTrue
-                      ? const Center(child: CircularProgressIndicator())
+                      ? const SizedBox(
+                          height: 180,
+                          child: Center(
+                            child: CircularProgressIndicator()
+                          )
+                        )
                       : SizedBox(
                         height: 180,
                         child: ListView.separated(
@@ -141,9 +156,56 @@ import 'package:showbox/src/widgets/cards/item_card.dart';
                   ),
                 ],
               ),
+              const SizedBox(height: 30),
+              // Top Rated Movies
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Top Rated Movies",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Obx(() => homeCon.isTopRatedMoviesLoading.isTrue
+                    ? const SizedBox(
+                      height: 180,
+                        child: Center(
+                          child: CircularProgressIndicator()
+                        )
+                      )
+                    : SizedBox(
+                        height: 180,
+                        child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: homeCon.topRatedMovies.length,
+                        physics: const BouncingScrollPhysics(),
+                        separatorBuilder:(context, index) => const SizedBox(width: 10,),
+                        itemBuilder: (context, index) {
+                          final movie = homeCon.topRatedMovies[index];
+                          return GestureDetector(
+                            onTap: (){
+                              Get.to(()=> MovieDetailsPage(
+                                movieId: movie.id,
+                              ));
+                            },
+                            child: ItemCard(
+                              width: 132,
+                              title: movie.title, 
+                              year: "", 
+                              rating: movie.voteAverage?.toDouble() ?? 0.0, 
+                              image: '${AppConstants.imageUrl}${movie.posterPath}'
+                            )
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               const SizedBox(height: 40),
-              // Upcomming Movies
-              // UpComming Series
             ],
           ),
         ),

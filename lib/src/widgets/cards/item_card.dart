@@ -23,7 +23,7 @@ class ItemCard extends StatelessWidget {
     return Container(
       width: width?.toDouble(),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
+        border: Border.all(color: Theme.of(context).primaryColor.withOpacity(0.1), width: 1),
         borderRadius: BorderRadius.circular(2),
       ),
       child: ClipRRect(
@@ -37,20 +37,23 @@ class ItemCard extends StatelessWidget {
               imagePath: "${AppConstants.imageUrl}$image",
             ),
             // Display the release year at the top-left corner
-            Positioned(
-              top: 0,
-              left: 0,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.6),
-                  borderRadius: const BorderRadius.only(
-                      bottomRight: Radius.circular(8)),
-                ),
-                child: Text(
-                  year,
-                  style: const TextStyle(color: Colors.white, fontSize: 12),
+            Visibility(
+              visible: year != "",
+              child: Positioned(
+                top: 0,
+                left: 0,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.6),
+                    borderRadius: const BorderRadius.only(
+                        bottomRight: Radius.circular(8)),
+                  ),
+                  child: Text(
+                    year,
+                    style: const TextStyle(color: Colors.white, fontSize: 12),
+                  ),
                 ),
               ),
             ),

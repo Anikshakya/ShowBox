@@ -88,7 +88,12 @@ class MovieList extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     Obx(() => movieController.isTopRatedMoviesLoading.isTrue
-                        ? const Center(child: CircularProgressIndicator())
+                        ? const SizedBox(
+                          height: 180,
+                          child: Center(
+                            child: CircularProgressIndicator()
+                          )
+                        )
                         : SizedBox(
                           height: 180,
                           child: ListView.separated(

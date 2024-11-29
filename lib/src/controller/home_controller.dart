@@ -9,6 +9,7 @@ import 'package:get/get.dart' hide FormData, MultipartFile;
     late RxBool isTrendingListLoading = false.obs;
     late RxBool isTopRatedMoviesLoading = false.obs;
     late RxBool isTopRatedSeriesLoading = false.obs;
+    late RxBool isUpcommingMoviesLoding = false.obs;
 
     // Trending List
     var trendingList = [].obs;
@@ -19,10 +20,16 @@ import 'package:get/get.dart' hide FormData, MultipartFile;
     // Top Rated Series
     var topRatedSeries = [].obs;
 
+    // UpComming Movies
+    var upcommingMovies = [].obs;
+
     // Initialize data
     void initialize() async {
       if (trendingList.isEmpty) {
         await getTrendingList();
+      }
+      if (upcommingMovies.isEmpty) {
+        await getUpcommingMovies();
       }
       if (topRatedMovies.isEmpty) {
         await getTopRatedMovies();
@@ -45,6 +52,29 @@ import 'package:get/get.dart' hide FormData, MultipartFile;
         isTrendingListLoading(false);
       } finally {
         isTrendingListLoading(false);
+      }
+    }
+
+    // Get Upcomming Movies from API
+    getUpcommingMovies() async {
+      try {
+        isUpcommingMoviesLoding(true);
+
+        // Fetch data from the API
+        var response = await ApiRepo.apiGet(
+          'https://api.themoviedb.org/3/movie/popular?language=en-US&page=1',
+          "",
+          "Get Upcomming Movies"
+        );
+        if (response != null) {
+          upcommingMovies.value = response['results'];
+          isUpcommingMoviesLoding(false);
+        }
+      } catch (e) {
+        isUpcommingMoviesLoding(false);
+        debugPrint('Error fetching top rated series: $e');
+      } finally {
+        isUpcommingMoviesLoding(false);
       }
     }
 

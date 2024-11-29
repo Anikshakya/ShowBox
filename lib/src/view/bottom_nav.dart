@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:showbox/src/controller/bottom_nav_controller.dart';
 import 'package:showbox/src/view/home.dart';
 import 'package:showbox/src/view/movie/movies_list.dart';
-import 'package:showbox/src/view/search_page.dart';
+import 'package:showbox/src/view/search/search_page.dart';
 import 'package:showbox/src/view/series/series_list.dart';
 
 class BottomNav extends StatefulWidget {
@@ -78,7 +78,7 @@ class _BottomNavState extends State<BottomNav> {
                     IconButton(
                       icon: const Icon(Icons.search),
                       onPressed: () {
-                        Get.to(() => const SearchPage());
+                        Get.to(() => SearchPage());
                       },
                     ),
                   ],
