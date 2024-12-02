@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class CustomShimmer extends StatefulWidget {
   final double borderRadius;
 
-  const CustomShimmer({super.key, this.borderRadius = 10,});
+  const CustomShimmer({super.key, this.borderRadius = 2,});
 
   @override
   State<CustomShimmer> createState() => _CustomShimmerState();
@@ -49,6 +49,59 @@ class _CustomShimmerState extends State<CustomShimmer> with SingleTickerProvider
           ),
         );
       },
+    );
+  }
+}
+
+class AppShimmers {
+  // Build Movie/Series Card Shimmer
+  buildMovieSeriesShimmerList() {
+    return SizedBox(
+      height: 280,
+      child: ListView.separated(
+        separatorBuilder: (context, index) => const SizedBox(width: 10),
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.only(left: 10, right: 10),
+        itemCount: 5, // For shimmer effect, show a limited number
+        itemBuilder: (context, index) {
+          return const Padding(
+            padding: EdgeInsets.only(right: 10),
+            child: SizedBox(
+              width: 132,
+              height: 180,
+              child: CustomShimmer(),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  // Shimmer for trending list
+  trendingMovieSeriesShimmer() {
+    return SizedBox(
+      height: 280,  // Adjust height based on your design
+      width: double.infinity,
+      child: PageView.builder(
+        itemCount: 3,  // Number of shimmer placeholders
+        controller: PageController(
+          initialPage: 1,
+          viewportFraction: 0.6
+        ),  // Make side items smaller
+        itemBuilder: (context, index) {
+          // For shimmer effect, we just use containers to simulate images
+          double scale = index == 1 ? 1.0 : 0.7;  // Active image in the center is larger
+          return AnimatedScale(
+            scale: scale,
+            duration: const Duration(milliseconds: 350),
+            child: const SizedBox(
+              width: 120,  // Width of the shimmer placeholders
+              height: 180,
+              child: CustomShimmer(),
+            ),
+          );
+        },
+      ),
     );
   }
 }
