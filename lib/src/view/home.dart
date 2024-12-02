@@ -63,11 +63,14 @@ import 'package:showbox/src/widgets/cards/item_card.dart';
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "Upcomming Movies",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
+                  const Padding(
+                    padding: EdgeInsets.only(left: 10),
+                    child: Text(
+                      "Upcomming Movies",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -82,6 +85,7 @@ import 'package:showbox/src/widgets/cards/item_card.dart';
                         height: 180,
                         child: ListView.separated(
                         scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.only(left: 10, right: 10),
                         itemCount: homeCon.upcommingMovies.length,
                         physics: const BouncingScrollPhysics(),
                         separatorBuilder:(context, index) => const SizedBox(width: 10,),
@@ -112,12 +116,15 @@ import 'package:showbox/src/widgets/cards/item_card.dart';
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "Top Rated Series",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+                  const Padding(
+                    padding: EdgeInsets.only(left: 10),
+                    child: Text(
+                      "Top Rated Series",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+                    ),
                   ),
                   const SizedBox(height: 12),
                   Obx(() => homeCon.isTopRatedSeriesLoading.isTrue
@@ -130,6 +137,7 @@ import 'package:showbox/src/widgets/cards/item_card.dart';
                       : SizedBox(
                         height: 180,
                         child: ListView.separated(
+                        padding: const EdgeInsets.only(left: 10, right: 10),
                         scrollDirection: Axis.horizontal,
                         itemCount: homeCon.topRatedSeries.length,
                         physics: const BouncingScrollPhysics(),
@@ -161,11 +169,14 @@ import 'package:showbox/src/widgets/cards/item_card.dart';
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "Top Rated Movies",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
+                  const Padding(
+                    padding: EdgeInsets.only(left: 10),
+                    child: Text(
+                      "Top Rated Movies",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -179,6 +190,7 @@ import 'package:showbox/src/widgets/cards/item_card.dart';
                     : SizedBox(
                         height: 180,
                         child: ListView.separated(
+                        padding: const EdgeInsets.only(left: 10, right: 10),
                         scrollDirection: Axis.horizontal,
                         itemCount: homeCon.topRatedMovies.length,
                         physics: const BouncingScrollPhysics(),

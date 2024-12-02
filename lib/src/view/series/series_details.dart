@@ -34,6 +34,8 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+      ),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Obx(() => seriesCon.isDetailLoading.isTrue
         ? const Center(
@@ -57,7 +59,7 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                                 imagePath: "${AppConstants.imageUrl}/$seasonPoster",
                                 height: 300, 
                                 width: double.infinity,
-                              )
+                              )  
                             : SizedBox(
                                 height: 300,
                                 child: CustomWebView(
@@ -227,7 +229,7 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                                                     decoration: BoxDecoration(
                                                       border: Border.all(
                                                         color: selectedEpisode == seriesCon.episodeList[index]["episode_number"]
-                                                            ? Theme.of(context).colorScheme.error
+                                                            ? const Color(0XFFCBA84A)
                                                             : Theme.of(context).colorScheme.surface,
                                                       ),
                                                       borderRadius: BorderRadius.circular(8),

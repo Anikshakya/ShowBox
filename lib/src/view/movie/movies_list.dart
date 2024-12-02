@@ -79,11 +79,14 @@ class MovieList extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Top Rated Movies",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
+                    const Padding(
+                      padding: EdgeInsets.only(left: 10),
+                      child: Text(
+                        "Top Rated Movies",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -98,6 +101,7 @@ class MovieList extends StatelessWidget {
                           height: 180,
                           child: ListView.separated(
                           scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.only(left: 10, right: 10),
                           itemCount: movieController.topRatedMovies.length,
                           physics: const BouncingScrollPhysics(),
                           separatorBuilder:(context, index) => const SizedBox(width: 10,),
@@ -126,7 +130,7 @@ class MovieList extends StatelessWidget {
                 const SizedBox(height: 20,),
                 // All Movies
                 const Padding(
-                  padding: EdgeInsets.only(left: 8.0),
+                  padding: EdgeInsets.only(left: 10),
                   child: Text(
                     "All Movies",
                     style: TextStyle(
