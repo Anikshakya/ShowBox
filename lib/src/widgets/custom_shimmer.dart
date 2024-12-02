@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class CustomShimmer extends StatefulWidget {
   final double borderRadius;
 
-  const CustomShimmer({super.key, this.borderRadius = 2,});
+  const CustomShimmer({super.key, this.borderRadius = 4});
 
   @override
   State<CustomShimmer> createState() => _CustomShimmerState();
@@ -94,10 +94,11 @@ class AppShimmers {
           return AnimatedScale(
             scale: scale,
             duration: const Duration(milliseconds: 350),
-            child: const SizedBox(
-              width: 120,  // Width of the shimmer placeholders
-              height: 160,
-              child: CustomShimmer(),
+            child: Container(
+              width: 100,
+              height: 180,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: const CustomShimmer(),
             ),
           );
         },
