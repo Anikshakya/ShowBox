@@ -70,6 +70,22 @@ class _CustomWebViewState extends State<CustomWebView> {
     );
   }
 
+  // Method to reload the WebView with the new URL
+  void loadNewUrl(String newUrl) {
+    if (webViewController != null) {
+      webViewController?.loadUrl(urlRequest: URLRequest(url: WebUri(newUrl)));
+    }
+  }
+
+  @override
+  void didUpdateWidget(CustomWebView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Check if the URL has changed and reload it
+    if (widget.initialUrl != oldWidget.initialUrl) {
+      loadNewUrl(widget.initialUrl);
+    }
+  }
+
     @override
     void dispose() {
       // Reset screen orientation to default when leaving the screen
@@ -92,17 +108,17 @@ class _CustomWebViewState extends State<CustomWebView> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        if (webViewController != null) {
-          bool canGoBack = await webViewController!.canGoBack();
-          if (canGoBack) {
-            // Go back in WebView's history if possible
-            await webViewController!.goBack();
-            return false; // Prevent default back behavior
-          } else {
-            // Allow popping the current page if cannot go back further
-            return true;
-          }
-        }
+        // if (webViewController != null) {
+        //   bool canGoBack = await webViewController!.canGoBack();
+        //   if (canGoBack) {
+        //     // Go back in WebView's history if possible
+        //     await webViewController!.goBack();
+        //     return false; // Prevent default back behavior
+        //   } else {
+        //     // Allow popping the current page if cannot go back further
+        //     return true;
+        //   }
+        // }
         return true;
       },
       child: Scaffold(
