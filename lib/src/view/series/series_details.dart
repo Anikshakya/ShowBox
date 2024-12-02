@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:showbox/src/constant/constants.dart';
 import 'package:showbox/src/controller/series_controller.dart';
@@ -35,6 +36,10 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent, // Transparent status bar
+          statusBarIconBrightness: Theme.of(context).brightness == Brightness.light ? Brightness.dark : Brightness.light,
+        ),
       ),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Obx(() => seriesCon.isDetailLoading.isTrue
@@ -184,12 +189,12 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                                             'Season ${season.seasonNumber}',
                                             style: TextStyle(
                                                 color: selectedSeason == season.seasonNumber
-                                                    ? Theme.of(context).colorScheme.onPrimary
-                                                    : Theme.of(context).colorScheme.onSurface),
+                                                    ? const Color(0XFFCBA84A)
+                                                    : null),
                                           ),
                                           backgroundColor: selectedSeason == season.seasonNumber
-                                              ? Theme.of(context).colorScheme.primary
-                                              : Theme.of(context).colorScheme.surface,
+                                              ? Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black
+                                              : null,
                                         ),
                                       ),
                                     );
