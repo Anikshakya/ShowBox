@@ -32,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
 
 
     _opacity = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _opacityController, curve: Curves.easeIn),
+      CurvedAnimation(parent: _opacityController, curve: Curves.easeIn),                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
     );
     _opacityController.forward();  // Start opacity animation
 
@@ -55,7 +55,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   void _startZoomAnimation() {
     // Initialize _scaleController only when it's time to start the zoom animation
     // Define the scale animation from 1 to 2 (zoom in effect)
-    _scale = Tween<double>(begin: 1.0, end: 1000.0).animate(
+    _scale = Tween<double>(begin: 1.0, end: 1000.0).animate( 
       CurvedAnimation(parent: _scaleController, curve: Curves.easeInOut),
     );
 

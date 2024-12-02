@@ -27,7 +27,7 @@ class DioInterceptor extends Interceptor {
     String errormsg = 'ERROR PATH => [${err.response?.requestOptions.method}] ${err.response?.requestOptions.path}';
 
     // Check if the error is due to no internet connection
-    if (err.type == DioExceptionType.connectionError && err.message!.contains('SocketException')) {
+    if (err.type == DioExceptionType.connectionError) {
       log('\x1B[31mNo internet connection: $errormsg\x1B[0m');
       
       // Navigate to the NoInternetPage if no internet connection
