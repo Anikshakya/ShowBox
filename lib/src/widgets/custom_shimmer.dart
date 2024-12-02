@@ -96,7 +96,7 @@ class AppShimmers {
             duration: const Duration(milliseconds: 350),
             child: const SizedBox(
               width: 120,  // Width of the shimmer placeholders
-              height: 180,
+              height: 160,
               child: CustomShimmer(),
             ),
           );
