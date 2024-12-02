@@ -39,12 +39,13 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     // Navigate to the next screen after the total animation duration (4 seconds)
     Future.delayed(const Duration(seconds: 4), () {
       Navigator.pushReplacement(
+        // ignore: use_build_context_synchronously
         context,
         MaterialPageRoute(builder: (context) => const BottomNav()),
       );
     });
 
-    // Start the zoom animation after opacity reaches 1 (delay by 2 seconds)
+    // Start the zoom animation after opacity reaches 1 (delay by 3 seconds)
     Future.delayed(const Duration(seconds: 3), () {
       _startZoomAnimation();  // Start zoom animation
     });
@@ -54,7 +55,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   void _startZoomAnimation() {
     // Initialize _scaleController only when it's time to start the zoom animation
     // Define the scale animation from 1 to 2 (zoom in effect)
-    _scale = Tween<double>(begin: 1.0, end: 80.0).animate(
+    _scale = Tween<double>(begin: 1.0, end: 1000.0).animate(
       CurvedAnimation(parent: _scaleController, curve: Curves.easeInOut),
     );
 
