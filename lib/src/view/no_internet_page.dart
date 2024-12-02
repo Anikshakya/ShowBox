@@ -4,8 +4,15 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:showbox/src/view/splash_screen.dart';
 
-class NoInternetPage extends StatelessWidget {
+class NoInternetPage extends StatefulWidget {
   const NoInternetPage({super.key});
+
+  @override
+  State<NoInternetPage> createState() => _NoInternetPageState();
+}
+
+class _NoInternetPageState extends State<NoInternetPage> {
+  bool _isLoading = false; // Track loading state
 
   @override
   Widget build(BuildContext context) {
@@ -13,8 +20,12 @@ class NoInternetPage extends StatelessWidget {
       appBar: AppBar(
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent, // Transparent status bar
-          statusBarIconBrightness: Theme.of(context).brightness == Brightness.light ? Brightness.dark : Brightness.light,
+          statusBarIconBrightness: Theme.of(context).brightness == Brightness.light
+              ? Brightness.dark
+              : Brightness.light,
         ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
       body: Center(
         child: Padding(
@@ -23,7 +34,7 @@ class NoInternetPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Modern icon and message
+              // Icon and message
               const Icon(
                 Icons.signal_wifi_off,
                 size: 120,
@@ -47,44 +58,71 @@ class NoInternetPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 30),
-              
-              // Retry Button with custom style
-              ElevatedButton(
-                onPressed: () async {
-                  // Check if the internet is available
-                  final result = await InternetAddress.lookup('google.com');
-                  if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-                    Get.offAll(() => const SplashScreen()); // Navigate to SplashScreen
-                  } else {
-                    // If no internet, stay on the page
-                    // ignore: use_build_context_synchronously
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Still no internet connection'),
-                      ),
-                    );
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0XFFCBA84A),
+
+              // Retry Button with Loading
+              TextButton(
+                onPressed: _isLoading ? null : _retryConnection,
+                style: TextButton.styleFrom(
+                  backgroundColor: const Color(0XFFCBA84A), // Button background color
+                  foregroundColor: Colors.white, // Text and icon color
                   padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30), // Rounded corners
                   ),
-                  elevation: 5, // Slight elevation for a floating effect
+                ).copyWith(
+                  overlayColor: WidgetStateProperty.all(Colors.transparent), // Remove blue focus
                 ),
-                child: const Text(
-                  "Retry",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
+                child: _isLoading
+                    ? const SizedBox(
+                        height: 24,
+                        width: 24,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2.5,
+                        ),
+                      )
+                    : const Text(
+                        "Retry",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+              )
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  // Retry Connection Function
+  Future<void> _retryConnection() async {
+    setState(() {
+      _isLoading = true; // Show loading
+    });
+
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        Get.offAll(() => const SplashScreen()); // Navigate to SplashScreen
+      } else {
+        _showNoInternetSnackBar();
+      }
+    } catch (e) {
+      _showNoInternetSnackBar();
+    } finally {
+      setState(() {
+        _isLoading = false; // Hide loading
+      });
+    }
+  }
+
+  // Show SnackBar for no internet
+  void _showNoInternetSnackBar() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('No internet connection. Please try again.'),
       ),
     );
   }

@@ -21,7 +21,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     
     // Animation 1: Opacity animation
     _opacityController = AnimationController(
-      duration: const Duration(seconds: 2),  // Opacity animation duration
+      duration: const Duration(seconds: 2),  // Opacity animatio                                                                             n duration
       vsync: this,
     );
 

@@ -1,9 +1,6 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:showbox/src/constant/constants.dart';
-import 'package:showbox/src/view/no_internet_page.dart';
 
 class DioInterceptor extends Interceptor {
   
@@ -24,20 +21,7 @@ class DioInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
-    String errormsg = 'ERROR PATH => [${err.response?.requestOptions.method}] ${err.response?.requestOptions.path}';
-
-    // Check if the error is due to no internet connection
-    if (err.type == DioExceptionType.connectionError) {
-      log('\x1B[31mNo internet connection: $errormsg\x1B[0m');
-      
-      // Navigate to the NoInternetPage if no internet connection
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Get.offAll(()=> const NoInternetPage());
-      });
-    } else {
-      log('\x1B[31m$errormsg\x1B[0m');
-    }
-    
+    // String errormsg = 'ERROR PATH => [${err.response?.requestOptions.method}] ${err.response?.requestOptions.path}';
     return super.onError(err, handler);
   }
 }
