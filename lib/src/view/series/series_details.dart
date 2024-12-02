@@ -53,15 +53,15 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                             width: double.infinity,
                           )
                         : selectedSeason != null && selectedEpisode == null
-                            ? CustomImageNetworkWidget(
+                            ? CustomImageNetworkWidget(                        
                                 imagePath: "${AppConstants.imageUrl}/$seasonPoster",
-                                height: 300,
+                                height: 300, 
                                 width: double.infinity,
                               )
                             : SizedBox(
                                 height: 300,
                                 child: CustomWebView(
-                                  initialUrl: "${AppConstants.showEmbedUrl}EmbedUrl?tmdb=${seriesCon.seriesDetail.id}&season=$selectedSeason&episode=$selectedEpisode",
+                                  initialUrl: "${AppConstants.showEmbedUrl}?tmdb=${seriesCon.seriesDetail.id}&season=$selectedSeason&episode=$selectedEpisode",
                                   showAppBar: false,
                                   errorImageUrl: "${AppConstants.imageUrl}${seriesCon.seriesDetail.backdropPath}",
                                 ),
