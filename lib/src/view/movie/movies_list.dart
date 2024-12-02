@@ -31,23 +31,28 @@ class MovieList extends StatelessWidget {
               }
               return true;
             },
-            child: SingleChildScrollView(
-              controller: scrollController,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 100), // App bar space
-                  // Trending Slider Section
-                  buildTrendingSliderSection(movieController),
-                  const SizedBox(height: 20),
-                  // Top Rated Movies Section
-                  buildTopRatedMoviesSection(movieController),
-                  const SizedBox(height: 20),
-                  // All Movies Grid Section
-                  buildAllMoviesGrid(movieController),
-                   // Loading indicator for pagination
-                  paginationLoading(movieController),
-                ],
+            child: RefreshIndicator(
+              onRefresh: () async{
+                movieController.initialize(); // Pre-fetch initial movie data
+              }, // Refresh handler function
+              child: SingleChildScrollView(
+                controller: scrollController,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 100), // App bar space
+                    // Trending Slider Section
+                    buildTrendingSliderSection(movieController),
+                    const SizedBox(height: 20),
+                    // Top Rated Movies Section
+                    buildTopRatedMoviesSection(movieController),
+                    const SizedBox(height: 20),
+                    // All Movies Grid Section
+                    buildAllMoviesGrid(movieController),
+                    // Loading indicator for pagination
+                    paginationLoading(movieController),
+                  ],
+                ),
               ),
             ),
           ),
