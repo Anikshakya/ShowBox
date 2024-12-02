@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:showbox/src/constant/constants.dart';
 import 'package:showbox/src/controller/movies_controller.dart';
@@ -49,6 +50,10 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
       : Scaffold(
         appBar: AppBar(
           title: Text(movie.title ?? ''),
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent, // Transparent status bar
+            statusBarIconBrightness: Theme.of(context).brightness == Brightness.light ? Brightness.dark : Brightness.light,
+          ),
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
