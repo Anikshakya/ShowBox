@@ -18,81 +18,90 @@ class BottomNav extends StatefulWidget {
 }
 
 class _BottomNavState extends State<BottomNav> {
-  // Get Controller
-  BottomNavController bottomNavCon = Get.put(BottomNavController());
-
-  List pages = [];
-
-  int _selectedIndex = 0;
+  // Initialize BottomNavController to manage the visibility of the AppBar and Bottom Navigation Bar
+  final BottomNavController bottomNavCon = Get.put(BottomNavController());
+  
+  // Initialize a ScrollController to manage scroll position and trigger hiding/showing the app bar and bottom nav
   final ScrollController _scrollController = ScrollController();
 
-  void _onItemTapped(int index) {
-    HapticFeedback.heavyImpact(); // Provide haptic feedback on item tap
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  int _selectedIndex = 0; // Track the selected tab index
+
+  late final List<Widget> pages; // List of pages for each tab
 
   @override
   void initState() {
     super.initState();
 
+    // Define pages for each bottom navigation item (Home, Movies, Series)
     pages = [
       HomePage(scrollController: _scrollController),
       MovieList(scrollController: _scrollController),
       SeriesListPage(scrollController: _scrollController),
-      const PageContent(pageTitle: 'Page 4', color: Colors.orange),
     ];
 
-    // Add a listener to the ScrollController
-    bottomNavCon.toggleBottomNavAccToScroll(scrollController:_scrollController);
+    // Set up the BottomNavController to manage the app bar and bottom nav visibility based on scrolling
+    bottomNavCon.toggleBottomNavAccToScroll(scrollController: _scrollController);
   }
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    _scrollController.dispose(); // Dispose the ScrollController when the widget is disposed
     super.dispose();
+  }
+
+  // Handle the navigation item selection and provide haptic feedback on tap
+  void _onItemTapped(int index) {
+    HapticFeedback.heavyImpact(); // Provide haptic feedback on item tap
+    setState(() {
+      _selectedIndex = index; // Update the selected index to show the appropriate page
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true,
+      extendBody: true, // Allows body to extend beneath the app bar
       body: Stack(
         children: [
+          // Display the page corresponding to the selected index
           pages[_selectedIndex],
-          // App Bar
-          Obx(() => AnimatedPositioned(
+
+          // App Bar: Controls visibility based on scrolling
+          Obx(
+            () => AnimatedPositioned(
               duration: const Duration(milliseconds: 160),
-              top: bottomNavCon.isAppbarVisible.isTrue ? 0 : -80, // Hide app bar when not visible
+              top: bottomNavCon.isAppbarVisible.isTrue ? 0 : -80, // Hide the app bar if not visible
               left: 0,
               right: 0,
               child: AppBar(
                 systemOverlayStyle: SystemUiOverlayStyle(
-                  statusBarColor: Colors.transparent, // Transparent status bar
-                  statusBarIconBrightness: Theme.of(context).brightness == Brightness.light ? Brightness.dark : Brightness.light,
+                  statusBarColor: Colors.transparent, // Set transparent status bar
+                  statusBarIconBrightness: Theme.of(context).brightness == Brightness.light
+                      ? Brightness.dark
+                      : Brightness.light, // Set appropriate status bar icon brightness
                 ),
                 title: Text(
-                  _getAppBarTitle(_selectedIndex),
+                  _getAppBarTitle(_selectedIndex), // Set app bar title dynamically based on selected tab
                   style: GoogleFonts.poppins(fontSize: 24),
                 ),
-                backgroundColor: Colors.transparent,
+                backgroundColor: Colors.transparent, // Transparent background for the app bar
                 centerTitle: true,
                 actions: [
+                  // Search icon to navigate to the SearchPage
                   IconButton(
                     icon: const Icon(Icons.search),
-                    onPressed: () {
-                      Get.to(() => SearchPage());
-                    },
+                    onPressed: () => Get.to(() => SearchPage()),
                   ),
                 ],
               ),
-            )
+            ),
           ),
-          // Bottom Nav
-          Obx(() => AnimatedPositioned(
+
+          // Bottom Navigation Bar: Controls visibility based on scrolling
+          Obx(
+            () => AnimatedPositioned(
               duration: const Duration(milliseconds: 160),
-              bottom: bottomNavCon.isNavVisible.isTrue ? 0 : -80, // Position the nav bar to fall down
+              bottom: bottomNavCon.isNavVisible.isTrue ? 0 : -80, // Hide the bottom nav if not visible
               left: 0,
               right: 0,
               child: Padding(
@@ -100,8 +109,8 @@ class _BottomNavState extends State<BottomNav> {
                 child: Container(
                   height: 56,
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.6), // Semi-transparent background
-                    borderRadius: BorderRadius.circular(16), // Rounded corners
+                    color: Colors.black.withOpacity(0.6),
+                    borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
                         color: Theme.of(context).primaryColor.withOpacity(0.3),
@@ -115,23 +124,19 @@ class _BottomNavState extends State<BottomNav> {
                     child: BackdropFilter(
                       filter: ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0),
                       child: BottomNavigationBar(
-                        selectedLabelStyle: const TextStyle(fontSize: 0),
-                        unselectedLabelStyle: const TextStyle(fontSize: 0),
-                        showSelectedLabels: false,
-                        showUnselectedLabels: false,
-                        backgroundColor: Colors.black.withOpacity(0.5), // Transparent background
-                        elevation: 0, // Remove shadow
+                        selectedLabelStyle: const TextStyle(fontSize: 0), // Hide labels
+                        unselectedLabelStyle: const TextStyle(fontSize: 0), // Hide labels
+                        showSelectedLabels: false, // Hide selected label
+                        showUnselectedLabels: false, // Hide unselected label
+                        backgroundColor: Colors.black.withOpacity(0.5),
+                        elevation: 0,
                         type: BottomNavigationBarType.fixed,
-                        selectedItemColor: const Color(0XFFCBA84A),
-                        unselectedItemColor: const Color.fromARGB(255, 185, 185, 185),
+                        selectedItemColor: const Color(0XFFCBA84A), // Selected item color
+                        unselectedItemColor: const Color.fromARGB(255, 185, 185, 185), // Unselected item color
                         currentIndex: _selectedIndex,
-                        selectedIconTheme: const IconThemeData(
-                          size: 28
-                        ),
-                        unselectedIconTheme: const IconThemeData(
-                          size: 22
-                        ),
-                        onTap: _onItemTapped,
+                        selectedIconTheme: const IconThemeData(size: 28), // Size of selected icon
+                        unselectedIconTheme: const IconThemeData(size: 22), // Size of unselected icon
+                        onTap: _onItemTapped, // Handle item tap to change tab
                         items: const [
                           BottomNavigationBarItem(
                             icon: Icon(Icons.home),
@@ -145,74 +150,30 @@ class _BottomNavState extends State<BottomNav> {
                             icon: Icon(Icons.tv_rounded),
                             label: '',
                           ),
-                          // BottomNavigationBarItem(
-                          //   icon: Icon(Icons.person),
-                          //   label: '',
-                          // ),
                         ],
                       ),
                     ),
                   ),
                 ),
               ),
-            )
+            ),
           ),
         ],
       ),
     );
   }
 
-  // Method to get the app bar title based on the selected index
+  // Helper method to return the title for the app bar based on the selected index
   String _getAppBarTitle(int index) {
     switch (index) {
       case 0:
-        return 'ShowBox';
+        return 'ShowBox'; // Title for Home page
       case 1:
-        return 'ShowBox Movies';
+        return 'ShowBox Movies'; // Title for Movies page
       case 2:
-        return 'ShowBox Series';
-      // case 3:
-      //   return 'Page 4';
+        return 'ShowBox Series'; // Title for Series page
       default:
-        return 'ShowBox';
+        return 'ShowBox'; // Default title
     }
-  }
-}
-
-class PageContent extends StatelessWidget {
-  final String pageTitle;
-  final Color color;
-
-  const PageContent({super.key, required this.pageTitle, required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: color,
-      padding: const EdgeInsets.all(16.0),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              pageTitle,
-              style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
-            ),
-            const SizedBox(height: 20),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(), // Prevent nested scrolling
-              itemCount: 30,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  leading: const Icon(Icons.circle, color: Colors.white),
-                  title: Text('Item #$index', style: const TextStyle(color: Colors.white)),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
