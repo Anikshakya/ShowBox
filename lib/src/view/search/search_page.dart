@@ -101,6 +101,18 @@ class SearchPage extends StatelessWidget {
             );
           }
 
+          if (!controller.hasSearched.value) {
+            return const Center(
+              child: Text(
+                "Nothing to show",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w300,
+                ),
+              ),
+            );
+          }
+
           return TabBarView(
             children: [
               // Movies Tab

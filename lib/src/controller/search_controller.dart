@@ -6,11 +6,19 @@ import 'package:showbox/src/app_config/api_repo.dart';
 class SearchhController extends GetxController {
   late RxBool isSearchListLoading = false.obs;
   late RxBool hasSearched = false.obs;
+
   dynamic movieSearchList = [].obs;
   dynamic seriesSearchList = [].obs;
 
+  @override
+  void onInit() {
+    super.onInit();
+    hasSearched.value = false;
+  }
+
   searchForMovie(String keyword) async {
     isSearchListLoading(true);
+    hasSearched.value = true;
     movieSearchList.clear();
     seriesSearchList.clear();
     try {

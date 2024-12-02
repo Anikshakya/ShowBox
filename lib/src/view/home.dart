@@ -117,7 +117,7 @@ import 'package:showbox/src/widgets/cards/item_card.dart';
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                    ),
+                    ),                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
                   ),
                   const SizedBox(height: 12),
                   Obx(() => homeCon.isTopRatedSeriesLoading.isTrue

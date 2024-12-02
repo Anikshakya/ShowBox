@@ -63,31 +63,32 @@ class _BottomNavState extends State<BottomNav> {
           pages[_selectedIndex],
           // App Bar
           Obx(() => AnimatedPositioned(
-                duration: const Duration(milliseconds: 160),
-                top: bottomNavCon.isAppbarVisible.isTrue ? 0 : -80, // Hide app bar when not visible
-                left: 0,
-                right: 0,
-                child: AppBar(
-                  systemOverlayStyle: SystemUiOverlayStyle(
-                    statusBarColor: Colors.transparent, // Transparent status bar
-                    statusBarIconBrightness: Theme.of(context).brightness == Brightness.light ? Brightness.dark : Brightness.light,
-                  ),
-                  title: Text(
-                    _getAppBarTitle(_selectedIndex),
-                    style: GoogleFonts.poppins(fontSize: 24),
-                  ),
-                  backgroundColor: Colors.transparent,
-                  centerTitle: true,
-                  actions: [
-                    IconButton(
-                      icon: const Icon(Icons.search),
-                      onPressed: () {
-                        Get.to(() => SearchPage());
-                      },
-                    ),
-                  ],
+              duration: const Duration(milliseconds: 160),
+              top: bottomNavCon.isAppbarVisible.isTrue ? 0 : -80, // Hide app bar when not visible
+              left: 0,
+              right: 0,
+              child: AppBar(
+                systemOverlayStyle: SystemUiOverlayStyle(
+                  statusBarColor: Colors.transparent, // Transparent status bar
+                  statusBarIconBrightness: Theme.of(context).brightness == Brightness.light ? Brightness.dark : Brightness.light,
                 ),
-              )),
+                title: Text(
+                  _getAppBarTitle(_selectedIndex),
+                  style: GoogleFonts.poppins(fontSize: 24),
+                ),
+                backgroundColor: Colors.transparent,
+                centerTitle: true,
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.search),
+                    onPressed: () {
+                      Get.to(() => SearchPage());
+                    },
+                  ),
+                ],
+              ),
+            )
+          ),
           // Bottom Nav
           Obx(() => AnimatedPositioned(
               duration: const Duration(milliseconds: 160),
@@ -141,13 +142,13 @@ class _BottomNavState extends State<BottomNav> {
                             label: '',
                           ),
                           BottomNavigationBarItem(
-                            icon: Icon(Icons.grid_view),
+                            icon: Icon(Icons.tv_rounded),
                             label: '',
                           ),
-                          BottomNavigationBarItem(
-                            icon: Icon(Icons.person),
-                            label: '',
-                          ),
+                          // BottomNavigationBarItem(
+                          //   icon: Icon(Icons.person),
+                          //   label: '',
+                          // ),
                         ],
                       ),
                     ),
@@ -170,8 +171,8 @@ class _BottomNavState extends State<BottomNav> {
         return 'ShowBox Movies';
       case 2:
         return 'ShowBox Series';
-      case 3:
-        return 'Page 4';
+      // case 3:
+      //   return 'Page 4';
       default:
         return 'ShowBox';
     }
