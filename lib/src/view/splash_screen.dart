@@ -8,7 +8,7 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Future.delayed(const Duration(milliseconds: 3860), () {
+    Future.delayed(const Duration(milliseconds: 3800), () {
       Get.offAll(()=> const BottomNav());
     });
 
