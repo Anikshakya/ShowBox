@@ -57,6 +57,7 @@ class NoInternetPage extends StatelessWidget {
                     Get.offAll(() => const SplashScreen()); // Navigate to SplashScreen
                   } else {
                     // If no internet, stay on the page
+                    // ignore: use_build_context_synchronously
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Still no internet connection'),
