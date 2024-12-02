@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:showbox/src/controller/search_controller.dart';
 import 'package:showbox/src/view/movie/movie_details.dart';
@@ -22,10 +21,6 @@ class SearchPage extends StatelessWidget {
           elevation: 0,
           backgroundColor: Colors.transparent,
           toolbarHeight: 100,
-          systemOverlayStyle: SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent, // Transparent status bar
-            statusBarIconBrightness: Theme.of(context).brightness == Brightness.light ? Brightness.dark : Brightness.light,
-          ),
           title: Container(
             height: 45,
             decoration: BoxDecoration(

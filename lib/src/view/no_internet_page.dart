@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:showbox/src/view/splash_screen.dart';
 
@@ -18,12 +17,6 @@ class _NoInternetPageState extends State<NoInternetPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent, // Transparent status bar
-          statusBarIconBrightness: Theme.of(context).brightness == Brightness.light
-              ? Brightness.dark
-              : Brightness.light,
-        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),

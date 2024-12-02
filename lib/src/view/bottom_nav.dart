@@ -74,12 +74,6 @@ class _BottomNavState extends State<BottomNav> {
               left: 0,
               right: 0,
               child: AppBar(
-                systemOverlayStyle: SystemUiOverlayStyle(
-                  statusBarColor: Colors.transparent, // Set transparent status bar
-                  statusBarIconBrightness: Theme.of(context).brightness == Brightness.light
-                      ? Brightness.dark
-                      : Brightness.light, // Set appropriate status bar icon brightness
-                ),
                 title: Text(
                   _getAppBarTitle(_selectedIndex), // Set app bar title dynamically based on selected tab
                   style: GoogleFonts.poppins(fontSize: 24),
