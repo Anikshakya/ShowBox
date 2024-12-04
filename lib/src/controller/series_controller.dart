@@ -39,7 +39,6 @@ class SeriesController extends GetxController{
     if (topRatedSeries.isEmpty) {
       await getTopRatedSeries();
     }
-    
   }
 
   // Get Trending Series

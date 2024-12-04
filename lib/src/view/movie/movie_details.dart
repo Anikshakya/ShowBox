@@ -28,25 +28,101 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
   }
 
   initialize() async {
-    // Fetch movie details
     await movieCon.getMovieDetails(id: widget.movieId);
-    // Once the movie details are fetched
+    if (movieCon.movieDetails == null) {
+      Get.back();
+    }
     movie = movieCon.movieDetails!;
   }
 
   @override
   Widget build(BuildContext context) {
-    // Get current theme text color
     textColor = Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
     subtitleColor = Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey;
 
-    return Obx(()=> movieCon.isMovieDetailsLoading.isTrue
-      ? const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      )
-      : Scaffold(
+    return Obx(() {
+      if (movieCon.isMovieDetailsLoading.isTrue) {
+        return const Scaffold(
+          body: Center(child: CircularProgressIndicator()),
+        );
+      }
+
+      if (movieCon.movieDetails == null) {
+        return Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+          ),
+          body: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Icon and error message
+                  const Icon(
+                    Icons.error_outline,
+                    size: 120,
+                    color: Color(0XFFCBA84A),
+                  ),
+                  const SizedBox(height: 30),
+                  const Text(
+                    'Oops! Something went wrong.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  const Text(
+                    'We couldn\'t fetch the movie details. Please try again later.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+
+                  // Retry button
+                  TextButton(
+                    onPressed: initialize,
+                    style: TextButton.styleFrom(
+                      backgroundColor: const Color(0XFFCBA84A),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ).copyWith(
+                      overlayColor: WidgetStateProperty.all(Colors.transparent),
+                    ),
+                    child: Obx(() => movieCon.isMovieDetailsLoading.isTrue
+                        ? const SizedBox(
+                            height: 24,
+                            width: 24,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2.5,
+                            ),
+                          )
+                        : const Text(
+                            "Retry",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )),
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      }
+
+      return Scaffold(
         appBar: AppBar(
           title: Text(movie.title ?? ''),
         ),
@@ -68,7 +144,6 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Movie Title
                       Text(
                         movie.title ?? '',
                         style: const TextStyle(
@@ -77,7 +152,6 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      // Tagline
                       if (movie.tagline != null)
                         Text(
                           movie.tagline ?? '',
@@ -88,11 +162,9 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                           ),
                         ),
                       const SizedBox(height: 16),
-                      // Poster and details
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Poster image
                           if (movie.posterPath != null)
                             ClipRRect(
                               borderRadius: BorderRadius.circular(10),
@@ -103,7 +175,6 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                               ),
                             ),
                           const SizedBox(width: 16),
-                          // Other movie details
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,7 +208,6 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                         ],
                       ),
                       const SizedBox(height: 16),
-                      // Genres
                       const Text(
                         "Genres:",
                         style: TextStyle(
@@ -158,7 +228,6 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                           ),
                         ),
                       const SizedBox(height: 16),
-                      // Overview
                       const Text(
                         "Overview:",
                         style: TextStyle(
@@ -180,8 +249,8 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
               ),
             ),
           ],
-        )
-      ),
-    );
+        ),
+      );
+    });
   }
 }
