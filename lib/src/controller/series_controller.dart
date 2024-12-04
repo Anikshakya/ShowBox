@@ -29,14 +29,14 @@ class SeriesController extends GetxController{
   dynamic seriesDetail;
 
   // Initialize data
-  void initialize() async {
-    if (seriesList.isEmpty) {
+  initialize({bool? isRefresh}) async {
+    if (seriesList.isEmpty || isRefresh == true) {
       await getSeriesList();
     }
-    if (trendingSeriesList.isEmpty) {
+    if (trendingSeriesList.isEmpty || isRefresh == true) {
       await getTrendingSeriesList();
     }
-    if (topRatedSeries.isEmpty) {
+    if (topRatedSeries.isEmpty || isRefresh == true) {
       await getTopRatedSeries();
     }
   }

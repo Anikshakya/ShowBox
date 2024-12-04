@@ -26,14 +26,14 @@ class MovieController extends GetxController {
   var topRatedMovies = [].obs;
 
   // Initialize data
-  void initialize() async {
-    if (moviesList.isEmpty) {
+  initialize({bool? isRefresh}) async {
+    if (moviesList.isEmpty || isRefresh == true) {
       await getMovieList();
     }
-    if (trendingMovieList.isEmpty) {
+    if (trendingMovieList.isEmpty || isRefresh == true) {
       await getTrendingMoviesList();
     }
-    if (topRatedMovies.isEmpty) {
+    if (topRatedMovies.isEmpty || isRefresh == true) {
       await getTopRatedMovies();
     }
   }

@@ -46,24 +46,36 @@ class SeriesListPage extends StatelessWidget {
             }
             return true;
           },
-          child: SingleChildScrollView(
-            controller: scrollController,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // For App Bar
-                const SizedBox(height: 100),
-                // Trending Slider
-                buildTrendingSliderSection(seriesController),
-                const SizedBox(height: 20),
-                // Top Rated Series Section
-                buildTopRatedSeriesSection(seriesController),
-                const SizedBox(height: 20),
-                // All Series Grid Section
-                buildAllSeriesGrid(seriesController),
-                // Pagination loading indicator
-                paginationLoading(seriesController),
-              ],
+          child: RefreshIndicator(
+            backgroundColor: const Color(0XFFCBA84A),
+            color: Theme.of(context).primaryColor,
+            displacement: 80,
+            onRefresh: () async{
+              return Future.delayed(const Duration(seconds: 1), () async{
+                seriesController.initialize(
+                  isRefresh: true
+                );
+              });
+            },
+            child: SingleChildScrollView(
+              controller: scrollController,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // For App Bar
+                  const SizedBox(height: 100),
+                  // Trending Slider
+                  buildTrendingSliderSection(seriesController),
+                  const SizedBox(height: 20),
+                  // Top Rated Series Section
+                  buildTopRatedSeriesSection(seriesController),
+                  const SizedBox(height: 20),
+                  // All Series Grid Section
+                  buildAllSeriesGrid(seriesController),
+                  // Pagination loading indicator
+                  paginationLoading(seriesController),
+                ],
+              ),
             ),
           )
         ),

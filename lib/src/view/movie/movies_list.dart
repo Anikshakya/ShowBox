@@ -26,7 +26,7 @@ class MovieList extends StatelessWidget {
       body: Obx(() => movieController.isMovieListLoading. isTrue
         ? const Center(child: CircularProgressIndicator()) // Display loading spinner while movie list loads
         : NotificationListener<ScrollNotification>(
-            onNotification: (scrollNotification) {
+            onNotification: (scrollNotification) {                            
               // Show Scroll To Top Button
               if (scrollController.position.pixels  > 2000) {
                 movieController.isScrollToTopVisible(true);
@@ -42,8 +42,15 @@ class MovieList extends StatelessWidget {
               return true;
             },
             child: RefreshIndicator(
+              backgroundColor: const Color(0XFFCBA84A),
+              color: Theme.of(context).primaryColor,
+              displacement: 80,
               onRefresh: () async{
-                movieController.initialize(); // Pre-fetch initial movie data
+                return Future.delayed(const Duration(seconds: 1), () async{
+                  await movieController.initialize(
+                    isRefresh: true
+                  );
+                });
               }, // Refresh handler function
               child: SingleChildScrollView(
                 controller: scrollController,

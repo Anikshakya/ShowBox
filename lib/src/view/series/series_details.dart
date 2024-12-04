@@ -42,7 +42,7 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
           return const Center(
             child: CircularProgressIndicator(),
           );
-        }
+        }                                                                                                                                        
 
         if (seriesCon.seriesDetail == null) {
           return Center(
@@ -109,7 +109,7 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                   )
                 ],
               ),
-            ),
+            ),         
           );
         }
 
