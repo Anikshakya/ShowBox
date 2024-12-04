@@ -28,9 +28,9 @@ class MovieList extends StatelessWidget {
         : NotificationListener<ScrollNotification>(
             onNotification: (scrollNotification) {
               // Show Scroll To Top Button
-              if (scrollNotification.metrics.pixels > 2000 && !movieController.isScrollToTopVisible.value) {
+              if (scrollController.position.pixels  > 2000) {
                 movieController.isScrollToTopVisible(true);
-              } else if (scrollNotification.metrics.pixels <= 2000 && movieController.isScrollToTopVisible.value) {
+              } else if (scrollController.position.pixels  <= 2000) {
                 movieController.isScrollToTopVisible(false);
               }
 

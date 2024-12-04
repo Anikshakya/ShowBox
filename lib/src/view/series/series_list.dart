@@ -33,12 +33,11 @@ class SeriesListPage extends StatelessWidget {
         : NotificationListener<ScrollNotification>(
           onNotification: (scrollNotification) {  
             // Show Scroll To Top Button
-              // Show Scroll To Top Button
-              if (scrollNotification.metrics.pixels > 2000 && !seriesController.isScrollToTopVisible.value) {
-                seriesController.isScrollToTopVisible(true);
-              } else if (scrollNotification.metrics.pixels <= 2000 && seriesController.isScrollToTopVisible.value) {
-                seriesController.isScrollToTopVisible(false);
-              }
+            if (scrollController.position.pixels > 2000) {
+              seriesController.isScrollToTopVisible(true);
+            } else if (scrollController.position.pixels <= 2000) {
+              seriesController.isScrollToTopVisible(false);
+            }
 
             // Trigger pagination when the user scrolls to the bottom
             if (scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent && !seriesController.isSeriesListPaginationLoading.value) {
