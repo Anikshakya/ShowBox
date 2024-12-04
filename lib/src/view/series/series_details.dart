@@ -45,75 +45,69 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
         }
 
         if (seriesCon.seriesDetail == null) {
-          return Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-            ),
-            body: Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // Icon and error message
-                    const Icon(
-                      Icons.error_outline,
-                      size: 120,
-                      color: Color(0XFFCBA84A),
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Icon and error message
+                  const Icon(
+                    Icons.error_outline,
+                    size: 120,
+                    color: Color(0XFFCBA84A),
+                  ),
+                  const SizedBox(height: 30),
+                  const Text(
+                    'Oops! Something went wrong.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
                     ),
-                    const SizedBox(height: 30),
-                    const Text(
-                      'Oops! Something went wrong.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  ),
+                  const SizedBox(height: 15),
+                  const Text(
+                    'We couldn\'t fetch the movie details. Please try again later.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16,
                     ),
-                    const SizedBox(height: 15),
-                    const Text(
-                      'We couldn\'t fetch the movie details. Please try again later.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 16,
-                      ),
-                    ),
-                    const SizedBox(height: 30),
+                  ),
+                  const SizedBox(height: 30),
 
-                    // Retry button
-                    TextButton(
-                      onPressed: initialise,
-                      style: TextButton.styleFrom(
-                        backgroundColor: const Color(0XFFCBA84A),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ).copyWith(
-                        overlayColor: WidgetStateProperty.all(Colors.transparent),
+                  // Retry button
+                  TextButton(
+                    onPressed: initialise,
+                    style: TextButton.styleFrom(
+                      backgroundColor: const Color(0XFFCBA84A),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
                       ),
-                      child: Obx(() => seriesCon.isDetailLoading.isTrue
-                        ? const SizedBox(
-                            height: 24,
-                            width: 24,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2.5,
-                            ),
-                          )
-                        : const Text(
-                            "Retry",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )),
-                    )
-                  ],
-                ),
+                    ).copyWith(
+                      overlayColor: WidgetStateProperty.all(Colors.transparent),
+                    ),
+                    child: Obx(() => seriesCon.isDetailLoading.isTrue
+                      ? const SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2.5,
+                          ),
+                        )
+                      : const Text(
+                          "Retry",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )),
+                  )
+                ],
               ),
             ),
           );
