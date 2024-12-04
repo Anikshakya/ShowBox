@@ -9,10 +9,12 @@ import 'package:showbox/src/models/top_rated_movies_model.dart';
 
 class MovieController extends GetxController {
   RxBool isMovieListLoading = true.obs;
-  RxBool isMovieListPaginationLoading = true.obs;
+  RxBool isMovieListPaginationLoading = false.obs;
   RxBool isMovieDetailsLoading = true.obs;
   RxBool isTrendingMoviesLoading = true.obs;
   late RxBool isTopRatedMoviesLoading = true.obs;
+
+  late RxBool isScrollToTopVisible = false.obs; // Show Scroll To top
 
   RxInt movielistPage = 1.obs;
   RxBool showAdult = false.obs;

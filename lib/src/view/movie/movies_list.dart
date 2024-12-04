@@ -18,13 +18,20 @@ class MovieList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final movieController = Get.put(MovieController());
-    movieController.initialize(); // Pre-fetch initial movie data
-
+    movieController.initialize(); // Pre-fetch initial movie data                                                                  
     return Scaffold(
-      body: Obx(() => movieController.isMovieListLoading.isTrue
+      body: Obx(() => movieController.isMovieListLoading. isTrue
         ? const Center(child: CircularProgressIndicator()) // Display loading spinner while movie list loads
         : NotificationListener<ScrollNotification>(
             onNotification: (scrollNotification) {
+              // Show Scroll To Top Button
+              if(scrollNotification.metrics.pixels > 2000){
+                movieController.isScrollToTopVisible(true);
+              } else {
+                movieController.isScrollToTopVisible(false);
+              }
+
+              // Trigger pagination when the user scrolls to the bottom
               if (scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent && !movieController.isMovieListPaginationLoading.value) {
                 movieController.isMovieListPaginationLoading(true);
                 movieController.fetchNextPage(); // Trigger pagination when scrolling reaches the bottom
@@ -56,6 +63,25 @@ class MovieList extends StatelessWidget {
               ),
             ),
           ),
+      ),
+      floatingActionButton: Obx(()=>
+         Visibility(
+           visible: movieController.isScrollToTopVisible.value == true,
+           child: Padding(
+             padding: const EdgeInsets.only(bottom: 60.0),
+             child: FloatingActionButton(
+              backgroundColor: const Color(0xffecc877),
+              onPressed: () {
+                scrollController.animateTo(
+                  0,
+                  duration: const Duration(milliseconds: 800),
+                  curve: Curves.easeOut,
+                );
+              },
+              child: const Icon(Icons.arrow_upward_outlined, color: Colors.black),
+                         ),
+           ),
+         ),
       ),
     );
   }

@@ -16,6 +16,8 @@ class SeriesController extends GetxController{
   RxBool isTrendingSeriesLoading = true.obs;
   late RxBool isTopRatedSeriesLoading = true.obs;
 
+  late RxBool isScrollToTopVisible = false.obs; // Show Scroll To top
+
   RxInt seriesListPage = 1.obs;
   RxBool showAdult = true.obs;
 

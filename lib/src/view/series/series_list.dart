@@ -30,6 +30,13 @@ class SeriesListPage extends StatelessWidget {
           )
         : NotificationListener<ScrollNotification>(
           onNotification: (scrollNotification) {  
+            // Show Scroll To Top Button
+              if(scrollNotification.metrics.pixels > 2000){
+                seriesController.isScrollToTopVisible(true);
+              } else {
+                seriesController.isScrollToTopVisible(false);
+              }
+
             // Trigger pagination when the user scrolls to the bottom
             if (scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent && !seriesController.isSeriesListPaginationLoading.value) {
               seriesController.isSeriesListPaginationLoading(true);
@@ -58,6 +65,25 @@ class SeriesListPage extends StatelessWidget {
             ),
           )
         ),
+      ),
+      floatingActionButton: Obx(()=>
+         Visibility(
+           visible: seriesController.isScrollToTopVisible.value == true,
+           child: Padding(
+             padding: const EdgeInsets.only(bottom: 60.0),
+             child: FloatingActionButton(
+              backgroundColor: const Color(0xffecc877),
+              onPressed: () {
+                scrollController.animateTo(
+                  0,
+                  duration: const Duration(milliseconds: 800),
+                  curve: Curves.easeOut,
+                );
+              },
+              child: const Icon(Icons.arrow_upward_outlined, color: Colors.black),
+                         ),
+           ),
+         ),
       ),
     );
   }
@@ -214,9 +240,9 @@ class SeriesListPage extends StatelessWidget {
   // Pagination loading indicator
   Widget paginationLoading(SeriesController seriesController) {
     return seriesController.isSeriesListPaginationLoading.value
-        ? Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: AppShimmers().buildMovieSeriesShimmerList()
+        ? const Padding(
+            padding: EdgeInsets.symmetric(vertical: 20),
+            child: Center(child: CircularProgressIndicator()),
           )
         : const SizedBox.shrink();
   }
