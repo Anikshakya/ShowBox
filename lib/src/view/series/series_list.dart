@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:showbox/src/constant/constants.dart';
+import 'package:showbox/src/controller/bottom_nav_controller.dart';
 import 'package:showbox/src/controller/series_controller.dart';
 import 'package:showbox/src/view/series/series_details.dart';
 import 'package:showbox/src/widgets/cards/item_card.dart';
@@ -19,6 +20,7 @@ class SeriesListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Get Controller
     final seriesController = Get.put(SeriesController());
+    final bottomNavCon = Get.put(BottomNavController());
 
     seriesController.initialize(); // Pre-fetch initial series data
 
@@ -31,9 +33,10 @@ class SeriesListPage extends StatelessWidget {
         : NotificationListener<ScrollNotification>(
           onNotification: (scrollNotification) {  
             // Show Scroll To Top Button
-              if(scrollNotification.metrics.pixels > 2000){
+              // Show Scroll To Top Button
+              if (scrollNotification.metrics.pixels > 2000 && !seriesController.isScrollToTopVisible.value) {
                 seriesController.isScrollToTopVisible(true);
-              } else {
+              } else if (scrollNotification.metrics.pixels <= 2000 && seriesController.isScrollToTopVisible.value) {
                 seriesController.isScrollToTopVisible(false);
               }
 
@@ -69,8 +72,12 @@ class SeriesListPage extends StatelessWidget {
       floatingActionButton: Obx(()=>
          Visibility(
            visible: seriesController.isScrollToTopVisible.value == true,
-           child: Padding(
-             padding: const EdgeInsets.only(bottom: 60.0),
+           child: AnimatedPadding(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
+            padding: EdgeInsets.only(
+              bottom: bottomNavCon.isAppbarVisible.value ? 60.0 : 10.0,
+            ),
              child: FloatingActionButton(
               backgroundColor: const Color(0xffecc877),
               onPressed: () {
@@ -81,7 +88,7 @@ class SeriesListPage extends StatelessWidget {
                 );
               },
               child: const Icon(Icons.arrow_upward_outlined, color: Colors.black),
-                         ),
+                           ),
            ),
          ),
       ),

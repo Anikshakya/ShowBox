@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:showbox/src/constant/constants.dart';
+import 'package:showbox/src/controller/bottom_nav_controller.dart';
 import 'package:showbox/src/controller/movies_controller.dart';
 import 'package:showbox/src/view/movie/movie_details.dart';
 import 'package:showbox/src/widgets/cards/item_card.dart';
@@ -18,6 +19,8 @@ class MovieList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final movieController = Get.put(MovieController());
+    final bottmoNavCon = Get.put(BottomNavController());
+
     movieController.initialize(); // Pre-fetch initial movie data                                                                  
     return Scaffold(
       body: Obx(() => movieController.isMovieListLoading. isTrue
@@ -25,9 +28,9 @@ class MovieList extends StatelessWidget {
         : NotificationListener<ScrollNotification>(
             onNotification: (scrollNotification) {
               // Show Scroll To Top Button
-              if(scrollNotification.metrics.pixels > 2000){
+              if (scrollNotification.metrics.pixels > 2000 && !movieController.isScrollToTopVisible.value) {
                 movieController.isScrollToTopVisible(true);
-              } else {
+              } else if (scrollNotification.metrics.pixels <= 2000 && movieController.isScrollToTopVisible.value) {
                 movieController.isScrollToTopVisible(false);
               }
 
@@ -64,12 +67,16 @@ class MovieList extends StatelessWidget {
             ),
           ),
       ),
-      floatingActionButton: Obx(()=>
-         Visibility(
-           visible: movieController.isScrollToTopVisible.value == true,
-           child: Padding(
-             padding: const EdgeInsets.only(bottom: 60.0),
-             child: FloatingActionButton(
+      floatingActionButton: Obx(() {
+        return Visibility(
+          visible: movieController.isScrollToTopVisible.value,
+          child: AnimatedPadding(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
+            padding: EdgeInsets.only(
+              bottom: bottmoNavCon.isAppbarVisible.value ? 60.0 : 10.0,
+            ),
+            child: FloatingActionButton(
               backgroundColor: const Color(0xffecc877),
               onPressed: () {
                 scrollController.animateTo(
@@ -79,10 +86,10 @@ class MovieList extends StatelessWidget {
                 );
               },
               child: const Icon(Icons.arrow_upward_outlined, color: Colors.black),
-                         ),
-           ),
-         ),
-      ),
+            ),
+          ),
+        );
+      }),
     );
   }
 

@@ -10,7 +10,7 @@ import 'package:showbox/src/models/top_rated_series_model.dart';
 
 class SeriesController extends GetxController{
   late RxBool isSeriesListLoading = true.obs;
-  late RxBool isSeriesListPaginationLoading = true.obs;
+  late RxBool isSeriesListPaginationLoading = false.obs;
   late RxBool isDetailLoading = true.obs;
   late RxBool isEpisodeLoading = true.obs;
   RxBool isTrendingSeriesLoading = true.obs;
