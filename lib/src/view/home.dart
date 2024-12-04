@@ -5,7 +5,9 @@ import 'package:showbox/src/controller/home_controller.dart';
 import 'package:showbox/src/view/movie/movie_details.dart';
 import 'package:showbox/src/view/series/series_details.dart';
 import 'package:showbox/src/widgets/cards/item_card.dart';
+import 'package:showbox/src/widgets/cards/trending_card.dart';
 import 'package:showbox/src/widgets/custom_image_slider.dart';
+import 'package:showbox/src/widgets/custom_pageview.dart';
 import 'package:showbox/src/widgets/custom_shimmer.dart';
 
 class HomePage extends StatelessWidget {
@@ -28,7 +30,34 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 100), // Spacer for the app bar
+            // const SizedBox(height: 100), // Spacer for the app bar
+            Obx( ()=>  homeCon.isTrendingListLoading.isTrue
+              ? AppShimmers().trendingMovieSeriesShimmer()
+              :CustomPageView(
+                height: 480, 
+                width: double.infinity,
+                enableAutoSwipe: true,
+                widgets: [
+                  ...List.generate(
+                    homeCon.trendingList.length,
+                    (index) {
+                      var item = homeCon.trendingList[index];
+                      return TrendingCard(
+                        imageUrl: '${AppConstants.imageUrl}${item['poster_path']}',
+                        title: item["media_type"] == "tv" ? item["name"] : item["title"],
+                        rating: item['vote_average'].toString(),
+                        duration: '79 min',
+                        description: item["overview"],
+                        pricing: '14,900₮ | 30 days | SHOW BOX',
+                        onWatchPressed: () {
+                          // Handle Watch button press action
+                        },
+                      );
+                    },
+                  )                                                   
+                ]
+              ),
+            ),
 
             // Trending Movies/Series
             buildTrendingSection(homeCon),

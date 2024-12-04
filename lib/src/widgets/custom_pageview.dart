@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class CustomPageView extends StatefulWidget {
   final double height;
   final double width;
-  final List<Widget> widgets;
+  final List widgets;
   final double? indicatorTop;
   final double? indicatorBottom;
   final double? indicatorLeft;
