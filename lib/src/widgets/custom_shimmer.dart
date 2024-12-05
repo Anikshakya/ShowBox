@@ -35,19 +35,32 @@ class _CustomShimmerState extends State<CustomShimmer> with SingleTickerProvider
         return Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(widget.borderRadius),
-            color: Colors.grey.shade300,
             gradient: LinearGradient(
               colors: [
-                Colors.grey.shade300,
-                Colors.grey.shade100,
-                Colors.grey.shade300,
+                Colors.grey.withOpacity(.3),
+                Colors.transparent,
               ],
-              stops: const [0.3, 0.5, 0.7],
-              begin: Alignment(-1 + _controller.value * 2, 0),
-              end: Alignment(1 + _controller.value * 2, 0),
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
             ),
           ),
         );
+        // return Container(
+        //   decoration: BoxDecoration(
+        //     borderRadius: BorderRadius.circular(widget.borderRadius),
+        //     color: Colors.grey.shade300,
+        //     gradient: LinearGradient(
+        //       colors: [
+        //         Colors.grey.shade300,
+        //         Colors.grey.shade100,
+        //         Colors.grey.shade300,
+        //       ],
+        //       stops: const [0.3, 0.5, 0.7],
+        //       begin: Alignment(-1 + _controller.value * 2, 0),
+        //       end: Alignment(1 + _controller.value * 2, 0),
+        //     ),
+        //   ),
+        // );
       },
     );
   }

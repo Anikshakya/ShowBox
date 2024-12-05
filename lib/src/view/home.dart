@@ -32,11 +32,75 @@ class HomePage extends StatelessWidget {
           children: [
             // const SizedBox(height: 100), // Spacer for the app bar
             Obx( ()=>  homeCon.isTrendingListLoading.isTrue
-              ? AppShimmers().trendingMovieSeriesShimmer()
-              :CustomPageView(
-                height: 480, 
+              ? Stack(
+                children: [
+                  const SizedBox(
+                    height: 580,
+                    child: CustomShimmer()
+                  ),
+                  Positioned.fill(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w300,
+                              letterSpacing: 1,
+                              height: 1.5,
+                            ),
+                            children: const [
+                              TextSpan(text: "Watch "),
+                              TextSpan(
+                                text: "Free",
+                                style: TextStyle(color: Color(0XFFCBA84A)),
+                              ),
+                              TextSpan(text: " HD Movies &\nTV shows"),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 26),
+                        RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w300,
+                              letterSpacing: 1,
+                              height: 1.6,
+                            ),
+                            children: const [
+                              TextSpan(text: "Enjoy your "),
+                              TextSpan(
+                                text: "unlimited",
+                                style: TextStyle(color: Color(0XFFCBA84A)),
+                              ),
+                              TextSpan(
+                                  text: " Movies & TV show collection.\nWe are the definitive source for the best\n curated 720p / 1080p HD Movies & TV shows,\nviewable by mobile phone and tablet, for "),
+                              TextSpan(
+                                text: "free",
+                                style: TextStyle(color: Color(0XFFCBA84A)),
+                              ),
+                              TextSpan(text: "."),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 30),
+                      ]
+                    ),
+                  )
+                ],
+              )
+              : CustomPageView(
+                height: 580,
                 width: double.infinity,
                 enableAutoSwipe: true,
+                showIndicator: false,
+                animationDuration: const Duration(seconds: 1),
                 widgets: [
                   ...List.generate(
                     homeCon.trendingList.length,
@@ -46,9 +110,9 @@ class HomePage extends StatelessWidget {
                         imageUrl: '${AppConstants.imageUrl}${item['poster_path']}',
                         title: item["media_type"] == "tv" ? item["name"] : item["title"],
                         rating: item['vote_average'].toString(),
-                        duration: '79 min',
-                        description: item["overview"],
-                        pricing: '14,900₮ | 30 days | SHOW BOX',
+                        year: item["media_type"] == "tv" ? item['first_air_date'] == null ?  "" : item['first_air_date'].split("-")[0] : item['release_date'] == null ?  "" : item['release_date'].split("-")[0],
+                        description: item["overview"] ?? "",
+                        pricing: 'UNLIMITED | FREE | SHOW BOX',
                         onWatchPressed: () {
                           // Handle Watch button press action
                         },
@@ -58,25 +122,25 @@ class HomePage extends StatelessWidget {
                 ]
               ),
             ),
-
+        
             // Trending Movies/Series
-            buildTrendingSection(homeCon),
-
+            // buildTrendingSection(homeCon),
+        
             const SizedBox(height: 20),
-
+        
             // Upcoming Movies
             buildUpcomingMoviesSection(homeCon),
-
+        
             const SizedBox(height: 30),
-
+        
             // Top Rated Series Section
             buildTopRatedSeriesSection(homeCon),
-
+        
             const SizedBox(height: 30),
-
+        
             // Top Rated Movies Section
             buildTopRatedMoviesSection(homeCon),
-
+        
             const SizedBox(height: 40), // Extra spacer
           ],
         ),

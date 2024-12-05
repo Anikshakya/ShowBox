@@ -161,7 +161,7 @@ class _BottomNavState extends State<BottomNav> {
   String _getAppBarTitle(int index) {
     switch (index) {
       case 0:
-        return 'ShowBox'; // Title for Home page
+        return ''; // Title for Home page
       case 1:
         return 'ShowBox Movies'; // Title for Movies page
       case 2:

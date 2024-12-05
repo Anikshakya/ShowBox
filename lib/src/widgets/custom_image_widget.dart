@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:showbox/src/widgets/custom_shimmer.dart';
 
 class CustomImageNetworkWidget extends StatefulWidget {
   const CustomImageNetworkWidget({
@@ -37,28 +36,43 @@ class _CustomImageNetworkWidgetState extends State<CustomImageNetworkWidget> {
               fit: widget.fit ?? BoxFit.cover,
               headers: const {"Connection": "Keep-Alive"},
               loadingBuilder: (context, child, loadingProgress) {
-                return loadingProgress == null
-                    ? child
-                    : SizedBox(
+                if (loadingProgress == null) {
+                  return child; // Return the loaded image
+                }
+                return SizedBox(
+                  width: widget.width,
+                  height: widget.height,
+                  child: Stack(
+                    children: [
+                      // Initial Placeholder
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(widget.borderRadius),
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.grey.withOpacity(.3),
+                              Colors.transparent,
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
+                        ),
                         width: widget.width,
                         height: widget.height,
-                        child: Stack(
-                          children: [
-                            CustomShimmer(
-                              borderRadius: widget.borderRadius,
-                            ),
-                            Center(
-                              child: CircularProgressIndicator(
-                                strokeWidth: 1,
-                                value: loadingProgress.expectedTotalBytes != null
-                                    ? loadingProgress.cumulativeBytesLoaded /
-                                        loadingProgress.expectedTotalBytes!
-                                    : null,
-                              ),
-                            ),
-                          ],
+                      ),
+                      // Loading Indicator
+                      Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 1,
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                                  loadingProgress.expectedTotalBytes!
+                              : null,
                         ),
-                      );
+                      ),
+                    ],
+                  ),
+                );
               },
               errorBuilder: (context, error, stackTrace) => placeHolder(),
             ),
@@ -66,9 +80,20 @@ class _CustomImageNetworkWidgetState extends State<CustomImageNetworkWidget> {
   }
 
   placeHolder() {
-    return Opacity(
-      opacity: 1,
-      child: Container(color: Colors.grey),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(widget.borderRadius),
+        gradient: LinearGradient(
+          colors: [
+            Colors.grey.withOpacity(.3),
+            Colors.transparent,
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+      ),
+      width: widget.width,
+      height: widget.height,
     );
   }
 }
