@@ -24,11 +24,6 @@ class TrendingCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textShadow = Shadow(
-      offset: const Offset(2.0, 2.0),
-      blurRadius: 4.0,
-      color: isDark ? Colors.black.withOpacity(0.2) : Colors.white.withOpacity(0.4),
-    );
 
     return Stack(
       children: [
@@ -38,6 +33,20 @@ class TrendingCard extends StatelessWidget {
           width: double.infinity,
           fit: BoxFit.cover,
         ),
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  Colors.black.withOpacity(0.5),
+                ],
+              ),
+            ),
+          ),
+        ),
         // Gradient Overlay (Linear Gradient)
         Positioned.fill(
           child: Container(
@@ -46,11 +55,23 @@ class TrendingCard extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  isDark ? Colors.black.withOpacity(0.1) : Colors.white.withOpacity(0.1), // Subtle gradient at the top
-                  Colors.transparent, // Middle transition
-                  isDark ? Colors.black : Colors.white, // Bottom gradient
+                  Colors.transparent,
+                  isDark ? Colors.black : Colors.white,
                 ],
-                stops: const [0.0, 0.4, 1.0], // Adjust stops for smoother blending
+              ),
+            ),
+          ),
+        ),
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.center,
+                end: Alignment.topCenter,
+                colors: [
+                  Colors.transparent,
+                  Colors.white.withOpacity(0.5),
+                ],
               ),
             ),
           ),
@@ -64,38 +85,59 @@ class TrendingCard extends StatelessWidget {
               children: [
                 // Movie Title
                 Text(
-                  title,
+                  title   ,
                   style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    shadows: [textShadow],
+                    fontSize: 26,
+                    color: Colors.white.withOpacity(0.7),
+                    fontWeight: FontWeight.w300,
                   ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8),
                 // Movie Rating and Duration
-                Text(
-                  "Rating $rating • $year",
-                  style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                    fontSize: 14,
-                    fontWeight: Theme.of(context).brightness == Brightness.dark ? FontWeight.w400: FontWeight.w600,
-                    shadows: [textShadow],
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: "Rating • ",
+                        style: TextStyle(
+                          color: Theme.of(context).primaryColor.withOpacity(0.6),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      TextSpan(
+                        text: rating,
+                        style: const TextStyle(
+                          color: Color(0xffecc877), // Change to your desired color
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      TextSpan(
+                        text: "  •  $year",
+                        style: TextStyle(
+                          color: Theme.of(context).primaryColor.withOpacity(0.6),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+
                 const SizedBox(height: 12),
                 // Movie Description
                 SizedBox(
-                  width: 280,
+                  width: 320,
                   child: Text(
                     description,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: Theme.of(context).primaryColor,
+                      color: Theme.of(context).primaryColor.withOpacity(0.93),
                       fontSize: 14,
-                      fontWeight: Theme.of(context).brightness == Brightness.dark ? FontWeight.w300: FontWeight.w500,
+                      fontWeight: Theme.of(context).brightness == Brightness.dark ? FontWeight.w300: FontWeight.w400,
                       height: 1.5,
-                      shadows: [textShadow],
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -103,24 +145,25 @@ class TrendingCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 // Watch Button
-                ElevatedButton(
-                  onPressed: onWatchPressed,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0XFFCBA84A).withOpacity(.9),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
+                GestureDetector(
+                  onTap: onWatchPressed, // The tap event handler
+                  child: Container(
+                    height: 40,
+                    width: 180,
+                    decoration: BoxDecoration(
+                      color: const Color(0x00ecc877).withOpacity(.9), // Button color
+                      borderRadius: BorderRadius.circular(4), // Rounded corners
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 58),
-                  ),
-                  child: Text(
-                    "WATCH",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w300,
-                      letterSpacing: 1,
-                      height: 1.6,
-                      shadows: [textShadow],
+                    // padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 0), // Padding for content
+                    alignment: Alignment.center, // Center-align the text
+                    child: const Text(
+                      "WATCH",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w300,
+                        letterSpacing: 1,
+                        height: 1.6,
+                      ),
                     ),
                   ),
                 ),
@@ -129,10 +172,9 @@ class TrendingCard extends StatelessWidget {
                 Text(
                   pricing,
                   style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                    fontSize: 12,
+                    color: Theme.of(context).primaryColor.withOpacity(0.6),
+                    fontSize: 13,
                     fontWeight: FontWeight.w400,
-                    shadows: [textShadow],
                   ),
                 ),
               ],

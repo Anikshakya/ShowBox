@@ -6,7 +6,6 @@ import 'package:showbox/src/view/movie/movie_details.dart';
 import 'package:showbox/src/view/series/series_details.dart';
 import 'package:showbox/src/widgets/cards/item_card.dart';
 import 'package:showbox/src/widgets/cards/trending_card.dart';
-import 'package:showbox/src/widgets/custom_image_slider.dart';
 import 'package:showbox/src/widgets/custom_pageview.dart';
 import 'package:showbox/src/widgets/custom_shimmer.dart';
 
@@ -30,101 +29,8 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // const SizedBox(height: 100), // Spacer for the app bar
-            Obx( ()=>  homeCon.isTrendingListLoading.isTrue
-              ? Stack(
-                children: [
-                  const SizedBox(
-                    height: 580,
-                    child: CustomShimmer()
-                  ),
-                  Positioned.fill(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                            style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                              fontSize: 22,
-                              fontWeight: FontWeight.w300,
-                              letterSpacing: 1,
-                              height: 1.5,
-                            ),
-                            children: const [
-                              TextSpan(text: "Watch "),
-                              TextSpan(
-                                text: "Free",
-                                style: TextStyle(color: Color(0XFFCBA84A)),
-                              ),
-                              TextSpan(text: " HD Movies &\nTV shows"),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 26),
-                        RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                            style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w300,
-                              letterSpacing: 1,
-                              height: 1.6,
-                            ),
-                            children: const [
-                              TextSpan(text: "Enjoy your "),
-                              TextSpan(
-                                text: "unlimited",
-                                style: TextStyle(color: Color(0XFFCBA84A)),
-                              ),
-                              TextSpan(
-                                  text: " Movies & TV show collection.\nWe are the definitive source for the best\n curated 720p / 1080p HD Movies & TV shows,\nviewable by mobile phone and tablet, for "),
-                              TextSpan(
-                                text: "free",
-                                style: TextStyle(color: Color(0XFFCBA84A)),
-                              ),
-                              TextSpan(text: "."),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 30),
-                      ]
-                    ),
-                  )
-                ],
-              )
-              : CustomPageView(
-                height: 580,
-                width: double.infinity,
-                enableAutoSwipe: true,
-                showIndicator: false,
-                animationDuration: const Duration(seconds: 1),
-                widgets: [
-                  ...List.generate(
-                    homeCon.trendingList.length,
-                    (index) {
-                      var item = homeCon.trendingList[index];
-                      return TrendingCard(
-                        imageUrl: '${AppConstants.imageUrl}${item['poster_path']}',
-                        title: item["media_type"] == "tv" ? item["name"] : item["title"],
-                        rating: item['vote_average'].toString(),
-                        year: item["media_type"] == "tv" ? item['first_air_date'] == null ?  "" : item['first_air_date'].split("-")[0] : item['release_date'] == null ?  "" : item['release_date'].split("-")[0],
-                        description: item["overview"] ?? "",
-                        pricing: 'UNLIMITED | FREE | SHOW BOX',
-                        onWatchPressed: () {
-                          // Handle Watch button press action
-                        },
-                      );
-                    },
-                  )                                                   
-                ]
-              ),
-            ),
-        
             // Trending Movies/Series
-            // buildTrendingSection(homeCon),
+            trendingSlider(homeCon, context),
         
             const SizedBox(height: 20),
         
@@ -148,21 +54,90 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // Method to build the trending section with conditional loading
-  Widget buildTrendingSection(HomeController homeCon) {
-    return Obx(
-      () => homeCon.isTrendingListLoading.isTrue
-          ? AppShimmers().trendingMovieSeriesShimmer()
-          : homeCon.trendingList.isEmpty
-              ? const SizedBox(
-                  height: 280,
-                  child: Center(child: Text("No data available")),
-                )
-              : CustomImageSlider(
-                  height: 280,
-                  cornerRadius: 2.0,
-                  showIndicator: false,
-                  onTap: (index) {
+  trendingSlider(HomeController homeCon, BuildContext context) {
+    return Obx( ()=>  homeCon.isTrendingListLoading.isTrue
+        ? Stack(
+          children: [
+            const SizedBox(
+              height: 560,
+              child: CustomShimmer()
+            ),
+            Positioned.fill(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w300,
+                        letterSpacing: 1,
+                        height: 1.5,
+                      ),
+                      children: const [
+                        TextSpan(text: "Watch "),
+                        TextSpan(
+                          text: "Free",
+                          style: TextStyle(color: Color(0XFFCBA84A)),
+                        ),
+                        TextSpan(text: " HD Movies &\nTV shows"),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 26),
+                  RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w300,
+                        letterSpacing: 1,
+                        height: 1.6,
+                      ),
+                      children: const [
+                        TextSpan(text: "Enjoy your "),
+                        TextSpan(
+                          text: "unlimited",
+                          style: TextStyle(color: Color(0XFFCBA84A)),
+                        ),
+                        TextSpan(
+                            text: " Movies & TV show collection.\nWe are the definitive source for the best\n curated 720p / 1080p HD Movies & TV shows,\nviewable by mobile phone and tablet, for "),
+                        TextSpan(
+                          text: "free",
+                          style: TextStyle(color: Color(0XFFCBA84A)),
+                        ),
+                        TextSpan(text: "."),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                ]
+              ),
+            )
+          ],
+        )
+        : CustomPageView(
+          height: 560,
+          width: double.infinity,
+          enableAutoSwipe: true,
+          showIndicator: false,
+          animationDuration: const Duration(seconds: 1),
+          widgets: [
+            ...List.generate(
+              homeCon.trendingList.length,
+              (index) {
+                var item = homeCon.trendingList[index];
+                return TrendingCard(
+                  imageUrl: '${AppConstants.imageUrl}${item['poster_path']}',
+                  title: item["media_type"] == "tv" ? item["name"] : item["title"],
+                  rating: item['vote_average'].toStringAsFixed(1),
+                  year: item["media_type"] == "tv" ? item['first_air_date'] == null ?  "" : item['first_air_date'].split("-")[0] : item['release_date'] == null ?  "" : item['release_date'].split("-")[0],
+                  description: item["overview"] ?? "",
+                  pricing: 'UNLIMITED | FREE | SHOW BOX',
+                  onWatchPressed: () {
                     final mediaType = homeCon.trendingList[index]["media_type"];
                     final id = homeCon.trendingList[index]["id"];
                     // Navigate based on media type (movie or TV)
@@ -171,15 +146,16 @@ class HomePage extends StatelessWidget {
                     } else if (mediaType == "tv") {
                       Get.to(() => SeriesDetailPage(id: id));
                     }
+                    // Handle Watch button press action
                   },
-                  images: homeCon.trendingList.map((item) {
-                    return item['poster_path'] != null
-                        ? '${AppConstants.imageUrl}${item['poster_path']}'
-                        : '';
-                  }).toList(),
-                ),
-    );
+                );
+              },
+            )                                                   
+          ]
+        ),
+      );
   }
+
   // Method to build Upcoming Movies section with conditional loading
   Widget buildUpcomingMoviesSection(HomeController homeCon) {
     return Column(
@@ -220,7 +196,7 @@ class HomePage extends StatelessWidget {
                               Get.to(() => MovieDetailsPage(movieId: data["id"]));
                             },
                             child: ItemCard(
-                              width: 132,
+                              width: 116,
                               title: data["title"],
                               year: "", // You can customize to show release year if needed
                               rating: data["vote_average"]?.toDouble() ?? 0.0,
