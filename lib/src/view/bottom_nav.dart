@@ -126,7 +126,7 @@ class _BottomNavState extends State<BottomNav> {
                         elevation: 0,
                         type: BottomNavigationBarType.fixed,
                         selectedItemColor: const Color(0XFFCBA84A), // Selected item color
-                        unselectedItemColor: Theme.of(context).brightness == Brightness.dark ? const Color.fromARGB(255, 185, 185, 185) : const Color.fromARGB(255, 153, 153, 153), // Unselected item color
+                        unselectedItemColor: Theme.of(context).brightness == Brightness.dark ? const Color.fromARGB(255, 185, 185, 185) : const Color.fromARGB(255, 104, 104, 104), // Unselected item color
                         currentIndex: _selectedIndex,
                         selectedIconTheme: const IconThemeData(size: 28), // Size of selected icon
                         unselectedIconTheme: const IconThemeData(size: 22), // Size of unselected icon

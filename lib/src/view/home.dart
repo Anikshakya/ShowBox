@@ -37,12 +37,12 @@ class HomePage extends StatelessWidget {
             // Upcoming Movies
             buildUpcomingMoviesSection(homeCon),
         
-            const SizedBox(height: 30),
+            const SizedBox(height: 20),
         
             // Top Rated Series Section
             buildTopRatedSeriesSection(homeCon),
         
-            const SizedBox(height: 30),
+            const SizedBox(height: 20),
         
             // Top Rated Movies Section
             buildTopRatedMoviesSection(homeCon),
@@ -157,7 +157,7 @@ class HomePage extends StatelessWidget {
   }
 
   // Method to build Upcoming Movies section with conditional loading
-  Widget buildUpcomingMoviesSection(HomeController homeCon) {
+  buildUpcomingMoviesSection(HomeController homeCon) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -165,10 +165,10 @@ class HomePage extends StatelessWidget {
           padding: EdgeInsets.only(left: 10),
           child: Text(
             "Upcoming Movies",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w300),
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 4),
         Obx(
           () => homeCon.isUpcommingMoviesLoding.isTrue
               ? SizedBox(
@@ -196,7 +196,7 @@ class HomePage extends StatelessWidget {
                               Get.to(() => MovieDetailsPage(movieId: data["id"]));
                             },
                             child: ItemCard(
-                              width: 116,
+                              width: 118,
                               title: data["title"],
                               year: "", // You can customize to show release year if needed
                               rating: data["vote_average"]?.toDouble() ?? 0.0,
@@ -213,7 +213,7 @@ class HomePage extends StatelessWidget {
   }
 
   // Method to build Top Rated Series section with conditional loading
-  Widget buildTopRatedSeriesSection(HomeController homeCon) {
+  buildTopRatedSeriesSection(HomeController homeCon) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -221,10 +221,10 @@ class HomePage extends StatelessWidget {
           padding: EdgeInsets.only(left: 10),
           child: Text(
             "Top Rated Series",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w300),
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 4),
         Obx(
           () => homeCon.isTopRatedSeriesLoading.isTrue
               ? SizedBox(
@@ -252,7 +252,7 @@ class HomePage extends StatelessWidget {
                               Get.to(() => SeriesDetailPage(id: movie.id));
                             },
                             child: ItemCard(
-                              width: 132,
+                              width: 118,
                               title: movie.name,
                               year: "", // You can customize to show release year if needed
                               rating: movie.voteAverage.toDouble(),
@@ -269,7 +269,7 @@ class HomePage extends StatelessWidget {
   }
 
   // Method to build Top Rated Movies section with conditional loading
-  Widget buildTopRatedMoviesSection(HomeController homeCon) {
+  buildTopRatedMoviesSection(HomeController homeCon) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -277,10 +277,10 @@ class HomePage extends StatelessWidget {
           padding: EdgeInsets.only(left: 10),
           child: Text(
             "Top Rated Movies",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w300),
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 4),
         Obx(
           () => homeCon.isTopRatedMoviesLoading.isTrue
               ? SizedBox(
@@ -308,7 +308,7 @@ class HomePage extends StatelessWidget {
                               Get.to(() => MovieDetailsPage(movieId: movie.id));
                             },
                             child: ItemCard(
-                              width: 132,
+                              width: 118,
                               title: movie.title,
                               year: "", // You can customize to show release year if needed
                               rating: movie.voteAverage.toDouble(),
