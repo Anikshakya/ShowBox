@@ -25,60 +25,89 @@ class SeriesListPage extends StatelessWidget {
     seriesController.initialize(); // Pre-fetch initial series data
 
     return Scaffold(
-      body: Obx(() => seriesController.isSeriesListLoading.isTrue
-        // Display a loading spinner while the series list is loading
-        ? const Center(
-            child: CircularProgressIndicator(),
-          )
-        : NotificationListener<ScrollNotification>(
-          onNotification: (scrollNotification) {  
-            // Show Scroll To Top Button
-            if (scrollController.position.pixels > 2000) {
-              seriesController.isScrollToTopVisible(true);
-            } else if (scrollController.position.pixels <= 2000) {
-              seriesController.isScrollToTopVisible(false);
-            }
-
-            // Trigger pagination when the user scrolls to the bottom
-            if (scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent && !seriesController.isSeriesListPaginationLoading.value) {
-              seriesController.isSeriesListPaginationLoading(true);
-              seriesController.fetchNextPage();
-            }
-            return true;
-          },
-          child: RefreshIndicator(
-            backgroundColor: const Color(0XFFCBA84A),
-            color: Theme.of(context).primaryColor,
-            displacement: 80,
-            onRefresh: () async{
-              return Future.delayed(const Duration(seconds: 1), () async{
-                seriesController.initialize(
-                  isRefresh: true
-                );
-              });
-            },
-            child: SingleChildScrollView(
-              controller: scrollController,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // For App Bar
-                  const SizedBox(height: 100),
-                  // Trending Slider
-                  buildTrendingSliderSection(seriesController),
-                  const SizedBox(height: 20),
-                  // Top Rated Series Section
-                  buildTopRatedSeriesSection(seriesController),
-                  const SizedBox(height: 20),
-                  // All Series Grid Section
-                  buildAllSeriesGrid(seriesController),
-                  // Pagination loading indicator
-                  paginationLoading(seriesController),
+      body: Stack(
+        children: [
+          // Graident Underlay
+          Container(
+              decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.white.withOpacity(.2), 
+                  Colors.transparent,
                 ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
             ),
-          )
-        ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.grey.withOpacity(.14),
+                  Colors.transparent,
+                ],
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+              ),
+            ),
+            child: Obx(() => seriesController.isSeriesListLoading.isTrue
+              // Display a loading spinner while the series list is loading
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : NotificationListener<ScrollNotification>(
+                onNotification: (scrollNotification) {  
+                  // Show Scroll To Top Button
+                  if (scrollController.position.pixels > 2000) {
+                    seriesController.isScrollToTopVisible(true);
+                  } else if (scrollController.position.pixels <= 2000) {
+                    seriesController.isScrollToTopVisible(false);
+                  }
+              
+                  // Trigger pagination when the user scrolls to the bottom
+                  if (scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent && !seriesController.isSeriesListPaginationLoading.value) {
+                    seriesController.isSeriesListPaginationLoading(true);
+                    seriesController.fetchNextPage();
+                  }
+                  return true;
+                },
+                child: RefreshIndicator(
+                  backgroundColor: const Color(0XFFCBA84A),
+                  color: Theme.of(context).primaryColor,
+                  displacement: 80,
+                  onRefresh: () async{
+                    return Future.delayed(const Duration(seconds: 1), () async{
+                      seriesController.initialize(
+                        isRefresh: true
+                      );
+                    });
+                  },
+                  child: SingleChildScrollView(
+                    controller: scrollController,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // For App Bar
+                        const SizedBox(height: 100),
+                        // Trending Slider
+                        buildTrendingSliderSection(seriesController),
+                        const SizedBox(height: 20),
+                        // Top Rated Series Section
+                        buildTopRatedSeriesSection(seriesController),
+                        const SizedBox(height: 20),
+                        // All Series Grid Section
+                        buildAllSeriesGrid(seriesController),
+                        // Pagination loading indicator
+                        paginationLoading(seriesController),
+                      ],
+                    ),
+                  ),
+                )
+              ),
+            ),
+          ),
+        ],
       ),
       floatingActionButton: Obx(()=>
          Visibility(
@@ -123,9 +152,9 @@ class SeriesListPage extends StatelessWidget {
             : CustomItemSlider(
                 height: 260,
                 cornerRadius: 2,
-                unActiveScale: 0.95,
+                unActiveScale: 0.7,
                 autoSlide: true,
-                setLoop: false,
+                setLoop: true,
                 itemMargin: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
                 items: [
                   ...List.generate(
@@ -159,10 +188,10 @@ class SeriesListPage extends StatelessWidget {
           padding: EdgeInsets.only(left: 10),
           child: Text(
             "Top Rated Series",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w300),
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 4),
         Obx(
           () => seriesController.isTopRatedSeriesLoading.isTrue
               ? SizedBox(
@@ -176,7 +205,7 @@ class SeriesListPage extends StatelessWidget {
                     padding: const EdgeInsets.only(left: 10, right: 10),
                     itemCount: seriesController.topRatedSeries.length,
                     physics: const BouncingScrollPhysics(),
-                    separatorBuilder: (context, index) => const SizedBox(width: 10),
+                    separatorBuilder: (context, index) => const SizedBox(width: 7.5),
                     itemBuilder: (context, index) {
                       final series = seriesController.topRatedSeries[index];
                       return GestureDetector(
@@ -184,7 +213,7 @@ class SeriesListPage extends StatelessWidget {
                           Get.to(() => SeriesDetailPage(id: series.id));
                         },
                         child: ItemCard(
-                          width: 132,
+                          width: 120,
                           title: series.name ?? "",
                           year: "",
                           rating: series.voteAverage?.toDouble() ?? 0.0,
@@ -218,11 +247,11 @@ class SeriesListPage extends StatelessWidget {
                     "All Series",
                     style: TextStyle(
                       fontSize: 18,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w300,
                     ),
                   ),
                 ),
-                const SizedBox(height: 10,),
+                const SizedBox(height: 4,),
                 // Series List Grid
               GridView.builder(
                   physics: const NeverScrollableScrollPhysics(),

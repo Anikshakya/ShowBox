@@ -23,56 +23,89 @@ class MovieList extends StatelessWidget {
 
     movieController.initialize(); // Pre-fetch initial movie data                                                                  
     return Scaffold(
-      body: Obx(() => movieController.isMovieListLoading. isTrue
-        ? const Center(child: CircularProgressIndicator()) // Display loading spinner while movie list loads
-        : NotificationListener<ScrollNotification>(
-            onNotification: (scrollNotification) {                            
-              // Show Scroll To Top Button
-              if (scrollController.position.pixels  > 2000) {
-                movieController.isScrollToTopVisible(true);
-              } else if (scrollController.position.pixels  <= 2000) {
-                movieController.isScrollToTopVisible(false);
-              }
-
-              // Trigger pagination when the user scrolls to the bottom
-              if (scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent && !movieController.isMovieListPaginationLoading.value) {
-                movieController.isMovieListPaginationLoading(true);
-                movieController.fetchNextPage(); // Trigger pagination when scrolling reaches the bottom
-              }
-              return true;
-            },
-            child: RefreshIndicator(
-              backgroundColor: const Color(0XFFCBA84A),
-              color: Theme.of(context).primaryColor,
-              displacement: 80,
-              onRefresh: () async{
-                return Future.delayed(const Duration(seconds: 1), () async{
-                  await movieController.initialize(
-                    isRefresh: true
-                  );
-                });
-              }, // Refresh handler function
-              child: SingleChildScrollView(
-                controller: scrollController,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 100), // App bar space
-                    // Trending Slider Section
-                    buildTrendingSliderSection(movieController),
-                    const SizedBox(height: 20),
-                    // Top Rated Movies Section
-                    buildTopRatedMoviesSection(movieController),
-                    const SizedBox(height: 20),
-                    // All Movies Grid Section
-                    buildAllMoviesGrid(movieController),
-                    // Loading indicator for pagination
-                    paginationLoading(movieController),
-                  ],
-                ),
+      body: Stack(
+        children: [
+          // Gradient Underlay
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.white.withOpacity(.2),
+                  Colors.transparent,
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
             ),
           ),
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.grey.withOpacity(.14),
+                  Colors.transparent,
+                ],
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+              ),
+            ),
+            child: Obx(() => movieController.isMovieListLoading. isTrue
+              ? const Center(child: CircularProgressIndicator()) // Display loading spinner while movie list loads
+              : Stack(
+                children: [
+                  NotificationListener<ScrollNotification>(
+                      onNotification: (scrollNotification) {                            
+                        // Show Scroll To Top Button
+                        if (scrollController.position.pixels  > 2000) {
+                          movieController.isScrollToTopVisible(true);
+                        } else if (scrollController.position.pixels  <= 2000) {
+                          movieController.isScrollToTopVisible(false);
+                        }
+                  
+                        // Trigger pagination when the user scrolls to the bottom
+                        if (scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent && !movieController.isMovieListPaginationLoading.value) {
+                          movieController.isMovieListPaginationLoading(true);
+                          movieController.fetchNextPage(); // Trigger pagination when scrolling reaches the bottom
+                        }
+                        return true;
+                      },
+                      child: RefreshIndicator(
+                        backgroundColor: const Color(0XFFCBA84A),
+                        color: Theme.of(context).primaryColor,
+                        displacement: 80,
+                        onRefresh: () async{
+                          return Future.delayed(const Duration(seconds: 1), () async{
+                            await movieController.initialize(
+                              isRefresh: true
+                            );
+                          });
+                        }, // Refresh handler function
+                        child: SingleChildScrollView(
+                          controller: scrollController,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 100), // App bar space
+                              // Trending Slider Section
+                              buildTrendingSliderSection(movieController),
+                              const SizedBox(height: 20),
+                              // Top Rated Movies Section
+                              buildTopRatedMoviesSection(movieController),
+                              const SizedBox(height: 20),
+                              // All Movies Grid Section
+                              buildAllMoviesGrid(movieController),
+                              // Loading indicator for pagination
+                              paginationLoading(movieController),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
       floatingActionButton: Obx(() {
         return Visibility(
@@ -117,9 +150,9 @@ class MovieList extends StatelessWidget {
             : CustomItemSlider(
                 height: 260,
                 cornerRadius: 2,
-                unActiveScale: 0.95,
+                unActiveScale: 0.7,
                 autoSlide: true,
-                setLoop: false,
+                setLoop: true,
                 itemMargin: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
                 items: [
                   ...List.generate(
@@ -153,10 +186,10 @@ class MovieList extends StatelessWidget {
           padding: EdgeInsets.only(left: 10),
           child: Text(
             "Top Rated Movies",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w300),
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 4),
         Obx(
           () => movieController.isTopRatedMoviesLoading.isTrue
               ? SizedBox(
@@ -175,7 +208,7 @@ class MovieList extends StatelessWidget {
                         padding: const EdgeInsets.only(left: 10, right: 10),
                         itemCount: movieController.topRatedMovies.length,
                         physics: const BouncingScrollPhysics(),
-                        separatorBuilder: (context, index) => const SizedBox(width: 10),
+                        separatorBuilder: (context, index) => const SizedBox(width: 7.5),
                         itemBuilder: (context, index) {
                           final movie = movieController.topRatedMovies[index];
                           return GestureDetector(
@@ -183,7 +216,7 @@ class MovieList extends StatelessWidget {
                               Get.to(() => MovieDetailsPage(movieId: movie.id));
                             },
                             child: ItemCard(
-                              width: 134,
+                              width: 120,
                               title: movie.title,
                               year: "", // You can customize to show release year if needed
                               rating: movie.voteAverage?.toDouble() ?? 0.0,
@@ -217,11 +250,11 @@ class MovieList extends StatelessWidget {
                     "All Movies",
                     style: TextStyle(
                       fontSize: 18,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w300,
                     ),
                   ),
                 ),
-                const SizedBox(height: 10,),
+                const SizedBox(height: 4,),
                 // Grid
                 GridView.builder(
                     physics: const NeverScrollableScrollPhysics(),

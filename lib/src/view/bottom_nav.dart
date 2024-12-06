@@ -107,7 +107,7 @@ class _BottomNavState extends State<BottomNav> {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Theme.of(context).primaryColor.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.5 ),
+                        color: Theme.of(context).primaryColor.withOpacity(0.3),
                         blurRadius: 2,
                         offset: const Offset(0, 0),
                       ),
@@ -122,7 +122,7 @@ class _BottomNavState extends State<BottomNav> {
                         unselectedLabelStyle: const TextStyle(fontSize: 0), // Hide labels
                         showSelectedLabels: false, // Hide selected label
                         showUnselectedLabels: false, // Hide unselected label
-                        backgroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.black.withOpacity(0.5) : Colors.white.withOpacity(0.8),
+                        backgroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.black.withOpacity(0.5) : Colors.white.withOpacity(0.84),
                         elevation: 0,
                         type: BottomNavigationBarType.fixed,
                         selectedItemColor: const Color(0XFFCBA84A), // Selected item color

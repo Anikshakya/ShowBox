@@ -128,6 +128,7 @@ class _CustomWebViewState extends State<CustomWebView> {
               )
             : null, // Only show the app bar if showAppBar is true
         body: SafeArea(
+          bottom: false,
           child: SizedBox(
             height: MediaQuery.of(context).size.height - kToolbarHeight - 80,
             child: Column(
