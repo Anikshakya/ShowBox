@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:showbox/src/app_config/styles.dart';
 import 'package:showbox/src/view/splash_screen.dart';
 
 class NoInternetPage extends StatefulWidget {
@@ -31,7 +32,7 @@ class _NoInternetPageState extends State<NoInternetPage> {
               const Icon(
                 Icons.signal_wifi_off,
                 size: 120,
-                color: Color(0XFFCBA84A),
+                color: AppStyles.goldenColor,
               ),
               const SizedBox(height: 30),
               const Text(
@@ -56,7 +57,7 @@ class _NoInternetPageState extends State<NoInternetPage> {
               TextButton(
                 onPressed: _isLoading ? null : _retryConnection,
                 style: TextButton.styleFrom(
-                  backgroundColor: const Color(0XFFCBA84A), // Button background color
+                  backgroundColor: AppStyles.goldenColor, // Button background color
                   foregroundColor: Colors.white, // Text and icon color
                   padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                   shape: RoundedRectangleBorder(

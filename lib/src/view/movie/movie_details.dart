@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:showbox/src/app_config/styles.dart';
 import 'package:showbox/src/constant/constants.dart';
 import 'package:showbox/src/controller/movies_controller.dart';
 import 'package:showbox/src/widgets/custom_image_widget.dart';
@@ -84,7 +85,7 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
             const Icon(
               Icons.error_outline,
               size: 120,
-              color: Color(0XFFCBA84A),
+              color: AppStyles.goldenColor,
             ),
             const SizedBox(height: 30),
             const Text(
@@ -102,7 +103,7 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
             TextButton(
               onPressed: initialize, // Retry fetching the movie details
               style: TextButton.styleFrom(
-                backgroundColor: const Color(0XFFCBA84A),
+                backgroundColor:AppStyles.goldenColor,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),

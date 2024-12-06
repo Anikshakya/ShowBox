@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:showbox/src/app_config/styles.dart';
 import 'package:showbox/src/app_config/theme/custom_themes/appbar_theme.dart';
 import 'package:showbox/src/app_config/theme/custom_themes/bottom_sheet_theme.dart';
 import 'package:showbox/src/app_config/theme/custom_themes/check_box_theme.dart';
@@ -24,7 +25,7 @@ class CAppTheme {
     outlinedButtonTheme: COutlinedButtonTheme.lightOutlinedButtonTheme,
     inputDecorationTheme: CTextFormFieldTheme.lightInputDecorationTheme,
     progressIndicatorTheme: const ProgressIndicatorThemeData(
-      color: Color(0XFFCBA84A),
+      color: AppStyles.goldenColor,
     ),
     textSelectionTheme: TextSelectionThemeData(
       cursorColor: const Color.fromARGB(255, 110, 108, 110),
@@ -47,7 +48,7 @@ class CAppTheme {
     outlinedButtonTheme: COutlinedButtonTheme.darkOutlinedButtonTheme,
     inputDecorationTheme: CTextFormFieldTheme.darkInputDecorationTheme,
     progressIndicatorTheme: const ProgressIndicatorThemeData(
-      color: Color(0XFFCBA84A),
+      color: AppStyles.goldenColor,
     ),
     textSelectionTheme: TextSelectionThemeData(
       cursorColor: const Color.fromARGB(255, 110, 108, 110),

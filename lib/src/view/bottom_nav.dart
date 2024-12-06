@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:showbox/src/app_config/styles.dart';
 import 'package:showbox/src/controller/bottom_nav_controller.dart';
 import 'package:showbox/src/view/home.dart';
 import 'package:showbox/src/view/movie/movies_list.dart';
@@ -125,7 +126,7 @@ class _BottomNavState extends State<BottomNav> {
                         backgroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.black.withOpacity(0.5) : Colors.white.withOpacity(0.84),
                         elevation: 0,
                         type: BottomNavigationBarType.fixed,
-                        selectedItemColor: const Color(0XFFCBA84A), // Selected item color
+                        selectedItemColor: AppStyles.goldenColor, // Selected item color
                         unselectedItemColor: Theme.of(context).brightness == Brightness.dark ? const Color.fromARGB(255, 185, 185, 185) : const Color.fromARGB(255, 104, 104, 104), // Unselected item color
                         currentIndex: _selectedIndex,
                         selectedIconTheme: const IconThemeData(size: 28), // Size of selected icon

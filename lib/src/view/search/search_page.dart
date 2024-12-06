@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:showbox/src/app_config/styles.dart';
 import 'package:showbox/src/controller/search_controller.dart';
 import 'package:showbox/src/view/movie/movie_details.dart';
 import 'package:showbox/src/view/series/series_details.dart';
@@ -71,7 +72,7 @@ class SearchPage extends StatelessWidget {
                   ? Colors.grey[100]
                   : Colors.grey[900],
               unselectedLabelColor:Colors.grey[500],
-              indicatorColor: const Color(0XFFCBA84A),
+              indicatorColor: AppStyles.goldenColor,
               labelStyle: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w500
@@ -117,7 +118,7 @@ class SearchPage extends StatelessWidget {
                 if (controller.isSearchListLoading.value) {
                   return const Center(
                     child: CircularProgressIndicator(
-                      color: Color(0XFFCBA84A), // Golden progress indicator
+                      color: AppStyles.goldenColor, // Golden progress indicator
                     ),
                   );
                 }

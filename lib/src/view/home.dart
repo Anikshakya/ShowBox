@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:showbox/src/app_config/styles.dart';
 import 'package:showbox/src/constant/constants.dart';
 import 'package:showbox/src/controller/home_controller.dart';
 import 'package:showbox/src/view/movie/movie_details.dart';
@@ -80,7 +81,7 @@ class HomePage extends StatelessWidget {
                         TextSpan(text: "Watch "),
                         TextSpan(
                           text: "Free",
-                          style: TextStyle(color: Color(0XFFCBA84A)),
+                          style: TextStyle(color: AppStyles.goldenColor),
                         ),
                         TextSpan(text: " HD Movies &\nTV shows"),
                       ],
@@ -101,13 +102,13 @@ class HomePage extends StatelessWidget {
                         TextSpan(text: "Enjoy your "),
                         TextSpan(
                           text: "unlimited",
-                          style: TextStyle(color: Color(0XFFCBA84A)),
+                          style: TextStyle(color: AppStyles.goldenColor),
                         ),
                         TextSpan(
                             text: " Movies & TV show collection.\nWe are the definitive source for the best\n curated 720p / 1080p HD Movies & TV shows,\nviewable by mobile phone and tablet, for "),
                         TextSpan(
                           text: "free",
-                          style: TextStyle(color: Color(0XFFCBA84A)),
+                          style: TextStyle(color: AppStyles.goldenColor),
                         ),
                         TextSpan(text: "."),
                       ],

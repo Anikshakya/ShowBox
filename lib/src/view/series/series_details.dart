@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:showbox/src/app_config/styles.dart';
 import 'package:showbox/src/constant/constants.dart';
 import 'package:showbox/src/controller/series_controller.dart';
 import 'package:showbox/src/widgets/custom_image_widget.dart';
@@ -56,7 +57,7 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                   const Icon(
                     Icons.error_outline,
                     size: 120,
-                    color: Color(0XFFCBA84A),
+                    color: AppStyles.goldenColor,
                   ),
                   const SizedBox(height: 30),
                   const Text(
@@ -81,7 +82,7 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                   TextButton(
                     onPressed: initialise,
                     style: TextButton.styleFrom(
-                      backgroundColor: const Color(0XFFCBA84A),
+                      backgroundColor: AppStyles.goldenColor,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                       shape: RoundedRectangleBorder(
@@ -256,7 +257,7 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                                           'Season ${season.seasonNumber}',
                                           style: TextStyle(
                                               color: selectedSeason == season.seasonNumber
-                                                  ? const Color(0XFFCBA84A)
+                                                  ? AppStyles.goldenColor
                                                   : null),
                                         ),
                                         backgroundColor: selectedSeason == season.seasonNumber
@@ -301,7 +302,7 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                                                   decoration: BoxDecoration(
                                                     border: Border.all(
                                                       color: selectedEpisode == seriesCon.episodeList[index]["episode_number"]
-                                                          ? const Color(0XFFCBA84A)
+                                                          ?AppStyles.goldenColor
                                                           : Theme.of(context).colorScheme.surface,
                                                     ),
                                                     borderRadius: BorderRadius.circular(8),

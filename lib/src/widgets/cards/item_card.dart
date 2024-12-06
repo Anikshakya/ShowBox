@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:showbox/src/app_config/styles.dart';
 import 'package:showbox/src/constant/constants.dart';
 import 'package:showbox/src/widgets/custom_image_widget.dart';
 
@@ -65,7 +66,7 @@ class ItemCard extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: const Color(0XFFCBA84A).withOpacity(0.9),
+                  color: AppStyles.goldenColor.withOpacity(0.9),
                   borderRadius: const BorderRadius.only(
                       bottomLeft: Radius.circular(8)),
                 ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:showbox/src/app_config/styles.dart';
 import 'package:showbox/src/constant/constants.dart';
 import 'package:showbox/src/controller/bottom_nav_controller.dart';
 import 'package:showbox/src/controller/series_controller.dart';
@@ -73,7 +74,7 @@ class SeriesListPage extends StatelessWidget {
                   return true;
                 },
                 child: RefreshIndicator(
-                  backgroundColor: const Color(0XFFCBA84A),
+                  backgroundColor: AppStyles.goldenColor,
                   color: Theme.of(context).primaryColor,
                   displacement: 80,
                   onRefresh: () async{
