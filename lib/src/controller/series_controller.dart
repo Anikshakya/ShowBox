@@ -45,7 +45,7 @@ class SeriesController extends GetxController{
   getTrendingSeriesList() async {
     try {
       isTrendingSeriesLoading(true);
-      var response = await ApiRepo.apiGet(AppConstants.trendingSeriesUrl, "");
+      var response = await ApiRepo.apiGet(AppConstants.trendingSeriesUrl, "Trending Series");
       if(response != null) {
         trendingSeriesList.value = response['results'];
         isTrendingSeriesLoading( false);
@@ -65,7 +65,6 @@ class SeriesController extends GetxController{
       // Fetch data from the API
       var response = await ApiRepo.apiGet(
         'https://api.themoviedb.org/3/tv/top_rated',
-        "",
         "Get Top Rated Series"
       );
       if (response != null) {
@@ -86,7 +85,7 @@ class SeriesController extends GetxController{
   getSeriesList() async {
     try {
       isSeriesListLoading(true);
-      var response = await ApiRepo.apiGet(AppConstants.showListUrl, "");
+      var response = await ApiRepo.apiGet(AppConstants.showListUrl, "Get Series List");
       if(response != null) {
         seriesList.value = response['results'];
         isSeriesListLoading(false);
@@ -105,7 +104,6 @@ class SeriesController extends GetxController{
       seriesListPage.value++;
       var response = await ApiRepo.apiGet(
         '${AppConstants.showListUrl}?page=${seriesListPage.value}&sort_by=popularity.desc&include_adult=$showAdult',
-        "",
         "Get Series List Pagination",
       );
       if (response != null) {
@@ -125,7 +123,7 @@ class SeriesController extends GetxController{
     try {
       isDetailLoading(true);
       episodeList.clear();
-      var response = await ApiRepo.apiGet("${AppConstants.showDetailUrl}/$id", "");
+      var response = await ApiRepo.apiGet("${AppConstants.showDetailUrl}/$id", "Series Details");
       if(response != null) {
         final allData = SeriesDetailModel.fromJson(response);
         seriesDetail = allData;
@@ -143,7 +141,7 @@ class SeriesController extends GetxController{
     try {
       isEpisodeLoading(true);
       episodeList.clear();
-      var response = await ApiRepo.apiGet("${AppConstants.showDetailUrl}/$seriesId?api_key=${AppConstants.apiKey}&append_to_response=season/$seasonNo", "");
+      var response = await ApiRepo.apiGet("${AppConstants.showDetailUrl}/$seriesId?api_key=${AppConstants.apiKey}&append_to_response=season/$seasonNo", "Get Episode List");
       if(response != null) {
         episodeList = response["season/$seasonNo"]["episodes"];
         isEpisodeLoading(false);

@@ -42,7 +42,7 @@ class MovieController extends GetxController {
   getTrendingMoviesList() async {
     try {
       isTrendingMoviesLoading(true);
-      var response = await ApiRepo.apiGet(AppConstants.trendingMovieUrl, "");
+      var response = await ApiRepo.apiGet(AppConstants.trendingMovieUrl, "Trending Movies");
       if(response != null) {
         trendingMovieList.value = response['results'];
         isTrendingMoviesLoading( false);
@@ -59,8 +59,7 @@ class MovieController extends GetxController {
     try {
       isTopRatedMoviesLoading(true);
       var response = await ApiRepo.apiGet(
-        'https://api.themoviedb.org/3/movie/top_rated', 
-        '', 
+        'https://api.themoviedb.org/3/movie/top_rated',
         'Get Top Rated Movies'
       );
       if (response != null) {
@@ -82,7 +81,6 @@ class MovieController extends GetxController {
       isMovieListLoading(true);
       var response = await ApiRepo.apiGet(
         AppConstants.movieListUrl,
-        "",
         "Get Movie List",
       );
       if (response != null) {
@@ -104,7 +102,6 @@ class MovieController extends GetxController {
       movielistPage.value++;
       var response = await ApiRepo.apiGet(
         '${AppConstants.movieListUrl}?page=${movielistPage.value}&sort_by=popularity.desc&include_adult=$showAdult',
-        "",
         "Get Movie List Pagination",
       );
       if (response != null) {
@@ -126,7 +123,6 @@ class MovieController extends GetxController {
       isMovieDetailsLoading(true);
       var response = await ApiRepo.apiGet(
         "${AppConstants.movieDetailUrl}/$id",
-        "",
         "Get Movie Details",
       );
       if (response != null) {

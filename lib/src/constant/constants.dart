@@ -12,7 +12,7 @@ class AppConstants {
   //SHOWS
   static String showListUrl = '$baseUrl/discover/tv';
   static String showDetailUrl = '$baseUrl/tv';
-  static String searchShowUrl = '$baseUrl/search/tv';
+  static String searchSeriesUrl = '$baseUrl/search/tv';
 
 
   // video embed url

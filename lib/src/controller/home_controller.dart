@@ -43,7 +43,7 @@ class HomeController extends GetxController {
   getTrendingList() async {
     try {
       isTrendingListLoading(true);
-      var response = await ApiRepo.apiGet(AppConstants.trendingUrl, "", "Get Trending List");
+      var response = await ApiRepo.apiGet(AppConstants.trendingUrl, "Get Trending List");
       if (response != null) {
         trendingList.value = response['results'] ?? [];
       }
@@ -60,7 +60,6 @@ class HomeController extends GetxController {
       isUpcommingMoviesLoding(true);
       var response = await ApiRepo.apiGet(
         'https://api.themoviedb.org/3/movie/popular?language=en-US&page=1',
-        "",
         "Get Upcomming Movies"
       );
       if (response != null) {
@@ -78,9 +77,8 @@ class HomeController extends GetxController {
     try {
       isTopRatedMoviesLoading(true);
       var response = await ApiRepo.apiGet(
-        'https://api.themoviedb.org/3/movie/top_rated', 
-        '', 
-        'Get Top Rated Movies'
+        'https://api.themoviedb.org/3/movie/top_rated',
+        'Get Top Rated Movies'   
       );
       if (response != null) {
         topRatedMovies.value = (response['results'] as List?)
@@ -100,7 +98,6 @@ class HomeController extends GetxController {
       isTopRatedSeriesLoading(true);
       var response = await ApiRepo.apiGet(
         'https://api.themoviedb.org/3/tv/top_rated',
-        "",
         "Get Top Rated Series"
       );
       if (response != null) {

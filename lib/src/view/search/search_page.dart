@@ -39,7 +39,8 @@ class SearchPage extends StatelessWidget {
             child: TextFormField(
               onFieldSubmitted: (value) {
                 if (value.isNotEmpty) {
-                  controller.searchForMovie(value);
+                  controller.searchMovie(value);
+                  controller.searchSeries(value);
                 }
               },
               style: TextStyle(
@@ -115,7 +116,7 @@ class SearchPage extends StatelessWidget {
                 ),
               ),
               child: Obx(() {
-                if (controller.isSearchListLoading.value) {
+                if (controller.isMovieSearchLoading.value) {
                   return const Center(
                     child: CircularProgressIndicator(
                       color: AppStyles.goldenColor, // Golden progress indicator
