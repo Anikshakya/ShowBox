@@ -32,7 +32,7 @@ class HomePage extends StatelessWidget {
             // Trending Movies/Series
             trendingSlider(homeCon, context),
         
-            const SizedBox(height: 20),
+            const SizedBox(height: 30),
         
             // Upcoming Movies
             buildUpcomingMoviesSection(homeCon),
