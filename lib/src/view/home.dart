@@ -121,9 +121,8 @@ class HomePage extends StatelessWidget {
         )
         : CustomPageView(
           height: 560,
-          width: double.infinity,
           enableAutoSwipe: true,
-          showIndicator: false,
+          showIndicator: true,
           animationDuration: const Duration(seconds: 1),
           widgets: [
             ...List.generate(
