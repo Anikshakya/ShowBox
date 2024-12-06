@@ -19,7 +19,7 @@ class SearchPage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
-          backgroundColor: Colors.transparent,
+          backgroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.white.withOpacity(0.11) : Theme.of(context).primaryColor.withOpacity(0.09),
           toolbarHeight: 100,
           title: Container(
             height: 45,
@@ -87,113 +87,144 @@ class SearchPage extends StatelessWidget {
             ),
           ),
         ),
-        body: Obx(() {
-          if (controller.isSearchListLoading.value) {
-            return const Center(
-              child: CircularProgressIndicator(
-                color: Color(0XFFCBA84A), // Golden progress indicator
-              ),
-            );
-          }
-
-          if (!controller.hasSearched.value) {
-            return const Center(
-              child: Text(
-                "Nothing to show",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w300,
+        body: Stack(
+          children: [
+            // Gradient Underlay
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Theme.of(context).primaryColor.withOpacity(Theme.of(context).brightness == Brightness.dark ? .0001 : 0.1),
+                    Colors.transparent,
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                 ),
               ),
-            );
-          }
-
-          return TabBarView(
-            children: [
-              // Movies Tab
-              controller.movieSearchList.isEmpty
-                  ? const Center(
-                      child: Text(
-                        "No Movies Found",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w300,
-                        ),
-                      ),
-                    )
-                  : GridView.builder(
-                      padding: const EdgeInsets.all(8.0),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        mainAxisSpacing: 8,
-                        crossAxisSpacing: 8,
-                        childAspectRatio: 0.7,
-                      ),
-                      itemCount: controller.movieSearchList.length,
-                      itemBuilder: (context, index) {
-                        var movie = controller.movieSearchList[index];
-                        return GestureDetector(
-                          onTap: (){
-                              Get.to(()=> MovieDetailsPage(movieId: movie["id"]));
-                          },
-                          child: ItemCard(
-                            title: movie['title'] ?? 'Unknown Movie',
-                            year: (movie['release_date'] ?? '').split('-').first,
-                            rating: (movie['vote_average'] ?? 0).toDouble(),
-                            image: movie['poster_path'] ?? '',
-                            width: MediaQuery.of(context).size.width / 2 - 16,
-                          ),
-                        );
-                      },
+            ),
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.white.withOpacity(.2),
+                    Colors.transparent,
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
+              child: Obx(() {
+                if (controller.isSearchListLoading.value) {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: Color(0XFFCBA84A), // Golden progress indicator
                     ),
-
-              // Series Tab
-              controller.seriesSearchList.isEmpty
-                  ? const Center(
-                      child: Text(
-                        "No Series Found",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w300,
-                        ),
+                  );
+                }
+              
+                if (!controller.hasSearched.value) {
+                  return const Center(
+                    child: Text(
+                      "Nothing to show",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w300,
                       ),
-                    )
-                  : GridView.builder(
-                      padding: const EdgeInsets.all(8.0),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        mainAxisSpacing: 8,
-                        crossAxisSpacing: 8,
-                        childAspectRatio: 0.7,
-                      ),
-                      itemCount: controller.seriesSearchList.length,
-                      itemBuilder: (context, index) {
-                        var series = controller.seriesSearchList[index];
-                        return GestureDetector(
-                          onTap : (){
-                            if( series["media_type"] == "tv"){
-                              Get.to(()=> SeriesDetailPage(
-                                id: series["id"],
-                              ));
-                            }
-                          },
-                          child: ItemCard(
-                            title: series['name'] ?? 'Unknown Series',
-                            year: (series['first_air_date'] ?? '')
-                                .split('-')
-                                .first,
-                            rating: (series['vote_average'] ?? 0).toDouble(),
-                            image: series['poster_path'] ?? '',
-                            width: MediaQuery.of(context).size.width / 2 - 16,
-                          ),
-                        );
-                      },
                     ),
-            ],
-          );
-        }),
+                  );
+                }
+              
+                return TabBarView(
+                  children: [
+                    // Movies Tab
+                    controller.movieSearchList.isEmpty
+                        ? const Center(
+                            child: Text(
+                              "No Movies Found",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                          )
+                        : GridView.builder(
+                            padding: const EdgeInsets.all(8.0),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              mainAxisSpacing: 8,
+                              crossAxisSpacing: 8,
+                              childAspectRatio: 0.7,
+                            ),
+                            itemCount: controller.movieSearchList.length,
+                            itemBuilder: (context, index) {
+                              var movie = controller.movieSearchList[index];
+                              return GestureDetector(
+                                onTap: (){
+                                    Get.to(()=> MovieDetailsPage(movieId: movie["id"]));
+                                },
+                                child: ItemCard(
+                                  title: movie['title'] ?? 'Unknown Movie',
+                                  year: (movie['release_date'] ?? '').split('-').first,
+                                  rating: (movie['vote_average'] ?? 0).toDouble(),
+                                  image: movie['poster_path'] ?? '',
+                                  width: MediaQuery.of(context).size.width / 2 - 16,
+                                ),
+                              );
+                            },
+                          ),
+              
+                    // Series Tab
+                    controller.seriesSearchList.isEmpty
+                        ? const Center(
+                            child: Text(
+                              "No Series Found",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                          )
+                        : GridView.builder(
+                          shrinkWrap: true,
+                          physics: const BouncingScrollPhysics(),
+                          padding: const EdgeInsets.all(8.0),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            mainAxisSpacing: 8,
+                            crossAxisSpacing: 8,
+                            childAspectRatio: 0.7,
+                          ),
+                          itemCount: controller.seriesSearchList.length,
+                          itemBuilder: (context, index) {
+                            var series = controller.seriesSearchList[index];
+                            return GestureDetector(
+                              onTap : (){
+                                if( series["media_type"] == "tv"){
+                                  Get.to(()=> SeriesDetailPage(
+                                    id: series["id"],
+                                  ));
+                                }
+                              },
+                              child: ItemCard(
+                                title: series['name'] ?? 'Unknown Series',
+                                year: (series['first_air_date'] ?? '')
+                                    .split('-')
+                                    .first,
+                                rating: (series['vote_average'] ?? 0).toDouble(),
+                                image: series['poster_path'] ?? '',
+                                width: MediaQuery.of(context).size.width / 2 - 16,
+                              ),
+                            );
+                          },
+                        ),
+                  ],
+                );
+              }),
+            ),
+          ],
+        ),
       ),
     );
   }
