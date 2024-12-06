@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class CustomPageView extends StatefulWidget {
   final double height;
-  final double width;
+  final double? width;
   final List widgets;
   final double? indicatorTop;
   final double? indicatorBottom;
@@ -19,14 +19,14 @@ class CustomPageView extends StatefulWidget {
   const CustomPageView({
     super.key,
     required this.height,
-    required this.width,
+    this.width = double.infinity,
     required this.widgets,
     this.indicatorTop,
     this.indicatorBottom = 16,
     this.indicatorLeft = 0,
     this.indicatorRight = 0,
     this.indicatorColor = Colors.white,
-    this.indicatorSize = 8.0,
+    this.indicatorSize = 6.0,
     this.enableAutoSwipe = false,
     this.showIndicator = true, // Default to show the indicator
     this.swipeAfter = const Duration(milliseconds: 8000),
@@ -94,7 +94,6 @@ class _CustomPageViewState extends State<CustomPageView> {
           width: widget.width,
           child: PageView.builder(
             controller: _pageController,
-            itemCount: null, // Set to null for infinite loop
             onPageChanged: (index) {
               final currentPage = index % widget.widgets.length;
               _currentPageNotifier.value = currentPage;
@@ -106,7 +105,7 @@ class _CustomPageViewState extends State<CustomPageView> {
               return widget.widgets[pageIndex];
             },
           ),
-        ),
+        ), 
         // Custom Page Indicator (Conditional Rendering)
         if (widget.showIndicator)
           Positioned(
@@ -117,18 +116,23 @@ class _CustomPageViewState extends State<CustomPageView> {
             child: ValueListenableBuilder<int>(
               valueListenable: _currentPageNotifier,
               builder: (context, currentPage, child) {
-                // Using modulo to ensure the index is within bounds
                 final currentIndicatorPage = currentPage % widget.widgets.length;
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(widget.widgets.length, (index) {
+                    // Calculate the normalized distance from the center
+                    final distanceFromCenter = (index - currentIndicatorPage).abs();
+                    // Normalize the distance to a value between 0 and 1
+                    final normalizedDistance = (1 - (distanceFromCenter / (widget.widgets.length / 2)))
+                        .clamp(0.0, 1.0);
+                    // Adjust the size based on distance
+                    final dynamicSize = widget.indicatorSize * (0.5 + 0.5 * normalizedDistance);
+
                     return AnimatedContainer(
                       duration: const Duration(milliseconds: 300),
-                      margin: const EdgeInsets.symmetric(horizontal: 5),
-                      height: widget.indicatorSize,
-                      width: currentIndicatorPage == index
-                          ? widget.indicatorSize * 2
-                          : widget.indicatorSize,
+                      margin: const EdgeInsets.symmetric(horizontal: 3),
+                      height: dynamicSize,
+                      width: dynamicSize,
                       decoration: BoxDecoration(
                         color: currentIndicatorPage == index
                             ? widget.indicatorColor
