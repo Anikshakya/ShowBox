@@ -26,6 +26,11 @@ class CAppTheme {
     progressIndicatorTheme: const ProgressIndicatorThemeData(
       color: Color(0XFFCBA84A),
     ),
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: const Color.fromARGB(255, 110, 108, 110),
+      selectionColor: const Color(0xffecc877).withOpacity(.5),
+      selectionHandleColor: const Color(0xffecc877), 
+    ),
   );
 
   static ThemeData darkTheme = ThemeData(
@@ -43,6 +48,11 @@ class CAppTheme {
     inputDecorationTheme: CTextFormFieldTheme.darkInputDecorationTheme,
     progressIndicatorTheme: const ProgressIndicatorThemeData(
       color: Color(0XFFCBA84A),
+    ),
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: const Color.fromARGB(255, 110, 108, 110),
+      selectionColor: const Color(0xffecc877).withOpacity(.5),
+      selectionHandleColor: const Color(0xffecc877), 
     ),
   );
 }
