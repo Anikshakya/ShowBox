@@ -107,7 +107,7 @@ class _BottomNavState extends State<BottomNav> {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Theme.of(context).primaryColor.withOpacity(0.3),
+                        color: Theme.of(context).primaryColor.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.5 ),
                         blurRadius: 2,
                         offset: const Offset(0, 0),
                       ),
@@ -122,11 +122,11 @@ class _BottomNavState extends State<BottomNav> {
                         unselectedLabelStyle: const TextStyle(fontSize: 0), // Hide labels
                         showSelectedLabels: false, // Hide selected label
                         showUnselectedLabels: false, // Hide unselected label
-                        backgroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.black.withOpacity(0.5) : Colors.white.withOpacity(0.7),
+                        backgroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.black.withOpacity(0.5) : Colors.white.withOpacity(0.8),
                         elevation: 0,
                         type: BottomNavigationBarType.fixed,
                         selectedItemColor: const Color(0XFFCBA84A), // Selected item color
-                        unselectedItemColor: Theme.of(context).brightness == Brightness.dark ? const Color.fromARGB(255, 185, 185, 185) : const Color.fromARGB(255, 112, 112, 112), // Unselected item color
+                        unselectedItemColor: Theme.of(context).brightness == Brightness.dark ? const Color.fromARGB(255, 185, 185, 185) : const Color.fromARGB(255, 153, 153, 153), // Unselected item color
                         currentIndex: _selectedIndex,
                         selectedIconTheme: const IconThemeData(size: 28), // Size of selected icon
                         unselectedIconTheme: const IconThemeData(size: 22), // Size of unselected icon
