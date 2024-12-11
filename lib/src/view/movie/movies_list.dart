@@ -128,6 +128,8 @@ class MovieList extends StatelessWidget {
                   duration: const Duration(milliseconds: 800),
                   curve: Curves.easeOut,
                 );
+                bottmoNavCon.isAppbarVisible.value = true;
+                bottmoNavCon.isNavVisible.value = true;
               },
               child: const Icon(Icons.arrow_upward_outlined, color: Colors.black),
             ),

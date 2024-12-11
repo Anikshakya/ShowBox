@@ -130,6 +130,8 @@ class SeriesListPage extends StatelessWidget {
                   duration: const Duration(milliseconds: 800),
                   curve: Curves.easeOut,
                 );
+                bottomNavCon.isAppbarVisible.value = true;
+                bottomNavCon.isNavVisible.value = true;
               },
               child: const Icon(Icons.arrow_upward_outlined, color: Colors.black),
                            ),

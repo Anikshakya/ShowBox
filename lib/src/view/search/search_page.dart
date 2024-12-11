@@ -150,7 +150,7 @@ class _SearchPageState extends State<SearchPage> {
                       }
                       points.clear();
                       setState(() {
-
+        
                       });
                     },
                     child: CustomPaint(
@@ -198,7 +198,7 @@ class _SearchPageState extends State<SearchPage> {
                             } else if (movieScrollController.position.pixels  <= 2000) {
                               searchCon.isMovieScrollToTopVisible(false);
                             }
-                      
+                                              
                             // Trigger pagination when the user scrolls to the bottom
                             if (scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent && !searchCon.isMoviePageSearchLoading.value) {
                               searchCon.isMoviePageSearchLoading(true);
@@ -206,46 +206,57 @@ class _SearchPageState extends State<SearchPage> {
                             }
                             return true;
                           },
-                          child: SingleChildScrollView(
-                            controller: movieScrollController,
-                            child: Column(
-                              children: [
-                                GridView.builder(
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  padding: const EdgeInsets.all(8.0),
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 3,
-                                    mainAxisSpacing: 8,
-                                    crossAxisSpacing: 8,
-                                    childAspectRatio: 0.7,
+                          child: RefreshIndicator(
+                            backgroundColor: AppStyles.goldenColor,
+                            color: Theme.of(context).primaryColor,
+                            displacement: 20,
+                            onRefresh: () async{
+                              return Future.delayed(const Duration(seconds: 1), () async{
+                                searchCon.searchMovie(searchTextCon.text);
+                                searchCon.searchSeries(searchTextCon.text);
+                              });
+                            },
+                            child: SingleChildScrollView(
+                              controller: movieScrollController,
+                              child: Column(
+                                children: [
+                                  GridView.builder(
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    padding: const EdgeInsets.all(8.0),
+                                    gridDelegate:
+                                        const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 3,
+                                      mainAxisSpacing: 8,
+                                      crossAxisSpacing: 8,
+                                      childAspectRatio: 0.7,
+                                    ),
+                                    shrinkWrap: true,
+                                    itemCount: searchCon.movieSearchList.length,
+                                    itemBuilder: (context, index) {
+                                      var movie = searchCon.movieSearchList[index];
+                                      return GestureDetector(
+                                        onTap: (){
+                                            Get.to(()=> MovieDetailsPage(movieId: movie["id"]));
+                                        },
+                                        child: ItemCard(
+                                          title: movie['title'] ?? 'Unknown Movie',
+                                          year: (movie['release_date'] ?? '').split('-').first,
+                                          rating: (movie['vote_average'] ?? 0).toDouble(),
+                                          image: movie['poster_path'] ?? '',
+                                          width: MediaQuery.of(context).size.width / 2 - 16,
+                                        ),
+                                      );
+                                    },
                                   ),
-                                  shrinkWrap: true,
-                                  itemCount: searchCon.movieSearchList.length,
-                                  itemBuilder: (context, index) {
-                                    var movie = searchCon.movieSearchList[index];
-                                    return GestureDetector(
-                                      onTap: (){
-                                          Get.to(()=> MovieDetailsPage(movieId: movie["id"]));
-                                      },
-                                      child: ItemCard(
-                                        title: movie['title'] ?? 'Unknown Movie',
-                                        year: (movie['release_date'] ?? '').split('-').first,
-                                        rating: (movie['vote_average'] ?? 0).toDouble(),
-                                        image: movie['poster_path'] ?? '',
-                                        width: MediaQuery.of(context).size.width / 2 - 16,
-                                      ),
-                                    );
-                                  },
-                                ),
-                                // Pagination Loading
-                                 searchCon.isMoviePageSearchLoading.value
-                                    ? const Padding(
-                                        padding: EdgeInsets.symmetric(vertical: 20),
-                                        child: Center(child: CircularProgressIndicator()),
-                                      )
-                                    : const SizedBox.shrink()
-                              ],
+                                  // Pagination Loading
+                                   searchCon.isMoviePageSearchLoading.value
+                                      ? const Padding(
+                                          padding: EdgeInsets.symmetric(vertical: 20),
+                                          child: Center(child: CircularProgressIndicator()),
+                                        )
+                                      : const SizedBox.shrink()
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -277,52 +288,63 @@ class _SearchPageState extends State<SearchPage> {
                             }
                             return true;
                           },
-                          child: SingleChildScrollView(
-                            controller: seriesScrollController,
-                            child: Column(
-                              children: [
-                                GridView.builder(
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  padding: const EdgeInsets.all(8.0),
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 3,
-                                    mainAxisSpacing: 8,
-                                    crossAxisSpacing: 8,
-                                    childAspectRatio: 0.7,
+                          child: RefreshIndicator(
+                            backgroundColor: AppStyles.goldenColor,
+                            color: Theme.of(context).primaryColor,
+                            displacement: 20,
+                            onRefresh: () async{
+                              return Future.delayed(const Duration(seconds: 1), () async{
+                                searchCon.searchMovie(searchTextCon.text);
+                                searchCon.searchSeries(searchTextCon.text);
+                              });
+                            },
+                            child: SingleChildScrollView(
+                              controller: seriesScrollController,
+                              child: Column(
+                                children: [
+                                  GridView.builder(
+                                    shrinkWrap: true,
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    padding: const EdgeInsets.all(8.0),
+                                    gridDelegate:
+                                        const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 3,
+                                      mainAxisSpacing: 8,
+                                      crossAxisSpacing: 8,
+                                      childAspectRatio: 0.7,
+                                    ),
+                                    itemCount: searchCon.seriesSearchList.length,
+                                    itemBuilder: (context, index) {
+                                      var series = searchCon.seriesSearchList[index];
+                                      return GestureDetector(
+                                        onTap : (){
+                                          if( series["media_type"] == "tv"){
+                                            Get.to(()=> SeriesDetailPage(
+                                              id: series["id"],
+                                            ));
+                                          }
+                                        },
+                                        child: ItemCard(
+                                          title: series['name'] ?? 'Unknown Series',
+                                          year: (series['first_air_date'] ?? '')
+                                              .split('-')
+                                              .first,
+                                          rating: (series['vote_average'] ?? 0).toDouble(),
+                                          image: series['poster_path'] ?? '',
+                                          width: MediaQuery.of(context).size.width / 2 - 16,
+                                        ),
+                                      );
+                                    },
                                   ),
-                                  itemCount: searchCon.seriesSearchList.length,
-                                  itemBuilder: (context, index) {
-                                    var series = searchCon.seriesSearchList[index];
-                                    return GestureDetector(
-                                      onTap : (){
-                                        if( series["media_type"] == "tv"){
-                                          Get.to(()=> SeriesDetailPage(
-                                            id: series["id"],
-                                          ));
-                                        }
-                                      },
-                                      child: ItemCard(
-                                        title: series['name'] ?? 'Unknown Series',
-                                        year: (series['first_air_date'] ?? '')
-                                            .split('-')
-                                            .first,
-                                        rating: (series['vote_average'] ?? 0).toDouble(),
-                                        image: series['poster_path'] ?? '',
-                                        width: MediaQuery.of(context).size.width / 2 - 16,
-                                      ),
-                                    );
-                                  },
-                                ),
-                                // Pagination Loading
-                                searchCon.isSeriesPageSearchLoading.value
-                                  ? const Padding(
-                                      padding: EdgeInsets.symmetric(vertical: 20),
-                                      child: Center(child: CircularProgressIndicator()),
-                                    )
-                                  : const SizedBox.shrink()
-                              ],
+                                  // Pagination Loading
+                                  searchCon.isSeriesPageSearchLoading.value
+                                    ? const Padding(
+                                        padding: EdgeInsets.symmetric(vertical: 20),
+                                        child: Center(child: CircularProgressIndicator()),
+                                      )
+                                    : const SizedBox.shrink()
+                                ],
+                              ),
                             ),
                           ),
                         ),
