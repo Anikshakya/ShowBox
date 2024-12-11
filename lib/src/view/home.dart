@@ -120,39 +120,44 @@ class HomePage extends StatelessWidget {
             )
           ],
         )
-        : CustomPageView(
-          height: 560,
-          enableAutoSwipe: true,
-          showIndicator: true,
-          animationDuration: const Duration(seconds: 1),
-          widgets: [
-            ...List.generate(
-              homeCon.trendingList.length,
-              (index) {
-                var item = homeCon.trendingList[index];
-                return TrendingCard(
-                  imageUrl: '${AppConstants.imageUrl}${item['poster_path']}',
-                  title: item["media_type"] == "tv" ? item["name"] : item["title"],
-                  rating: item['vote_average'].toStringAsFixed(1),
-                  year: item["media_type"] == "tv" ? item['first_air_date'] == null ?  "" : item['first_air_date'].split("-")[0] : item['release_date'] == null ?  "" : item['release_date'].split("-")[0],
-                  description: item["overview"] ?? "",
-                  pricing: 'UNLIMITED | FREE | SHOW BOX',
-                  onWatchPressed: () {
-                    final mediaType = homeCon.trendingList[index]["media_type"];
-                    final id = homeCon.trendingList[index]["id"];
-                    // Navigate based on media type (movie or TV)
-                    if (mediaType == "movie") {
-                      Get.to(() => MovieDetailsPage(movieId: id));
-                    } else if (mediaType == "tv") {
-                      Get.to(() => SeriesDetailPage(id: id));
-                    }
-                    // Handle Watch button press action
-                  },
-                );
-              },
-            )                                                   
-          ]
-        ),
+        : homeCon.trendingList.isEmpty
+          ? const SizedBox(
+              height: 180,
+              child: Center(child: Text("No data available")),
+            )
+          :CustomPageView(
+            height: 560,
+            enableAutoSwipe: true,
+            showIndicator: true,
+            animationDuration: const Duration(seconds: 1),
+            widgets: [
+              ...List.generate(
+                homeCon.trendingList.length,
+                (index) {
+                  var item = homeCon.trendingList[index];
+                  return TrendingCard(
+                    imageUrl: '${AppConstants.imageUrl}${item['poster_path']}',
+                    title: item["media_type"] == "tv" ? item["name"] : item["title"],
+                    rating: item['vote_average'].toStringAsFixed(1),
+                    year: item["media_type"] == "tv" ? item['first_air_date'] == null ?  "" : item['first_air_date'].split("-")[0] : item['release_date'] == null ?  "" : item['release_date'].split("-")[0],
+                    description: item["overview"] ?? "",
+                    pricing: 'UNLIMITED | FREE | SHOW BOX',
+                    onWatchPressed: () {
+                      final mediaType = homeCon.trendingList[index]["media_type"];
+                      final id = homeCon.trendingList[index]["id"];
+                      // Navigate based on media type (movie or TV)
+                      if (mediaType == "movie") {
+                        Get.to(() => MovieDetailsPage(movieId: id));
+                      } else if (mediaType == "tv") {
+                        Get.to(() => SeriesDetailPage(id: id));
+                      }
+                      // Handle Watch button press action
+                    },
+                  );
+                },
+              )                                                   
+            ]
+          ),
       );
   }
 

@@ -7,13 +7,16 @@ import 'package:showbox/src/view/series/series_details.dart';
 import 'package:showbox/src/widgets/cards/item_card.dart';
 
 class SearchPage extends StatelessWidget {
-  final SearchhController controller = Get.put(SearchhController());
+  final SearchhController searchCon = Get.put(SearchhController());
 
   SearchPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final ScrollController movieScrollController = ScrollController();
+    final ScrollController seriesScrollController = ScrollController();
+    final TextEditingController searchTextCon = TextEditingController();
 
     return DefaultTabController(
       length: 2,
@@ -37,10 +40,11 @@ class SearchPage extends StatelessWidget {
               ],
             ),
             child: TextFormField(
+              controller: searchTextCon,
               onFieldSubmitted: (value) {
                 if (value.isNotEmpty) {
-                  controller.searchMovie(value);
-                  controller.searchSeries(value);
+                  searchCon.searchMovie(value);
+                  searchCon.searchSeries(value);
                 }
               },
               style: TextStyle(
@@ -116,7 +120,7 @@ class SearchPage extends StatelessWidget {
                 ),
               ),
               child: Obx(() {
-                if (controller.isMovieSearchLoading.value) {
+                if (searchCon.isMovieSearchLoading.value) {
                   return const Center(
                     child: CircularProgressIndicator(
                       color: AppStyles.goldenColor, // Golden progress indicator
@@ -124,7 +128,7 @@ class SearchPage extends StatelessWidget {
                   );
                 }
               
-                if (!controller.hasSearched.value) {
+                if (!searchCon.hasSearched.value) {
                   return const Center(
                     child: Text(
                       "Nothing to show",
@@ -139,7 +143,7 @@ class SearchPage extends StatelessWidget {
                 return TabBarView(
                   children: [
                     // Movies Tab
-                    controller.movieSearchList.isEmpty
+                    searchCon.movieSearchList.isEmpty
                         ? const Center(
                             child: Text(
                               "No Movies Found",
@@ -149,35 +153,68 @@ class SearchPage extends StatelessWidget {
                               ),
                             ),
                           )
-                        : GridView.builder(
-                            padding: const EdgeInsets.all(8.0),
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3,
-                              mainAxisSpacing: 8,
-                              crossAxisSpacing: 8,
-                              childAspectRatio: 0.7,
-                            ),
-                            itemCount: controller.movieSearchList.length,
-                            itemBuilder: (context, index) {
-                              var movie = controller.movieSearchList[index];
-                              return GestureDetector(
-                                onTap: (){
-                                    Get.to(()=> MovieDetailsPage(movieId: movie["id"]));
-                                },
-                                child: ItemCard(
-                                  title: movie['title'] ?? 'Unknown Movie',
-                                  year: (movie['release_date'] ?? '').split('-').first,
-                                  rating: (movie['vote_average'] ?? 0).toDouble(),
-                                  image: movie['poster_path'] ?? '',
-                                  width: MediaQuery.of(context).size.width / 2 - 16,
+                        : NotificationListener<ScrollNotification>(
+                          onNotification: (scrollNotification) {                            
+                            // Show Scroll To Top Button
+                            if (movieScrollController.position.pixels  > 2000) {
+                              searchCon.isMovieScrollToTopVisible(true);
+                            } else if (movieScrollController.position.pixels  <= 2000) {
+                              searchCon.isMovieScrollToTopVisible(false);
+                            }
+                      
+                            // Trigger pagination when the user scrolls to the bottom
+                            if (scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent && !searchCon.isMoviePageSearchLoading.value) {
+                              searchCon.isMoviePageSearchLoading(true);
+                              searchCon.getSearchMoviePagination(searchTextCon.text); // Trigger pagination when scrolling reaches the bottom
+                            }
+                            return true;
+                          },
+                          child: SingleChildScrollView(
+                            controller: movieScrollController,
+                            child: Column(
+                              children: [
+                                GridView.builder(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  padding: const EdgeInsets.all(8.0),
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 3,
+                                    mainAxisSpacing: 8,
+                                    crossAxisSpacing: 8,
+                                    childAspectRatio: 0.7,
+                                  ),
+                                  shrinkWrap: true,
+                                  itemCount: searchCon.movieSearchList.length,
+                                  itemBuilder: (context, index) {
+                                    var movie = searchCon.movieSearchList[index];
+                                    return GestureDetector(
+                                      onTap: (){
+                                          Get.to(()=> MovieDetailsPage(movieId: movie["id"]));
+                                      },
+                                      child: ItemCard(
+                                        title: movie['title'] ?? 'Unknown Movie',
+                                        year: (movie['release_date'] ?? '').split('-').first,
+                                        rating: (movie['vote_average'] ?? 0).toDouble(),
+                                        image: movie['poster_path'] ?? '',
+                                        width: MediaQuery.of(context).size.width / 2 - 16,
+                                      ),
+                                    );
+                                  },
                                 ),
-                              );
-                            },
+                                // Pagination Loading
+                                 searchCon.isMoviePageSearchLoading.value
+                                    ? const Padding(
+                                        padding: EdgeInsets.symmetric(vertical: 20),
+                                        child: Center(child: CircularProgressIndicator()),
+                                      )
+                                    : const SizedBox.shrink()
+                              ],
+                            ),
                           ),
+                        ),
               
                     // Series Tab
-                    controller.seriesSearchList.isEmpty
+                    searchCon.seriesSearchList.isEmpty
                         ? const Center(
                             child: Text(
                               "No Series Found",
@@ -187,39 +224,70 @@ class SearchPage extends StatelessWidget {
                               ),
                             ),
                           )
-                        : GridView.builder(
-                          shrinkWrap: true,
-                          physics: const BouncingScrollPhysics(),
-                          padding: const EdgeInsets.all(8.0),
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            mainAxisSpacing: 8,
-                            crossAxisSpacing: 8,
-                            childAspectRatio: 0.7,
-                          ),
-                          itemCount: controller.seriesSearchList.length,
-                          itemBuilder: (context, index) {
-                            var series = controller.seriesSearchList[index];
-                            return GestureDetector(
-                              onTap : (){
-                                if( series["media_type"] == "tv"){
-                                  Get.to(()=> SeriesDetailPage(
-                                    id: series["id"],
-                                  ));
-                                }
-                              },
-                              child: ItemCard(
-                                title: series['name'] ?? 'Unknown Series',
-                                year: (series['first_air_date'] ?? '')
-                                    .split('-')
-                                    .first,
-                                rating: (series['vote_average'] ?? 0).toDouble(),
-                                image: series['poster_path'] ?? '',
-                                width: MediaQuery.of(context).size.width / 2 - 16,
-                              ),
-                            );
+                        : NotificationListener<ScrollNotification>(
+                          onNotification: (scrollNotification) {                            
+                            // Show Scroll To Top Button
+                            if (seriesScrollController.position.pixels  > 2000) {
+                              searchCon.isSeriesSearchLoading(true);
+                            } else if (seriesScrollController.position.pixels  <= 2000) {
+                              searchCon.isSeriesSearchLoading(false);
+                            }
+                      
+                            // Trigger pagination when the user scrolls to the bottom
+                            if (scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent && !searchCon.isSeriesPageSearchLoading.value) {
+                              searchCon.isSeriesPageSearchLoading(true);
+                              searchCon.getSearchSeriesPagination(searchTextCon.text); // Trigger pagination when scrolling reaches the bottom
+                            }
+                            return true;
                           },
+                          child: SingleChildScrollView(
+                            controller: seriesScrollController,
+                            child: Column(
+                              children: [
+                                GridView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  padding: const EdgeInsets.all(8.0),
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 3,
+                                    mainAxisSpacing: 8,
+                                    crossAxisSpacing: 8,
+                                    childAspectRatio: 0.7,
+                                  ),
+                                  itemCount: searchCon.seriesSearchList.length,
+                                  itemBuilder: (context, index) {
+                                    var series = searchCon.seriesSearchList[index];
+                                    return GestureDetector(
+                                      onTap : (){
+                                        if( series["media_type"] == "tv"){
+                                          Get.to(()=> SeriesDetailPage(
+                                            id: series["id"],
+                                          ));
+                                        }
+                                      },
+                                      child: ItemCard(
+                                        title: series['name'] ?? 'Unknown Series',
+                                        year: (series['first_air_date'] ?? '')
+                                            .split('-')
+                                            .first,
+                                        rating: (series['vote_average'] ?? 0).toDouble(),
+                                        image: series['poster_path'] ?? '',
+                                        width: MediaQuery.of(context).size.width / 2 - 16,
+                                      ),
+                                    );
+                                  },
+                                ),
+                                // Pagination Loading
+                                searchCon.isSeriesPageSearchLoading.value
+                                  ? const Padding(
+                                      padding: EdgeInsets.symmetric(vertical: 20),
+                                      child: Center(child: CircularProgressIndicator()),
+                                    )
+                                  : const SizedBox.shrink()
+                              ],
+                            ),
+                          ),
                         ),
                   ],
                 );
