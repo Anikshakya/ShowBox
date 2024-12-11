@@ -5,19 +5,28 @@ import 'package:showbox/src/controller/search_controller.dart';
 import 'package:showbox/src/view/movie/movie_details.dart';
 import 'package:showbox/src/view/series/series_details.dart';
 import 'package:showbox/src/widgets/cards/item_card.dart';
+import 'package:showbox/src/widgets/customGesturePatternPainter.dart';
 
-class SearchPage extends StatelessWidget {
+class SearchPage extends StatefulWidget {
+
+  const SearchPage({super.key});
+
+  @override
+  State<SearchPage> createState() => _SearchPageState();
+}
+
+class _SearchPageState extends State<SearchPage> {
   final SearchhController searchCon = Get.put(SearchhController());
 
-  SearchPage({super.key});
+  final ScrollController movieScrollController = ScrollController();
+  final ScrollController seriesScrollController = ScrollController();
+  final TextEditingController searchTextCon = TextEditingController();
+  
+  List<Offset> points = [];
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final ScrollController movieScrollController = ScrollController();
-    final ScrollController seriesScrollController = ScrollController();
-    final TextEditingController searchTextCon = TextEditingController();
-
+  final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -127,14 +136,43 @@ class SearchPage extends StatelessWidget {
                     ),
                   );
                 }
-              
                 if (!searchCon.hasSearched.value) {
-                  return const Center(
-                    child: Text(
-                      "Nothing to show",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w300,
+                  return GestureDetector(
+                    onPanUpdate: (details) {
+                        points.add(details.localPosition);
+                        setState(() {
+                          
+                        });
+                       print("asdfsdf");
+                    },
+                    onPanEnd: (details) {
+                      if (UserGestures().detectZShape(points)) {
+                          searchCon.isAdult.value = !searchCon.isAdult.value;
+                      }
+                      points.clear();
+                      setState(() {
+
+                      });
+                    },
+                    child: CustomPaint(
+                      child: Container(
+                        color: Colors.black.withOpacity(0.1),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Obx( ()=>
+                              Center(
+                                child: Text(
+                                  "Nothing to show...${searchCon.isAdult.value == true ? "." : ""}",
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   );
@@ -146,7 +184,7 @@ class SearchPage extends StatelessWidget {
                     searchCon.movieSearchList.isEmpty
                         ? const Center(
                             child: Text(
-                              "No Movies Found",
+                              "No Movies Found....",
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w300,

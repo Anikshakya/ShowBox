@@ -85,7 +85,7 @@ class _BottomNavState extends State<BottomNav> {
                   // Search icon to navigate to the SearchPage
                   IconButton(
                     icon: const Icon(Icons.search),
-                    onPressed: () => Get.to(() => SearchPage()),
+                    onPressed: () => Get.to(() => const SearchPage()),
                   ),
                 ],
               ),
