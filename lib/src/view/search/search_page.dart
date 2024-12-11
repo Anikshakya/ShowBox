@@ -5,7 +5,7 @@ import 'package:showbox/src/controller/search_controller.dart';
 import 'package:showbox/src/view/movie/movie_details.dart';
 import 'package:showbox/src/view/series/series_details.dart';
 import 'package:showbox/src/widgets/cards/item_card.dart';
-import 'package:showbox/src/widgets/customGesturePatternPainter.dart';
+import 'package:showbox/src/widgets/custom_gesture_pattern_painter.dart';
 
 class SearchPage extends StatefulWidget {
 
@@ -143,7 +143,6 @@ class _SearchPageState extends State<SearchPage> {
                         setState(() {
                           
                         });
-                       print("asdfsdf");
                     },
                     onPanEnd: (details) {
                       if (UserGestures().detectZShape(points)) {
