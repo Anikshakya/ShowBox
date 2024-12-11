@@ -7,6 +7,7 @@ import 'package:showbox/src/view/movie/movie_details.dart';
 import 'package:showbox/src/view/series/series_details.dart';
 import 'package:showbox/src/widgets/cards/item_card.dart';
 import 'package:showbox/src/widgets/cards/trending_card.dart';
+import 'package:showbox/src/widgets/custom_fades.dart';
 import 'package:showbox/src/widgets/custom_pageview.dart';
 import 'package:showbox/src/widgets/custom_shimmer.dart';
 
@@ -35,18 +36,24 @@ class HomePage extends StatelessWidget {
         
             const SizedBox(height: 30),
         
-            // Upcoming Movies
-            buildUpcomingMoviesSection(homeCon),
-        
-            const SizedBox(height: 20),
-        
-            // Top Rated Series Section
-            buildTopRatedSeriesSection(homeCon),
-        
-            const SizedBox(height: 20),
-        
-            // Top Rated Movies Section
-            buildTopRatedMoviesSection(homeCon),
+            FadeInUp(
+              child: Column(
+                children: [
+                  // Upcoming Movies
+                  buildUpcomingMoviesSection(homeCon),
+              
+                  const SizedBox(height: 20),
+              
+                  // Top Rated Series Section
+                  buildTopRatedSeriesSection(homeCon),
+              
+                  const SizedBox(height: 20),
+              
+                  // Top Rated Movies Section
+                  buildTopRatedMoviesSection(homeCon),
+                ],
+              ),
+            ),
         
             const SizedBox(height: 40), // Extra spacer
           ],

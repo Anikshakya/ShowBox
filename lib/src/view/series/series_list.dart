@@ -6,6 +6,7 @@ import 'package:showbox/src/controller/bottom_nav_controller.dart';
 import 'package:showbox/src/controller/series_controller.dart';
 import 'package:showbox/src/view/series/series_details.dart';
 import 'package:showbox/src/widgets/cards/item_card.dart';
+import 'package:showbox/src/widgets/custom_fades.dart';
 import 'package:showbox/src/widgets/custom_shimmer.dart';
 import 'package:showbox/src/widgets/custom_slider.dart';
 
@@ -86,22 +87,24 @@ class SeriesListPage extends StatelessWidget {
                   },
                   child: SingleChildScrollView(
                     controller: scrollController,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // For App Bar
-                        const SizedBox(height: 100),
-                        // Trending Slider
-                        buildTrendingSliderSection(seriesController),
-                        const SizedBox(height: 20),
-                        // Top Rated Series Section
-                        buildTopRatedSeriesSection(seriesController),
-                        const SizedBox(height: 20),
-                        // All Series Grid Section
-                        buildAllSeriesGrid(seriesController),
-                        // Pagination loading indicator
-                        paginationLoading(seriesController),
-                      ],
+                    child: FadeInUp(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // For App Bar
+                          const SizedBox(height: 100),
+                          // Trending Slider
+                          buildTrendingSliderSection(seriesController),
+                          const SizedBox(height: 20),
+                          // Top Rated Series Section
+                          buildTopRatedSeriesSection(seriesController),
+                          const SizedBox(height: 20),
+                          // All Series Grid Section
+                          buildAllSeriesGrid(seriesController),
+                          // Pagination loading indicator
+                          paginationLoading(seriesController),
+                        ],
+                      ),
                     ),
                   ),
                 )
