@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:showbox/src/widgets/custom_fades.dart';
 
 class CustomImageNetworkWidget extends StatefulWidget {
   const CustomImageNetworkWidget({
@@ -37,7 +38,7 @@ class _CustomImageNetworkWidgetState extends State<CustomImageNetworkWidget> {
               headers: const {"Connection": "Keep-Alive"},
               loadingBuilder: (context, child, loadingProgress) {
                 if (loadingProgress == null) {
-                  return child; // Return the loaded image
+                  return FadeIn(child: child); // Return the loaded image
                 }
                 return SizedBox(
                   width: widget.width,
