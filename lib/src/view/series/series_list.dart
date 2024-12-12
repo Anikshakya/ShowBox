@@ -194,7 +194,7 @@ class SeriesListPage extends StatelessWidget {
           padding: EdgeInsets.only(left: 10),
           child: Text(
             "Top Rated Series",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w300),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300),
           ),
         ),
         const SizedBox(height: 4),
@@ -252,7 +252,7 @@ class SeriesListPage extends StatelessWidget {
                   child: Text(
                     "All Series",
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: FontWeight.w300,
                     ),
                   ),

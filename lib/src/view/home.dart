@@ -177,7 +177,7 @@ class HomePage extends StatelessWidget {
           padding: EdgeInsets.only(left: 10),
           child: Text(
             "Upcoming Movies",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w300),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300),
           ),
         ),
         const SizedBox(height: 4),
@@ -233,7 +233,7 @@ class HomePage extends StatelessWidget {
           padding: EdgeInsets.only(left: 10),
           child: Text(
             "Top Rated Series",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w300),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300),
           ),
         ),
         const SizedBox(height: 4),
@@ -289,7 +289,7 @@ class HomePage extends StatelessWidget {
           padding: EdgeInsets.only(left: 10),
           child: Text(
             "Top Rated Movies",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w300),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300),
           ),
         ),
         const SizedBox(height: 4),
