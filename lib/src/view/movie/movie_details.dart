@@ -299,36 +299,34 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Upper Section
+            // Upper Banner Section
             if (isWatchClicked)
               Column(
                 children: [
-                  Positioned.fill(
-                    child: FadeInUp(
-                      from: -40,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            movie.title ?? "",
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w300,
-                            ),
+                  FadeInUp(
+                    from: -40,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          movie.title ?? "",
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w300,
                           ),
-                          const SizedBox(height: 4),
-                          _buildActionButtons(isDark),
-                          const SizedBox(height: 8),
-                          Text(
-                            "${movie.releaseDate.split("-")[0]} • ${movie.runtime} min • ${movie.voteAverage.toStringAsFixed(1)} • ${movie.originalLanguage.toUpperCase()}",
-                            style: TextStyle(
-                              color: Theme.of(context).primaryColor.withOpacity(0.5),
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                            ),
+                        ),
+                        const SizedBox(height: 4),
+                        _buildActionButtons(isDark),
+                        const SizedBox(height: 8),
+                        Text(
+                          "${movie.releaseDate.split("-")[0]} • ${movie.runtime} min • ${movie.voteAverage.toStringAsFixed(1)} • ${movie.originalLanguage.toUpperCase()}",
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColor.withOpacity(0.5),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -345,7 +343,6 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
             const SizedBox(height: 10),
             _buildGenres(),
             const SizedBox(height: 25),
-            // _buildMovieInfoRow()
           ],
         ),
       ),
