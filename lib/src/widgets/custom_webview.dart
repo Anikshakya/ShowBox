@@ -127,123 +127,138 @@ class _CustomWebViewState extends State<CustomWebView> {
                 title: const Text("Web View", style: TextStyle(color: Colors.black)),
               )
             : null, // Only show the app bar if showAppBar is true
-        body: SafeArea(
-          bottom: false,
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height - kToolbarHeight - 80,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Expanded(
-                  child: Stack(
-                    children: [
-                      if (isError)
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            // Show error image if available, otherwise show error icon
-                            widget.errorImageUrl != null
-                                ? Image.network(widget.errorImageUrl!)
-                                : const Icon(Icons.error_outline, color: Colors.red, size: 50),
-                            const SizedBox(height: 10),
-                            const Text('Failed to load the page', style: TextStyle(color: Colors.red)),
-                            const SizedBox(height: 20),
-                            ElevatedButton(
-                              onPressed: reloadWebView,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.deepPurple,
+        body: SizedBox(
+          height: MediaQuery.of(context).size.height - kToolbarHeight - 80,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Expanded(
+                child: Stack(
+                  children: [
+                    if (isError)
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          // Show error image if available, otherwise show error icon
+                          widget.errorImageUrl != null
+                              ? Image.network(widget.errorImageUrl!)
+                              : const Icon(Icons.error_outline, color: Colors.red, size: 50),
+                          const SizedBox(height: 10),
+                          const Text('Failed to load the page', style: TextStyle(color: Colors.red)),
+                          const SizedBox(height: 20),
+                          ElevatedButton(
+                            onPressed: reloadWebView,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.deepPurple,
+                            ),
+                            child: const Text("Reload", style: TextStyle(color: Colors.white)),
+                          ),
+                        ],
+                      )
+                    else
+                      InAppWebView(
+                        key: webViewKey,
+                        initialUrlRequest: URLRequest(
+                          url: WebUri.uri(Uri.parse(widget.initialUrl)),
+                        ),
+                        initialOptions: options,
+                        pullToRefreshController: pullToRefreshController,
+                        onWebViewCreated: (controller) {
+                          webViewController = controller;
+                        },
+                        onLoadStart: (controller, url) async {
+                          setState(() {
+                            this.url = url.toString();
+                            isError = false; // Reset error state on page load
+                            isLoading = true; // Set loading state to true when page starts loading
+                          });
+                        },
+                        onLoadStop: (controller, url) async {
+                          pullToRefreshController!.endRefreshing();
+                          setState(() {
+                            this.url = url.toString();
+                            isLoading = false; // Set loading state to false when page finishes loading
+                          });
+                        },
+                        onEnterFullscreen: (controller) {
+                          // Rotate to landscape mode on fullscreen
+                          SystemChrome.setPreferredOrientations([
+                            DeviceOrientation.landscapeRight,
+                            DeviceOrientation.landscapeLeft,
+                          ]);
+                          debugPrint("Entered fullscreen mode");
+                        },
+                        onExitFullscreen: (controller) {
+                          // Revert to portrait mode on exit fullscreen
+                          SystemChrome.setPreferredOrientations([
+                            DeviceOrientation.portraitUp,
+                            DeviceOrientation.portraitDown,
+                          ]);
+                          debugPrint("Exited fullscreen mode");
+                        },
+                        androidOnPermissionRequest: (controller, origin, resources) async {
+                          return PermissionRequestResponse(
+                            resources: resources,
+                            action: PermissionRequestResponseAction.GRANT,
+                          );
+                        },
+                        shouldOverrideUrlLoading: (controller, navigationAction) async {
+                          return NavigationActionPolicy.CANCEL;
+                        },
+                        onLoadError: (controller, url, code, message) {
+                          pullToRefreshController!.endRefreshing();
+                          setState(() {
+                            isError = true; // Set error state when load fails
+                            isLoading = false; // Stop loading animation on error
+                          });
+                        },
+                        onProgressChanged: (controller, progress) {
+                          setState(() {
+                            this.progress = progress / 100;
+                          });
+                        },
+                        onConsoleMessage: (controller, consoleMessage) {
+                          debugPrint(consoleMessage.toString());
+                        },
+                        onLoadResource: (controller, resource) {
+                          final url = resource.url;
+                          log(url.toString());
+                        },
+                      ),
+                    // Purple loading screen
+                    if (isLoading)
+                      Stack(
+                        children: [
+                          Container(
+                            color: const Color.fromARGB(255, 42, 36, 53),
+                            child: const Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
                               ),
-                              child: const Text("Reload", style: TextStyle(color: Colors.white)),
                             ),
-                          ],
-                        )
-                      else
-                        InAppWebView(
-                          key: webViewKey,
-                          initialUrlRequest: URLRequest(
-                            url: WebUri.uri(Uri.parse(widget.initialUrl)),
                           ),
-                          initialOptions: options,
-                          pullToRefreshController: pullToRefreshController,
-                          onWebViewCreated: (controller) {
-                            webViewController = controller;
-                          },
-                          onLoadStart: (controller, url) async {
-                            setState(() {
-                              this.url = url.toString();
-                              isError = false; // Reset error state on page load
-                              isLoading = true; // Set loading state to true when page starts loading
-                            });
-                          },
-                          onLoadStop: (controller, url) async {
-                            pullToRefreshController!.endRefreshing();
-                            setState(() {
-                              this.url = url.toString();
-                              isLoading = false; // Set loading state to false when page finishes loading
-                            });
-                          },
-                          onEnterFullscreen: (controller) {
-                            // Rotate to landscape mode on fullscreen
-                            SystemChrome.setPreferredOrientations([
-                              DeviceOrientation.landscapeRight,
-                              DeviceOrientation.landscapeLeft,
-                            ]);
-                            debugPrint("Entered fullscreen mode");
-                          },
-                          onExitFullscreen: (controller) {
-                            // Revert to portrait mode on exit fullscreen
-                            SystemChrome.setPreferredOrientations([
-                              DeviceOrientation.portraitUp,
-                              DeviceOrientation.portraitDown,
-                            ]);
-                            debugPrint("Exited fullscreen mode");
-                          },
-                          androidOnPermissionRequest: (controller, origin, resources) async {
-                            return PermissionRequestResponse(
-                              resources: resources,
-                              action: PermissionRequestResponseAction.GRANT,
-                            );
-                          },
-                          shouldOverrideUrlLoading: (controller, navigationAction) async {
-                            return NavigationActionPolicy.CANCEL;
-                          },
-                          onLoadError: (controller, url, code, message) {
-                            pullToRefreshController!.endRefreshing();
-                            setState(() {
-                              isError = true; // Set error state when load fails
-                              isLoading = false; // Stop loading animation on error
-                            });
-                          },
-                          onProgressChanged: (controller, progress) {
-                            setState(() {
-                              this.progress = progress / 100;
-                            });
-                          },
-                          onConsoleMessage: (controller, consoleMessage) {
-                            debugPrint(consoleMessage.toString());
-                          },
-                          onLoadResource: (controller, resource) {
-                            final url = resource.url;
-                            log(url.toString());
-                          },
-                        ),
-                      // Purple loading screen
-                      if (isLoading)
-                        Container(
-                          color: const Color.fromARGB(255, 42, 36, 53),
-                          child: const Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
+                           Positioned.fill(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.transparent,
+                                  Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white,
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                    ],
-                  ),
+                        ],
+                      ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
