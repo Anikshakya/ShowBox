@@ -336,11 +336,11 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
             // Tag Line
             if (movie.tagline != null)
               Text(movie.tagline ?? '', style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic, color: subtitleColor)),
-            const SizedBox(height: 10),
+            const SizedBox(height: 16),
             _buildMovieInfoRow(),
-            const SizedBox(height: 10),
+            const SizedBox(height: 16),
             _buildOverview(),
-            const SizedBox(height: 10),
+            const SizedBox(height: 16),
             _buildGenres(),
             const SizedBox(height: 25),
           ],
