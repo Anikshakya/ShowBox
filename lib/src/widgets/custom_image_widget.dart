@@ -62,15 +62,15 @@ class _CustomImageNetworkWidgetState extends State<CustomImageNetworkWidget> {
                         height: widget.height,
                       ),
                       // Loading Indicator
-                      Center(
-                        child: CircularProgressIndicator(
-                          strokeWidth: 1,
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
-                                  loadingProgress.expectedTotalBytes!
-                              : null,
-                        ),
-                      ),
+                      // Center(
+                      //   child: CircularProgressIndicator(
+                      //     strokeWidth: 1,
+                      //     value: loadingProgress.expectedTotalBytes != null
+                      //         ? loadingProgress.cumulativeBytesLoaded /
+                      //             loadingProgress.expectedTotalBytes!
+                      //         : null,
+                      //   ),
+                      // ),
                     ],
                   ),
                 );
