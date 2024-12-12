@@ -1,11 +1,14 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:showbox/src/app_config/styles.dart';
 import 'package:showbox/src/constant/constants.dart';
 import 'package:showbox/src/controller/movies_controller.dart';
+import 'package:showbox/src/widgets/custom_fades.dart';
 import 'package:showbox/src/widgets/custom_image_widget.dart';
 import 'package:showbox/src/widgets/custom_webview.dart';
 
+/// Page to display detailed information about a selected movie
 class MovieDetailsPage extends StatefulWidget {
   final int movieId;
 
@@ -16,12 +19,11 @@ class MovieDetailsPage extends StatefulWidget {
 }
 
 class _MovieDetailsPageState extends State<MovieDetailsPage> {
-  // MovieController instance to manage the movie data
   final MovieController movieCon = Get.put(MovieController());
-
   late Color textColor;
   late Color subtitleColor;
   dynamic movie;
+  bool isWatchClicked = false;
 
   @override
   void initState() {
@@ -29,52 +31,61 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
     initialize();
   }
 
-  // Initialize the movie details by calling the API
+  /// Fetch movie details when the page is loaded
   Future<void> initialize() async {
     await movieCon.getMovieDetails(id: widget.movieId);
     if (movieCon.movieDetails == null) {
-      Get.back(); // If no movie details, go back
+      Get.back();
     } else {
-      movie = movieCon.movieDetails!; // Store the fetched movie data
+      movie = movieCon.movieDetails!;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Get colors for text and subtitle based on the app theme
     textColor = Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
     subtitleColor = Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Obx(() {
-      // Show loading indicator if movie details are still being fetched
-      if (movieCon.isMovieDetailsLoading.isTrue) {
-        return const Scaffold(
-          body: Center(child: CircularProgressIndicator()),
+    return PopScope(
+      canPop: Platform.isAndroid ? !isWatchClicked : true,
+      onPopInvokedWithResult: (_, __) {
+        setState(() {
+          isWatchClicked = false;
+        });
+      },
+      child: Obx(() {
+        if (movieCon.isMovieDetailsLoading.isTrue) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (movieCon.movieDetails == null) {
+          return _buildErrorPage();
+        }
+
+        return Scaffold(
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
+                children: [
+                  if (isWatchClicked)
+                    FadeIn(child: _buildMovieWebView()),
+
+                  if (!isWatchClicked) _buildMovieBanner(isDark),
+                ],
+              ),
+              Expanded(child: FadeInUp(child: _buildMovieDetails(isDark))),
+            ],
+          ),
         );
-      }
-
-      // Show error page if movie details are null
-      if (movieCon.movieDetails == null) {
-        return _buildErrorPage();
-      }
-
-      // Return movie details page if data is available
-      return Scaffold(
-        appBar: AppBar(
-          title: Text(movie.title ?? 'Movie Details'),
-        ),
-        body: Column( 
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildMovieWebView(),
-            Expanded(child: _buildMovieDetails())
-          ],
-        ),
-      );
-    });
+      }),
+    );
   }
 
-  // Build the error page when something goes wrong
+  /// Error page when movie details are unavailable
   Widget _buildErrorPage() {
     return Center(
       child: Padding(
@@ -82,11 +93,7 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.error_outline,
-              size: 120,
-              color: AppStyles.goldenColor,
-            ),
+            const Icon(Icons.error_outline, size: 120, color: AppStyles.goldenColor),
             const SizedBox(height: 30),
             const Text(
               'Oops! Something went wrong.',
@@ -101,13 +108,13 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
             ),
             const SizedBox(height: 30),
             TextButton(
-              onPressed: initialize, // Retry fetching the movie details
+              onPressed: initialize,
               style: TextButton.styleFrom(
-                backgroundColor:AppStyles.goldenColor,
+                backgroundColor: AppStyles.goldenColor,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-              ).copyWith(overlayColor: WidgetStateProperty.all(Colors.transparent)),
+              ),
               child: Obx(() => movieCon.isMovieDetailsLoading.isTrue
                   ? const SizedBox(
                       height: 24,
@@ -117,21 +124,18 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                         strokeWidth: 2.5,
                       ),
                     )
-                  : const Text(
-                      "Retry",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    )),
-            )
+                  : const Text("Retry", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
+            ),
           ],
         ),
       ),
     );
   }
 
-  // Build the WebView to display the movie's embed URL
+  /// WebView for movie playback
   Widget _buildMovieWebView() {
     return SizedBox(
-      height: 280,
+      height: 300,
       child: CustomWebView(
         initialUrl: "${AppConstants.movieEmbedUrl}/${movie.imdbId}",
         showAppBar: false,
@@ -140,45 +144,210 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
     );
   }
 
-  // Build the section displaying the movie details
-  Widget _buildMovieDetails() {
+  /// Movie banner widget
+  Widget _buildMovieBanner(bool isDark) {
+    return Stack(
+      children: [
+        SizedBox(
+          height: 400,
+          child: CustomImageNetworkWidget(
+            imagePath: "${AppConstants.imageUrl}${movie.backdropPath}",
+          ),
+        ),
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.center,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  isDark ? Colors.black : Colors.white,
+                ],
+              ),
+            ),
+          ),
+        ),
+        Positioned.fill(
+          child: FadeInUp(
+            from: 80,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Spacer(),
+                  Text(
+                    movie.title ?? "",
+                    style: TextStyle(
+                      fontSize: 24,
+                      color: Colors.white.withOpacity(0.8),
+                      fontWeight: FontWeight.w300,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  _buildActionButtons(isDark),
+                  const SizedBox(height: 14),
+                  Text(
+                    "${movie.releaseDate.split("-")[0]} • ${movie.runtime} min • ${movie.voteAverage.toStringAsFixed(1)} • ${movie.originalLanguage.toUpperCase()}",
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor.withOpacity(0.8),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    movie.productionCompanies
+                        .map((company) => company.name) // Map the list to extract names
+                        .join(', '), // Join names with a comma separator
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor.withOpacity(0.6),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        // Back Button
+        Positioned(
+          top: 45,
+          left: 10,
+          child: FadeIn(
+            child: Container(
+              height: 40,
+              width: 40,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.5),
+                shape: BoxShape.circle,
+              ),
+              child: IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: const Icon(Icons.arrow_back),
+                padding: EdgeInsets.zero
+              ),
+            ),
+          )
+        )
+      ],
+    );
+  }
+
+  /// Action buttons for play and watch later
+  Widget _buildActionButtons(isDark) {
+    return Row(
+      children: [
+        Visibility(
+          visible: isWatchClicked != true,
+          child: GestureDetector(
+            onTap: () {
+              setState(() {
+                isWatchClicked = true;
+              });
+            },
+            child: Container(
+              height: 32,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                color: const Color(0x00ecc877).withOpacity(.9),
+                borderRadius: BorderRadius.circular(2),
+              ),
+              child: const Row(
+                children: [
+                  Icon(Icons.play_arrow),
+                  SizedBox(width: 6),
+                  Text("PLAY", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400)),
+                ],
+              ),
+            ),
+          ),
+        ),
+        if(isWatchClicked != true)
+          const SizedBox(width: 10),
+        GestureDetector(
+          onTap: () {}, // Implement Watch Later logic
+          child: Container(
+            height: 36,
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            decoration: BoxDecoration(
+              color: Theme.of(context).primaryColor.withOpacity(isDark ? .3: .5),
+              borderRadius: BorderRadius.circular(2),
+            ),
+            child: const Row(
+              children: [
+                Icon(Icons.add, color: Colors.white),
+                SizedBox(width: 6),
+                Text("Watch Later", style: TextStyle(fontSize: 14, color: Colors.white)),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Movie details section
+  Widget _buildMovieDetails(isDark) {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildMovieTitle(),
-            const SizedBox(height: 8),
-            if (movie.tagline != null) _buildMovieTagline(),
-            const SizedBox(height: 16),
+            // Upper Section
+            if (isWatchClicked)
+              Column(
+                children: [
+                  Positioned.fill(
+                    child: FadeInUp(
+                      from: -40,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            movie.title ?? "",
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          _buildActionButtons(isDark),
+                          const SizedBox(height: 8),
+                          Text(
+                            "${movie.releaseDate.split("-")[0]} • ${movie.runtime} min • ${movie.voteAverage.toStringAsFixed(1)} • ${movie.originalLanguage.toUpperCase()}",
+                            style: TextStyle(
+                              color: Theme.of(context).primaryColor.withOpacity(0.5),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            if (isWatchClicked)
+              const SizedBox(height: 8),
+            // Tag Line
+            if (movie.tagline != null)
+              Text(movie.tagline ?? '', style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic, color: subtitleColor)),
+            const SizedBox(height: 10),
             _buildMovieInfoRow(),
-            const SizedBox(height: 16),
-            _buildGenres(),
-            const SizedBox(height: 16),
+            const SizedBox(height: 10),
             _buildOverview(),
+            const SizedBox(height: 10),
+            _buildGenres(),
+            const SizedBox(height: 25),
+            // _buildMovieInfoRow()
           ],
         ),
-      ),
-    );
-  }
-
-  // Build the movie title
-  Widget _buildMovieTitle() {
-    return Text(
-      movie.title ?? '',
-      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-    );
-  }
-
-  // Build the movie tagline
-  Widget _buildMovieTagline() {
-    return Text(
-      movie.tagline ?? '',
-      style: TextStyle(
-        fontSize: 16,
-        fontStyle: FontStyle.italic,
-        color: subtitleColor,
       ),
     );
   }
@@ -186,57 +355,65 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
   // Build the row showing movie info (release date, rating, runtime)
   Widget _buildMovieInfoRow() {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         if (movie.posterPath != null)
           ClipRRect(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(4),
             child: CustomImageNetworkWidget(
               imagePath: '${AppConstants.imageUrl}/${movie.posterPath}',
-              height: 100,
-              width: 70,
+              height: 150,
+              width: 110,
             ),
           ),
         const SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Release Date: ${movie.releaseDate ?? 'N/A'}", style: TextStyle(fontSize: 14, color: textColor)),
-              const SizedBox(height: 8),
-              Text("Rating: ${movie.voteAverage ?? 'N/A'}", style: TextStyle(fontSize: 14, color: textColor)),
-              const SizedBox(height: 8),
-              Text("Runtime: ${movie.runtime} minutes", style: TextStyle(fontSize: 14, color: textColor)),
-            ],
-          ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("Release Date: ${movie.releaseDate ?? 'N/A'}", style: TextStyle(fontSize: 14, color: textColor)),
+            const SizedBox(height: 8),
+            Text("Rating: ${movie.voteAverage ?? 'N/A'}", style: TextStyle(fontSize: 14, color: textColor)),
+            const SizedBox(height: 8),
+            Text("Runtime: ${movie.runtime} minutes", style: TextStyle(fontSize: 14, color: textColor)),
+            const SizedBox(height: 8),
+            Text("Language: ${movie.originalLanguage.toString().toUpperCase()}", style: TextStyle(fontSize: 14, color: textColor)),
+            const SizedBox(height: 8),
+            Text("Status: ${movie.status ?? "N/A"}", style: TextStyle(fontSize: 14, color: textColor)),
+          ],
         ),
       ],
     );
   }
 
-  // Build the genres section with chips
+  /// Display genres of the movie
   Widget _buildGenres() {
-    return const Text(
-      "Genres:",
-      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+    return Wrap(
+      spacing: 8.0,
+      runSpacing: 4.0,
+      children: movie.genres
+          .map<Widget>(
+            (genre) => Chip(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4),
+              ),
+              label: Text(genre.name),
+              side: const BorderSide(
+                width: 0,
+                color: Colors.transparent
+              ),
+              backgroundColor: Theme.of(context).primaryColor.withOpacity(0.2),
+            ),
+          )
+          .toList(),
     );
   }
 
-  // Build the movie overview
+  /// Display movie overview
   Widget _buildOverview() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Overview:",
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          movie.overview ?? 'No description available.',
-          style: TextStyle(fontSize: 14, color: subtitleColor),
-        ),
-      ],
+    return Text(
+      movie.overview ?? 'No description available.',
+      style: TextStyle(fontSize: 14, color: textColor.withOpacity(0.8)),
     );
   }
 }
