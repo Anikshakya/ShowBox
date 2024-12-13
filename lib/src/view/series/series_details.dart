@@ -158,9 +158,8 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                             children: [
                               Text(
                                 seriesCon.seriesDetail.name  ?? "",
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 24,
-                                  color: Colors.white.withOpacity(0.8),
                                   fontWeight: FontWeight.w300,
                                 ),
                               ),
@@ -195,12 +194,6 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            "Seasons:",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 8),
-                          // Seasons Horizontal Scroll List
                           SizedBox(
                             height: 60,
                             child: ListView.builder(
@@ -225,22 +218,24 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                                     child: Padding(
                                       padding: const EdgeInsets.only(right: 8.0),
                                       child: Chip(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(2),
+                                        ),
                                         label: Text(
                                           'Season ${season.seasonNumber}',
                                           style: TextStyle(
                                               color: selectedSeason == season.seasonNumber
-                                                  ? AppStyles.goldenColor
-                                                  : null),
+                                            ? Colors.black : Theme.of(context).primaryColor),
                                         ),
                                         backgroundColor: selectedSeason == season.seasonNumber
-                                            ? Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black
+                                            ? AppStyles.goldenColor
                                             : null,
                                       ),
                                     ),
                                   );
                                 }),
                           ),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 6),
                         ],
                       ),
                       // Episode List
@@ -251,15 +246,10 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Episodes Selection (only show if a season is selected)
-                              const Text(
-                                "Episodes:",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 8),
                               SizedBox(
                                 height: 120,
-                                child: ListView.builder(
+                                child: ListView.separated(
+                                  separatorBuilder: (context, index) => const SizedBox(width: 10,),
                                   scrollDirection: Axis.horizontal,
                                   itemCount: seriesCon.episodeList.length,
                                   itemBuilder: (context, index) {
@@ -269,52 +259,69 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                                           selectedEpisode = seriesCon.episodeList[index]["episode_number"];
                                         });
                                       },
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 7),
-                                        child: Column(
-                                          children: [
-                                            SizedBox(
-                                              width: 140,
-                                              height: 90,
-                                              child: Stack(
-                                                children: [
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                      border: Border.all(
-                                                        color: selectedEpisode == seriesCon.episodeList[index]["episode_number"]
-                                                            ?AppStyles.goldenColor
-                                                            : Theme.of(context).colorScheme.surface,
-                                                      ),
-                                                      borderRadius: BorderRadius.circular(8),
+                                      child: Column(
+                                        children: [
+                                          SizedBox(
+                                            width: 140,
+                                            height: 90,
+                                            child: Stack(
+                                              children: [
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                      width: isDark ? 2 : 4,
+                                                      color: selectedEpisode == seriesCon.episodeList[index]["episode_number"]
+                                                          ?AppStyles.goldenColor
+                                                          : Theme.of(context).colorScheme.surface,
                                                     ),
-                                                    child: ClipRRect(
-                                                      borderRadius: BorderRadius.circular(8),
-                                                      child: CustomImageNetworkWidget(
-                                                        width: 140,
-                                                        height: 90,
-                                                        imagePath: seriesCon.episodeList[index]["still_path"] == "" ||
-                                                                seriesCon.episodeList[index]["still_path"] == null
-                                                            ? "${AppConstants.imageUrl}${seriesCon.seriesDetail.backdropPath}"
-                                                            : "${AppConstants.imageUrl}${seriesCon.episodeList[index]["still_path"]}",
-                                                        fit: BoxFit.cover,
+                                                    borderRadius: BorderRadius.circular(4),
+                                                  ),
+                                                  child: CustomImageNetworkWidget(
+                                                    width: 140,
+                                                    height: 90,
+                                                    imagePath: seriesCon.episodeList[index]["still_path"] == "" ||
+                                                            seriesCon.episodeList[index]["still_path"] == null
+                                                        ? "${AppConstants.imageUrl}${seriesCon.seriesDetail.backdropPath}"
+                                                        : "${AppConstants.imageUrl}${seriesCon.episodeList[index]["still_path"]}",
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                                const Positioned.fill(
+                                                  child: Center(
+                                                    child: Icon(Icons.play_circle_outline),
+                                                  ),
+                                                ),
+                                                Positioned(
+                                                  bottom: 1,
+                                                  right: 1,
+                                                  child: Container(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                                                    decoration: const BoxDecoration(
+                                                      color: AppStyles.goldenColor, // Golden background color
+                                                      borderRadius: BorderRadius.only(
+                                                        topLeft:Radius.circular(8),
+                                                      ),
+                                                    ),
+                                                    child: Text(
+                                                      "Ep ${index + 1}", // Episode number
+                                                      style: const TextStyle(
+                                                        color: Colors.black, // White text color
+                                                        fontWeight: FontWeight.w300,
+                                                        fontSize: 12,
                                                       ),
                                                     ),
                                                   ),
-                                                  const Positioned.fill(
-                                                    child: Center(
-                                                      child: Icon(Icons.play_circle_outline),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
                                     );
                                   },
                                 ),
                               ),
+
                             ],
                           ),
                         ),
@@ -327,11 +334,11 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                       // Poster and Series Info
                       _builsSeriesInfo(),
                       const SizedBox(height: 16),
-                      // OverView
-                      _buildOverview(),
-                      const SizedBox(height: 16),
                       // Genres
                       _buildGenres(),
+                      const SizedBox(height: 16),
+                      // OverView
+                      _buildOverview(),
                       const SizedBox(height: 8),
                     ],
                   ),
@@ -474,6 +481,40 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
   Widget _buildActionButtons(isDark) {
     return Row(
       children: [
+        Visibility(
+          visible: isWatchClicked != true,
+          child: GestureDetector(
+            onTap: () async{
+              await seriesCon.getEpisodeList(seriesCon.seriesDetail.id, seriesCon.seriesDetail.seasons[0].seasonNumber);
+              setState(() {
+                isWatchClicked = true;
+                seasonPoster = seriesCon.seriesDetail.seasons[0].posterPath;
+                selectedSeason = seriesCon.seriesDetail.seasons[0].seasonNumber;
+                selectedEpisode = null;
+                setState(() {
+                  selectedEpisode = seriesCon.episodeList[0]["episode_number"];
+                });
+              });
+            },
+            child: Container(
+              height: 32,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                color: const Color(0x00ecc877).withOpacity(.9),
+                borderRadius: BorderRadius.circular(2),
+              ),
+              child: const Row(
+                children: [
+                  Icon(Icons.play_arrow),
+                  SizedBox(width: 6),
+                  Text("PLAY", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400)),
+                ],
+              ),
+            ),
+          ),
+        ),
+        if(isWatchClicked != true)
+          const SizedBox(width: 10),
         GestureDetector(
           onTap: () {}, // Implement Watch Later logic
           child: Container(
