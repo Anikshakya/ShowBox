@@ -267,26 +267,26 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
             ),
           ),
         ),
-        if(isWatchClicked != true)
-          const SizedBox(width: 10),
-        GestureDetector(
-          onTap: () {}, // Implement Watch Later logic
-          child: Container(
-            height: 36,
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor.withOpacity(isDark ? .3: .5),
-              borderRadius: BorderRadius.circular(2),
-            ),
-            child: const Row(
-              children: [
-                Icon(Icons.add, color: Colors.white),
-                SizedBox(width: 6),
-                Text("Watch Later", style: TextStyle(fontSize: 14, color: Colors.white)),
-              ],
-            ),
-          ),
-        ),
+        // if(isWatchClicked != true)
+        //   const SizedBox(width: 10),
+        // GestureDetector(
+        //   onTap: () {}, // Implement Watch Later logic
+        //   child: Container(
+        //     height: 36,
+        //     padding: const EdgeInsets.symmetric(horizontal: 10),
+        //     decoration: BoxDecoration(
+        //       color: Theme.of(context).primaryColor.withOpacity(isDark ? .3: .5),
+        //       borderRadius: BorderRadius.circular(2),
+        //     ),
+        //     child: const Row(
+        //       children: [
+        //         Icon(Icons.add, color: Colors.white),
+        //         SizedBox(width: 6),
+        //         Text("Watch Later", style: TextStyle(fontSize: 14, color: Colors.white)),
+        //       ],
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }

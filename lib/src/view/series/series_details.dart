@@ -23,6 +23,7 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
   late Color textColor;
   late Color subtitleColor;
   bool isWatchClicked = false;
+  String synopsis = "";
 
   @override
   void initState() {
@@ -212,6 +213,7 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                                         selectedEpisode = null;
                                         setState(() {
                                           selectedEpisode = seriesCon.episodeList[0]["episode_number"];
+                                          synopsis = seriesCon.episodeList[0]["overview"];
                                         });
                                       });
                                     },
@@ -257,6 +259,7 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                                       onTap: () {
                                         setState(() {
                                           selectedEpisode = seriesCon.episodeList[index]["episode_number"];
+                                          synopsis = seriesCon.episodeList[index]["overview"];
                                         });
                                       },
                                       child: Column(
@@ -315,6 +318,16 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                                               ],
                                             ),
                                           ),
+                                          const SizedBox(height: 5,),
+                                          SizedBox(
+                                            width: 130,
+                                            child: Text(
+                                              "${seriesCon.episodeList[index]["name"]}",
+                                              style: const TextStyle(fontSize: 12),
+                                              overflow: TextOverflow.ellipsis,
+                                              textAlign: TextAlign.center,
+                                            )
+                                          ),
                                         ],
                                       ),
                                     );
@@ -326,16 +339,51 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                           ),
                         ),
                       ),
-                      // Tagline (if available)
-                      if (seriesCon.seriesDetail.tagline != null &&
-                          seriesCon.seriesDetail.tagline.isNotEmpty)
-                        Text(seriesCon.seriesDetail.tagline ?? '', style: const TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
+                      const SizedBox(height: 16),
+                      // Synopsis
+                      Visibility(
+                        visible: synopsis != "", 
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0,vertical: 8.0),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4),
+                            color: Colors.white.withOpacity(0.15)
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Synopsis:",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w300,
+                                  height: 1.6,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                synopsis,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w300,
+                                  height: 1.6,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: 16),
                       // Poster and Series Info
                       _builsSeriesInfo(),
                       const SizedBox(height: 16),
                       // Genres
                       _buildGenres(),
+                      const SizedBox(height: 16),
+                      // Tagline (if available)
+                      if (seriesCon.seriesDetail.tagline != null &&
+                          seriesCon.seriesDetail.tagline.isNotEmpty)
+                        Text(seriesCon.seriesDetail.tagline ?? '', style: const TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
                       const SizedBox(height: 16),
                       // OverView
                       _buildOverview(),
@@ -493,6 +541,7 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                 selectedEpisode = null;
                 setState(() {
                   selectedEpisode = seriesCon.episodeList[0]["episode_number"];
+                  synopsis = seriesCon.episodeList[0]["overview"];
                 });
               });
             },
@@ -513,26 +562,26 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
             ),
           ),
         ),
-        if(isWatchClicked != true)
-          const SizedBox(width: 10),
-        GestureDetector(
-          onTap: () {}, // Implement Watch Later logic
-          child: Container(
-            height: 36,
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor.withOpacity(isDark ? .3: .5),
-              borderRadius: BorderRadius.circular(2),
-            ),
-            child: const Row(
-              children: [
-                Icon(Icons.add, color: Colors.white),
-                SizedBox(width: 6),
-                Text("Watch Later", style: TextStyle(fontSize: 14, color: Colors.white)),
-              ],
-            ),
-          ),
-        ),
+        // if(isWatchClicked != true)
+        //   const SizedBox(width: 10),
+        // GestureDetector(
+        //   onTap: () {}, // Implement Watch Later logic
+        //   child: Container(
+        //     height: 36,
+        //     padding: const EdgeInsets.symmetric(horizontal: 10),
+        //     decoration: BoxDecoration(
+        //       color: Theme.of(context).primaryColor.withOpacity(isDark ? .3: .5),
+        //       borderRadius: BorderRadius.circular(2),
+        //     ),
+        //     child: const Row(
+        //       children: [
+        //         Icon(Icons.add, color: Colors.white),
+        //         SizedBox(width: 6),
+        //         Text("Watch Later", style: TextStyle(fontSize: 14, color: Colors.white)),
+        //       ],
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }
