@@ -293,57 +293,74 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
 
   /// Movie details section
   Widget _buildMovieDetails(isDark) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Upper Banner Section
-            if (isWatchClicked)
-              Column(
-                children: [
+    return RefreshIndicator(
+      displacement: 15,
+      backgroundColor: const Color(0xffecc877),
+      color: Colors.white,
+      onRefresh: (){
+        return Future.delayed(const Duration(seconds: 1),()async{
+          await initialize();
+          setState((){
+            isWatchClicked = false;
+          });
+        });
+      },
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: FadeInUp(
+            from: 50,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Upper Banner Section
+                if (isWatchClicked)
                   FadeInUp(
                     from: -40,
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          movie.title ?? "",
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w300,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        _buildActionButtons(isDark),
-                        const SizedBox(height: 8),
-                        Text(
-                          "${movie.releaseDate.split("-")[0]} • ${movie.runtime} min • ${movie.voteAverage.toStringAsFixed(1)} • ${movie.originalLanguage.toUpperCase()}",
-                          style: TextStyle(
-                            color: Theme.of(context).primaryColor.withOpacity(0.5),
-                            fontSize: 12,
-                            fontWeight: FontWeight.w400,
-                          ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              movie.title ?? "",
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            _buildActionButtons(isDark),
+                            const SizedBox(height: 8),
+                            Text(
+                              "${movie.releaseDate.split("-")[0]} • ${movie.runtime} min • ${movie.voteAverage.toStringAsFixed(1)} • ${movie.originalLanguage.toUpperCase()}",
+                              style: TextStyle(
+                                color: Theme.of(context).primaryColor.withOpacity(0.5),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
-            if (isWatchClicked)
-              const SizedBox(height: 8),
-            // Tag Line
-            if (movie.tagline != null)
-              Text(movie.tagline ?? '', style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic, color: subtitleColor)),
-            const SizedBox(height: 16),
-            _buildMovieInfoRow(),
-            const SizedBox(height: 16),
-            _buildGenres(),
-            const SizedBox(height: 16),
-            _buildOverview(),
-            const SizedBox(height: 25),
-          ],
+                if (isWatchClicked)
+                  const SizedBox(height: 8),
+                // Tag Line
+                if (movie.tagline != null)
+                  Text(movie.tagline ?? '', style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic, color: subtitleColor)),
+                const SizedBox(height: 16),
+                _buildMovieInfoRow(),
+                const SizedBox(height: 16),
+                _buildGenres(),
+                const SizedBox(height: 16),
+                _buildOverview(),
+                // To Make Scroll
+                const SizedBox(height: 120),
+              ],
+            ),
+          ),
         ),
       ),
     );

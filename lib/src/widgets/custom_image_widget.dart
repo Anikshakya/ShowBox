@@ -75,7 +75,7 @@ class _CustomImageNetworkWidgetState extends State<CustomImageNetworkWidget> {
                   ),
                 );
               },
-              errorBuilder: (context, error, stackTrace) => placeHolder(),
+              errorBuilder: (context, error, stackTrace) => errorPlaceHolder(),
             ),
           );
   }
@@ -95,6 +95,34 @@ class _CustomImageNetworkWidgetState extends State<CustomImageNetworkWidget> {
       ),
       width: widget.width,
       height: widget.height,
+    );
+  }
+
+  errorPlaceHolder() {
+    return Column(
+      children: [
+        Image.asset(
+          width: double.infinity,
+          height: widget.height,
+          fit: BoxFit.cover
+,          "assets/images/app_logo.png"
+        ),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(widget.borderRadius),
+            gradient: LinearGradient(
+              colors: [
+                Colors.grey.withOpacity(.3),
+                Colors.red,
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+          width: widget.width,
+          height: widget.height,
+        ),
+      ],
     );
   }
 }

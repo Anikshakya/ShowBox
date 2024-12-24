@@ -335,11 +335,9 @@ class _SearchPageState extends State<SearchPage> with SingleTickerProviderStateM
                                     var series = searchCon.seriesSearchList[index];
                                     return GestureDetector(
                                       onTap : (){
-                                        if( series["media_type"] == "tv"){
-                                          Get.to(()=> SeriesDetailPage(
-                                            id: series["id"],
-                                          ));
-                                        }
+                                        Get.to(()=> SeriesDetailPage(
+                                          id: series["id"],
+                                        ));
                                       },
                                       child: ItemCard(
                                         title: series['name'] ?? 'Unknown Series',

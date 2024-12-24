@@ -142,253 +142,274 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                             errorImageUrl: "${AppConstants.imageUrl}${seriesCon.seriesDetail.backdropPath}",
                           ),
                         ),
-            const SizedBox(height: 18),
+            const SizedBox(height: 10),
             Expanded(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Upper Banner Section
-                      if (isWatchClicked)
-                        FadeInUp(
-                          from: -40,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                seriesCon.seriesDetail.name  ?? "",
-                                style: const TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w300,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              _buildActionButtons(isDark),
-                              const SizedBox(height: 14),
-                              Text(
-                                "${seriesCon.seriesDetail.firstAirDate .split("-")[0]} • ${seriesCon.seriesDetail.voteAverage.toStringAsFixed(1)} • ${seriesCon.seriesDetail.originalLanguage.toUpperCase()}",
-                                style: TextStyle(
-                                  color: Theme.of(context).primaryColor.withOpacity(0.8),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                seriesCon.seriesDetail.productionCompanies
-                                    .map((company) => company.name) // Map the list to extract names
-                                    .join(', '), // Join names with a comma separator
-                                style: TextStyle(
-                                  color: Theme.of(context).primaryColor.withOpacity(0.6),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      if (isWatchClicked)
-                        const SizedBox(height: 8),
-                      // Seasons Selection
-                      Column(
+              child: RefreshIndicator(
+                displacement: 40,
+                 backgroundColor: const Color(0xffecc877),
+                  color: Colors.white,
+                  onRefresh: (){
+                    return Future.delayed(const Duration(seconds: 1),()async{
+                      await seriesCon.getSeriesDetail(widget.id);
+                      setState((){
+                        isWatchClicked = false;
+                        selectedSeason =  null;
+                        selectedEpisode = null;
+                        seasonPoster = null;
+                        synopsis = "";
+                      });
+                    });
+                  },
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: FadeInUp(
+                      from: 50,
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(
-                            height: 60,
-                            child: ListView.builder(
-                                itemCount: seriesCon.seriesDetail.seasons.length,
-                                scrollDirection: Axis.horizontal,
-                                shrinkWrap: true,
-                                itemBuilder: (context, index) {
-                                  var season = seriesCon.seriesDetail.seasons[index];
-                                  return GestureDetector(
-                                    onTap: () async {
-                                      await seriesCon.getEpisodeList(seriesCon.seriesDetail.id, season.seasonNumber);
-                                      setState(() {
-                                        isWatchClicked = true;
-                                        seasonPoster = season.posterPath;
-                                        selectedSeason = season.seasonNumber;
-                                        selectedEpisode = null;
-                                        setState(() {
-                                          selectedEpisode = seriesCon.episodeList[0]["episode_number"];
-                                          synopsis = seriesCon.episodeList[0]["overview"];
-                                        });
-                                      });
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(right: 8.0),
-                                      child: Chip(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(2),
-                                        ),
-                                        label: Text(
-                                          'Season ${season.seasonNumber}',
-                                          style: TextStyle(
-                                              color: selectedSeason == season.seasonNumber
-                                            ? Colors.black : Theme.of(context).primaryColor),
-                                        ),
-                                        backgroundColor: selectedSeason == season.seasonNumber
-                                            ? AppStyles.goldenColor
-                                            : null,
+                          // Upper Banner Section
+                          if (isWatchClicked)
+                            FadeInUp(
+                              from: -40,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    seriesCon.seriesDetail.name  ?? "",
+                                    style: const TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.w300,
+                                    ),
+                                  ),
+                                  Text(
+                                    "${seriesCon.seriesDetail.firstAirDate .split("-")[0]} • ${seriesCon.seriesDetail.voteAverage.toStringAsFixed(1)} • ${seriesCon.seriesDetail.originalLanguage.toUpperCase()}",
+                                    style: TextStyle(
+                                      color: Theme.of(context).primaryColor.withOpacity(0.8),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  if (seriesCon.seriesDetail.productionCompanies.length != 0)
+                                    const SizedBox(height: 4),
+                                  if (seriesCon.seriesDetail.productionCompanies.length != 0)
+                                    Text(
+                                      seriesCon.seriesDetail.productionCompanies
+                                          .map((company) => company.name) // Map the list to extract names
+                                          .join(', '), // Join names with a comma separator
+                                      style: TextStyle(
+                                        color: Theme.of(context).primaryColor.withOpacity(0.6),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
                                       ),
                                     ),
-                                  );
-                                }),
-                          ),
-                          const SizedBox(height: 6),
-                        ],
-                      ),
-                      // Episode List
-                      Visibility(
-                        visible: seriesCon.episodeList.isNotEmpty,
-                        child: FadeInUp(
-                          from: -40,
-                          child: Column(
+                                ],
+                              ),
+                            ),
+                          if (isWatchClicked)
+                            const SizedBox(height: 8),
+                          // Seasons Selection
+                          Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SizedBox(
-                                height: 120,
-                                child: ListView.separated(
-                                  separatorBuilder: (context, index) => const SizedBox(width: 10,),
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: seriesCon.episodeList.length,
-                                  itemBuilder: (context, index) {
-                                    return GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          selectedEpisode = seriesCon.episodeList[index]["episode_number"];
-                                          synopsis = seriesCon.episodeList[index]["overview"];
-                                        });
-                                      },
-                                      child: Column(
-                                        children: [
-                                          SizedBox(
-                                            width: 140,
-                                            height: 90,
-                                            child: Stack(
-                                              children: [
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                      width: isDark ? 2 : 4,
-                                                      color: selectedEpisode == seriesCon.episodeList[index]["episode_number"]
-                                                          ?AppStyles.goldenColor
-                                                          : Theme.of(context).colorScheme.surface,
-                                                    ),
-                                                    borderRadius: BorderRadius.circular(4),
-                                                  ),
-                                                  child: CustomImageNetworkWidget(
-                                                    width: 140,
-                                                    height: 90,
-                                                    imagePath: seriesCon.episodeList[index]["still_path"] == "" ||
-                                                            seriesCon.episodeList[index]["still_path"] == null
-                                                        ? "${AppConstants.imageUrl}${seriesCon.seriesDetail.backdropPath}"
-                                                        : "${AppConstants.imageUrl}${seriesCon.episodeList[index]["still_path"]}",
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                ),
-                                                const Positioned.fill(
-                                                  child: Center(
-                                                    child: Icon(Icons.play_circle_outline),
-                                                  ),
-                                                ),
-                                                Positioned(
-                                                  bottom: 1,
-                                                  right: 1,
-                                                  child: Container(
-                                                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                                                    decoration: const BoxDecoration(
-                                                      color: AppStyles.goldenColor, // Golden background color
-                                                      borderRadius: BorderRadius.only(
-                                                        topLeft:Radius.circular(8),
-                                                      ),
-                                                    ),
-                                                    child: Text(
-                                                      "Ep ${index + 1}", // Episode number
-                                                      style: const TextStyle(
-                                                        color: Colors.black, // White text color
-                                                        fontWeight: FontWeight.w300,
-                                                        fontSize: 12,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
+                                height: 60,
+                                child: ListView.builder(
+                                    itemCount: seriesCon.seriesDetail.seasons.length,
+                                    scrollDirection: Axis.horizontal,
+                                    shrinkWrap: true,
+                                    itemBuilder: (context, index) {
+                                      var season = seriesCon.seriesDetail.seasons[index];
+                                      return GestureDetector(
+                                        onTap: () async {
+                                          await seriesCon.getEpisodeList(seriesCon.seriesDetail.id, season.seasonNumber);
+                                          setState(() {
+                                            isWatchClicked = true;
+                                            seasonPoster = season.posterPath;
+                                            selectedSeason = season.seasonNumber;
+                                            selectedEpisode = null;
+                                            setState(() {
+                                              selectedEpisode = seriesCon.episodeList[0]["episode_number"];
+                                              synopsis = seriesCon.episodeList[0]["overview"];
+                                            });
+                                          });
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(right: 8.0),
+                                          child: Chip(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(2),
                                             ),
+                                            label: Text(
+                                              'Season ${season.seasonNumber}',
+                                              style: TextStyle(
+                                                  color: selectedSeason == season.seasonNumber
+                                                ? Colors.black : Theme.of(context).primaryColor),
+                                            ),
+                                            backgroundColor: selectedSeason == season.seasonNumber
+                                                ? AppStyles.goldenColor
+                                                : null,
                                           ),
-                                          const SizedBox(height: 5,),
-                                          SizedBox(
-                                            width: 130,
-                                            child: Text(
-                                              "${seriesCon.episodeList[index]["name"]}",
-                                              style: const TextStyle(fontSize: 12),
-                                              overflow: TextOverflow.ellipsis,
-                                              textAlign: TextAlign.center,
-                                            )
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      // Synopsis
-                      Visibility(
-                        visible: synopsis != "", 
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12.0,vertical: 8.0),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
-                            color: Colors.white.withOpacity(0.15)
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                "Synopsis:",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w300,
-                                  height: 1.6,
-                                ),
+                                        ),
+                                      );
+                                    }),
                               ),
                               const SizedBox(height: 6),
-                              Text(
-                                synopsis,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w300,
-                                  height: 1.6,
-                                ),
-                              ),
                             ],
                           ),
-                        ),
+                          // Episode List
+                          Visibility(
+                            visible: seriesCon.episodeList.isNotEmpty,
+                            child: FadeInUp(
+                              from: -40,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    height: 120,
+                                    child: ListView.separated(
+                                      separatorBuilder: (context, index) => const SizedBox(width: 10,),
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: seriesCon.episodeList.length,
+                                      itemBuilder: (context, index) {
+                                        return GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              selectedEpisode = seriesCon.episodeList[index]["episode_number"];
+                                              synopsis = seriesCon.episodeList[index]["overview"];
+                                            });
+                                          },
+                                          child: Column(
+                                            children: [
+                                              SizedBox(
+                                                width: 140,
+                                                height: 90,
+                                                child: Stack(
+                                                  children: [
+                                                    Container(
+                                                      decoration: BoxDecoration(
+                                                        border: Border.all(
+                                                          width: isDark ? 2 : 4,
+                                                          color: selectedEpisode == seriesCon.episodeList[index]["episode_number"]
+                                                              ?AppStyles.goldenColor
+                                                              : Theme.of(context).colorScheme.surface,
+                                                        ),
+                                                        borderRadius: BorderRadius.circular(4),
+                                                      ),
+                                                      child: CustomImageNetworkWidget(
+                                                        width: 140,
+                                                        height: 90,
+                                                        imagePath: seriesCon.episodeList[index]["still_path"] == "" ||
+                                                                seriesCon.episodeList[index]["still_path"] == null
+                                                            ? "${AppConstants.imageUrl}${seriesCon.seriesDetail.backdropPath}"
+                                                            : "${AppConstants.imageUrl}${seriesCon.episodeList[index]["still_path"]}",
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+                                                    const Positioned.fill(
+                                                      child: Center(
+                                                        child: Icon(Icons.play_circle_outline),
+                                                      ),
+                                                    ),
+                                                    Positioned(
+                                                      bottom: 1,
+                                                      right: 1,
+                                                      child: Container(
+                                                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                                                        decoration: const BoxDecoration(
+                                                          color: AppStyles.goldenColor, // Golden background color
+                                                          borderRadius: BorderRadius.only(
+                                                            topLeft:Radius.circular(8),
+                                                          ),
+                                                        ),
+                                                        child: Text(
+                                                          "Ep ${index + 1}", // Episode number
+                                                          style: const TextStyle(
+                                                            color: Colors.black, // White text color
+                                                            fontWeight: FontWeight.w300,
+                                                            fontSize: 12,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              const SizedBox(height: 5,),
+                                              SizedBox(
+                                                width: 130,
+                                                child: Text(
+                                                  "${seriesCon.episodeList[index]["name"]}",
+                                                  style: const TextStyle(fontSize: 12),
+                                                  overflow: TextOverflow.ellipsis,
+                                                  textAlign: TextAlign.center,
+                                                )
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                      
+                                ],
+                              ),
+                            ),
+                          ),
+                          if(seriesCon.episodeList.isNotEmpty)
+                            const SizedBox(height: 16),
+                          // Synopsis
+                          Visibility(
+                            visible: synopsis != "", 
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12.0,vertical: 8.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(4),
+                                color: Colors.white.withOpacity(0.15)
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    "Synopsis:",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w300,
+                                      height: 1.6,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    synopsis,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w300,
+                                      height: 1.6,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          if(synopsis != "")
+                          const SizedBox(height: 16),
+                          // Poster and Series Info
+                          _builsSeriesInfo(),
+                          const SizedBox(height: 16),
+                          // Genres
+                          _buildGenres(),
+                          const SizedBox(height: 16),
+                          // Tagline (if available)
+                          if (seriesCon.seriesDetail.tagline != null &&
+                              seriesCon.seriesDetail.tagline.isNotEmpty)
+                            Text(seriesCon.seriesDetail.tagline ?? '', style: const TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
+                          const SizedBox(height: 16),
+                          // OverView
+                          _buildOverview(),
+                          const SizedBox(height: 100),
+                        ],
                       ),
-                      const SizedBox(height: 16),
-                      // Poster and Series Info
-                      _builsSeriesInfo(),
-                      const SizedBox(height: 16),
-                      // Genres
-                      _buildGenres(),
-                      const SizedBox(height: 16),
-                      // Tagline (if available)
-                      if (seriesCon.seriesDetail.tagline != null &&
-                          seriesCon.seriesDetail.tagline.isNotEmpty)
-                        Text(seriesCon.seriesDetail.tagline ?? '', style: const TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
-                      const SizedBox(height: 16),
-                      // OverView
-                      _buildOverview(),
-                      const SizedBox(height: 8),
-                    ],
+                    ),
                   ),
                 ),
               ),
@@ -450,15 +471,19 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                       fontWeight: FontWeight.w400,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    seriesCon.seriesDetail.productionCompanies
-                        .map((company) => company.name) // Map the list to extract names
-                        .join(', '), // Join names with a comma separator
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColor.withOpacity(0.6),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
+                  if(seriesCon.seriesDetail.productionCompanies.length != 0)
+                    const SizedBox(height: 4),
+                  Visibility(
+                    visible: seriesCon.seriesDetail.productionCompanies.length != 0,
+                    child: Text(
+                      seriesCon.seriesDetail.productionCompanies
+                          .map((company) => company.name) // Map the list to extract names
+                          .join(', '), // Join names with a comma separator
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColor.withOpacity(0.6),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
                   ),
                 ],
