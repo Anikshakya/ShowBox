@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:showbox/src/app_config/styles.dart';
@@ -48,7 +49,7 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return PopScope(
-      canPop: Platform.isAndroid ? !isWatchClicked : true,
+      canPop: kIsWeb || (!kIsWeb && !Platform.isIOS) ? !isWatchClicked : true,
       onPopInvokedWithResult: (_, __) {
         setState(() {
           isWatchClicked = false;

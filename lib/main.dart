@@ -22,7 +22,7 @@ void main() async {
       themeMode: ThemeMode.system,
       theme: CAppTheme.lightTheme,
       darkTheme: CAppTheme.darkTheme,
-      home: const SplashScreen(),                                                                                                                                                           
+      home: const SplashScreen(),                                                                                                                                                   
       builder: (context, child) {
         // Update the system UI based on the current theme
         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(

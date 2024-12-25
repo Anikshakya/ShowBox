@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -103,7 +104,7 @@ class _BottomNavState extends State<BottomNav> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
                 child: Container(
-                  height: Platform.isIOS ? 64 : 56,
+                  height: kIsWeb || (!kIsWeb && !Platform.isIOS) ? 64 : 56,
                   decoration: BoxDecoration(
                     color: Colors.black.withOpacity(0.6),
                     borderRadius: BorderRadius.circular(16),
