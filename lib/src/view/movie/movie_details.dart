@@ -78,27 +78,28 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                   if (!isWatchClicked) _buildMovieBanner(isDark),
 
                   // Back Button
-                  Positioned(
-                    top: 55,
-                    left: 20,
-                    child: FadeIn(
-                      child: Container(
-                        height: 40,
-                        width: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.5),
-                          shape: BoxShape.circle,
-                        ),
-                        child: IconButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          icon: const Icon(Icons.arrow_back),
-                          padding: EdgeInsets.zero
+                  if (!isWatchClicked)
+                    Positioned(
+                      top: 55,
+                      left: 20,
+                      child: FadeIn(
+                        child: Container(
+                          height: 40,
+                          width: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.5),
+                            shape: BoxShape.circle,
+                          ),
+                          child: IconButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            icon: const Icon(Icons.arrow_back),
+                            padding: EdgeInsets.zero,
+                          ),
                         ),
                       ),
-                    )
-                  )
+                    ),
                 ],
               ),
               Expanded(child: FadeInUp(child: _buildMovieDetails(isDark))),
@@ -315,6 +316,25 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (isWatchClicked)
+                  FadeIn(
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 15),
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.5),
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: const Icon(Icons.arrow_back),
+                        padding: EdgeInsets.zero,
+                      ),
+                    ),
+                  ),
                 // Upper Banner Section
                 if (isWatchClicked)
                   FadeInUp(

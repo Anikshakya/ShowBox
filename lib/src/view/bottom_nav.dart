@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -18,84 +17,87 @@ class BottomNav extends StatefulWidget {
 }
 
 class _BottomNavState extends State<BottomNav> {
-  // Initialize BottomNavController to manage the visibility of the AppBar and Bottom Navigation Bar
   final BottomNavController bottomNavCon = Get.put(BottomNavController());
-  
-  // Initialize a ScrollController to manage scroll position and trigger hiding/showing the app bar and bottom nav
   final ScrollController _scrollController = ScrollController();
 
-  int _selectedIndex = 0; // Track the selected tab index
+  int _selectedIndex = 0;
 
-  late final List<Widget> pages; // List of pages for each tab
+  late final List<Widget> pages;
 
   @override
   void initState() {
     super.initState();
-
-    // Define pages for each bottom navigation item (Home, Movies, Series)
     pages = [
       HomePage(scrollController: _scrollController),
       MovieList(scrollController: _scrollController),
       SeriesListPage(scrollController: _scrollController),
     ];
-
-    // Set up the BottomNavController to manage the app bar and bottom nav visibility based on scrolling
     bottomNavCon.toggleBottomNavAccToScroll(scrollController: _scrollController);
   }
 
   @override
   void dispose() {
-    _scrollController.dispose(); // Dispose the ScrollController when the widget is disposed
+    _scrollController.dispose();
     super.dispose();
   }
 
-  // Handle the navigation item selection and provide haptic feedback on tap
   void _onItemTapped(int index) {
-    HapticFeedback.heavyImpact(); // Provide haptic feedback on item tap
+    HapticFeedback.heavyImpact();
     setState(() {
-      _selectedIndex = index; // Update the selected index to show the appropriate page
+      _selectedIndex = index;
     });
+  }
+
+  // Theme toggle method
+  void _toggleTheme() {
+    Get.changeThemeMode(
+      Get.isDarkMode ? ThemeMode.light : ThemeMode.dark,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true, // Allows body to extend beneath the app bar
+      extendBody: true,
       body: Stack(
         children: [
-          // Display the page corresponding to the selected index
           pages[_selectedIndex],
 
-          // App Bar: Controls visibility based on scrolling
+          // App Bar
           Obx(
             () => AnimatedPositioned(
               duration: const Duration(milliseconds: 160),
-              top: bottomNavCon.isAppbarVisible.isTrue ? 0 : -100, // Hide the app bar if not visible
+              top: bottomNavCon.isAppbarVisible.isTrue ? 0 : -100,
               left: 0,
               right: 0,
               child: AppBar(
                 title: Text(
-                  _getAppBarTitle(_selectedIndex), // Set app bar title dynamically based on selected tab
+                  _getAppBarTitle(_selectedIndex),
                   style: GoogleFonts.poppins(fontSize: 24),
                 ),
-                backgroundColor: Colors.transparent, // Transparent background for the app bar
+                backgroundColor: Colors.transparent,
                 centerTitle: true,
                 actions: [
-                  // Search icon to navigate to the SearchPage
                   IconButton(
                     icon: const Icon(Icons.search),
                     onPressed: () => Get.to(() => const SearchPage()),
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Get.isDarkMode ? Icons.wb_sunny_outlined : Icons.nights_stay_outlined,
+                    ),
+                    onPressed: _toggleTheme,
                   ),
                 ],
               ),
             ),
           ),
 
-          // Bottom Navigation Bar: Controls visibility based on scrolling
+          // Bottom Navigation Bar
           Obx(
             () => AnimatedPositioned(
               duration: const Duration(milliseconds: 160),
-              bottom: bottomNavCon.isNavVisible.isTrue ? 0 : -80, // Hide the bottom nav if not visible
+              bottom: bottomNavCon.isNavVisible.isTrue ? 0 : -80,
               left: 0,
               right: 0,
               child: Padding(
@@ -105,8 +107,8 @@ class _BottomNavState extends State<BottomNav> {
                   child: Container(
                     decoration: BoxDecoration(
                       color: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.black.withOpacity(0.5)
-                          : Colors.white.withOpacity(0.84),
+                          ? Colors.black.withOpacity(0.8)
+                          : Colors.white.withOpacity(0.9),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Row(
@@ -127,17 +129,16 @@ class _BottomNavState extends State<BottomNav> {
     );
   }
 
-  // Helper method to return the title for the app bar based on the selected index
   String _getAppBarTitle(int index) {
     switch (index) {
       case 0:
-        return ''; // Title for Home page
+        return '';
       case 1:
-        return 'ShowBox Movies'; // Title for Movies page
+        return 'ShowBox Movies';
       case 2:
-        return 'ShowBox Series'; // Title for Series page
+        return 'ShowBox Series';
       default:
-        return 'ShowBox'; // Default title
+        return 'ShowBox';
     }
   }
 
@@ -146,15 +147,13 @@ class _BottomNavState extends State<BottomNav> {
 
     return Expanded(
       child: Material(
-        color: Colors.transparent, // Required for ripple
+        color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
           splashColor: AppStyles.goldenColor.withOpacity(0.2),
           highlightColor: AppStyles.goldenColor.withOpacity(0.1),
           onTap: () => _onItemTapped(index),
-          onLongPress: () {
-            HapticFeedback.mediumImpact();
-          },
+          onLongPress: () => HapticFeedback.mediumImpact(),
           child: Center(
             child: AnimatedScale(
               scale: isSelected ? 1.15 : 1.0,

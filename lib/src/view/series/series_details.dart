@@ -170,6 +170,26 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              // Back Button
+                              if (isWatchClicked)
+                                FadeIn(
+                                  child: Container(
+                                    margin: const EdgeInsets.only(bottom: 15),
+                                    height: 40,
+                                    width: 40,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.5),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: IconButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      icon: const Icon(Icons.arrow_back),
+                                      padding: EdgeInsets.zero,
+                                    ),
+                                  ),
+                                ),
                               // Upper Banner Section
                               if (isWatchClicked)
                                 FadeInUp(
@@ -421,27 +441,28 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
           }),
 
           // Back Button
-          Positioned(
-            top: 55,
-            left: 20,
-            child: FadeIn(
-              child: Container(
-                height: 40,
-                width: 40,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.5),
-                  shape: BoxShape.circle,
-                ),
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: const Icon(Icons.arrow_back),
-                  padding: EdgeInsets.zero
+          if (!isWatchClicked)
+            Positioned(
+              top: 55,
+              left: 20,
+              child: FadeIn(
+                child: Container(
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.5),
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(Icons.arrow_back),
+                    padding: EdgeInsets.zero,
+                  ),
                 ),
               ),
-            )
-          )
+            ),
         ],
       )
     );

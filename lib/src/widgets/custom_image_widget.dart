@@ -1,14 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:showbox/src/widgets/custom_fades.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
-class CustomImageNetworkWidget extends StatefulWidget {
+class CustomImageNetworkWidget extends StatelessWidget {
   const CustomImageNetworkWidget({
     super.key,
     required this.imagePath,
     this.height,
     this.width,
     this.fit,
-    this.fromPage,
     this.borderRadius = 0,
   });
 
@@ -16,113 +16,76 @@ class CustomImageNetworkWidget extends StatefulWidget {
   final double? height;
   final double? width;
   final BoxFit? fit;
-  final String? fromPage;
-  final double borderRadius; // Add borderRadius property
+  final double borderRadius;
 
-  @override
-  State<CustomImageNetworkWidget> createState() => _CustomImageNetworkWidgetState();
-}
-
-class _CustomImageNetworkWidgetState extends State<CustomImageNetworkWidget> {
   @override
   Widget build(BuildContext context) {
-    return widget.imagePath == "null" || widget.imagePath.isEmpty || widget.imagePath == ''
-        ? placeHolder()
-        : ClipRRect(
-            borderRadius: BorderRadius.circular(widget.borderRadius), // Use the borderRadius parameter
-            child: Image.network(
-              widget.imagePath,
-              width: widget.width,
-              height: widget.height,
-              fit: widget.fit ?? BoxFit.cover,
-              headers: const {"Connection": "Keep-Alive"},
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) {
-                  return FadeIn(child: child); // Return the loaded image
-                }
-                return SizedBox(
-                  width: widget.width,
-                  height: widget.height,
-                  child: Stack(
-                    children: [
-                      // Initial Placeholder
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(widget.borderRadius),
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.grey.withOpacity(.3),
-                              Colors.transparent,
-                            ],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                          ),
-                        ),
-                        width: widget.width,
-                        height: widget.height,
-                      ),
-                      // Loading Indicator
-                      // Center(
-                      //   child: CircularProgressIndicator(
-                      //     strokeWidth: 1,
-                      //     value: loadingProgress.expectedTotalBytes != null
-                      //         ? loadingProgress.cumulativeBytesLoaded /
-                      //             loadingProgress.expectedTotalBytes!
-                      //         : null,
-                      //   ),
-                      // ),
-                    ],
-                  ),
-                );
-              },
-              errorBuilder: (context, error, stackTrace) => errorPlaceHolder(),
-            ),
-          );
-  }
+    if (imagePath.isEmpty || imagePath == "null") {
+      return _placeholder();
+    }
 
-  placeHolder() {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(widget.borderRadius),
-        gradient: LinearGradient(
-          colors: [
-            Colors.grey.withOpacity(.3),
-            Colors.transparent,
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(borderRadius),
+      child: CachedNetworkImage(
+        imageUrl: imagePath,
+        cacheManager: myCacheManager, // <-- Use the custom cache manager here
+        width: width,
+        height: height,
+        fit: fit ?? BoxFit.cover,
+        placeholder: (context, url) => _placeholder(),
+        errorWidget: (context, url, error) => _errorPlaceholder(),
       ),
-      width: widget.width,
-      height: widget.height,
     );
   }
 
-  errorPlaceHolder() {
-    return Column(
-      children: [
-        Image.asset(
-          width: double.infinity,
-          height: widget.height,
-          fit: BoxFit.cover
-,          "assets/images/app_logo.png"
+  Widget _placeholder() {
+    return SizedBox(
+      width: width,
+      height: height,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(borderRadius),
+          gradient: LinearGradient(
+            colors: [Colors.grey.withOpacity(0.3), Colors.transparent],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
         ),
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(widget.borderRadius),
-            gradient: LinearGradient(
-              colors: [
-                Colors.grey.withOpacity(.3),
-                Colors.red,
-              ],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
+      ),
+    );
+  }
+
+  Widget _errorPlaceholder() {
+    return SizedBox(
+      width: width,
+      height: height,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset(
+            "assets/images/app_logo.png",
+            fit: BoxFit.fill,
+          ),
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.grey.withOpacity(0.3), Colors.red],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
             ),
           ),
-          width: widget.width,
-          height: widget.height,
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
+
+/// Custom cache manager to limit memory/disk usage
+final myCacheManager = CacheManager(
+  Config(
+    'myCacheKey', // Unique key
+    stalePeriod: const Duration(days: 3), // Cache lifetime
+    maxNrOfCacheObjects: 50, // Max number of images
+  ),
+);
