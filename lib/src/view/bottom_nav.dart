@@ -1,7 +1,4 @@
-import 'dart:io';
-import 'dart:ui';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -73,7 +70,7 @@ class _BottomNavState extends State<BottomNav> {
           Obx(
             () => AnimatedPositioned(
               duration: const Duration(milliseconds: 160),
-              top: bottomNavCon.isAppbarVisible.isTrue ? 0 : -80, // Hide the app bar if not visible
+              top: bottomNavCon.isAppbarVisible.isTrue ? 0 : -100, // Hide the app bar if not visible
               left: 0,
               right: 0,
               child: AppBar(
@@ -102,53 +99,23 @@ class _BottomNavState extends State<BottomNav> {
               left: 0,
               right: 0,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-                child: Container(
-                  height: kIsWeb || (!kIsWeb && !Platform.isIOS) ? 64 : 56,
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.6),
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Theme.of(context).primaryColor.withOpacity(0.3),
-                        blurRadius: 2,
-                        offset: const Offset(0, 0),
-                      ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0),
-                      child: BottomNavigationBar(
-                        selectedLabelStyle: const TextStyle(fontSize: 0), // Hide labels
-                        unselectedLabelStyle: const TextStyle(fontSize: 0), // Hide labels
-                        showSelectedLabels: false, // Hide selected label
-                        showUnselectedLabels: false, // Hide unselected label
-                        backgroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.black.withOpacity(0.5) : Colors.white.withOpacity(0.84),
-                        elevation: 0,
-                        type: BottomNavigationBarType.fixed,
-                        selectedItemColor: AppStyles.goldenColor, // Selected item color
-                        unselectedItemColor: Theme.of(context).brightness == Brightness.dark ? const Color.fromARGB(255, 185, 185, 185) : const Color.fromARGB(255, 104, 104, 104), // Unselected item color
-                        currentIndex: _selectedIndex,
-                        selectedIconTheme: const IconThemeData(size: 28), // Size of selected icon
-                        unselectedIconTheme: const IconThemeData(size: 22), // Size of unselected icon
-                        onTap: _onItemTapped, // Handle item tap to change tab
-                        items: const [
-                          BottomNavigationBarItem(
-                            icon: Icon(Icons.home),
-                            label: '',
-                          ),
-                          BottomNavigationBarItem(
-                            icon: Icon(Icons.video_collection_sharp),
-                            label: '',
-                          ),
-                          BottomNavigationBarItem(
-                            icon: Icon(Icons.tv_rounded),
-                            label: '',
-                          ),
-                        ],
-                      ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                child: SizedBox(
+                  height: 60,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.black.withOpacity(0.5)
+                          : Colors.white.withOpacity(0.84),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        _buildNavItem(Icons.home, 0),
+                        _buildNavItem(Icons.video_collection_sharp, 1),
+                        _buildNavItem(Icons.live_tv_sharp, 2),
+                      ],
                     ),
                   ),
                 ),
@@ -172,5 +139,39 @@ class _BottomNavState extends State<BottomNav> {
       default:
         return 'ShowBox'; // Default title
     }
+  }
+
+  Widget _buildNavItem(IconData icon, int index) {
+    final bool isSelected = _selectedIndex == index;
+
+    return Expanded(
+      child: Material(
+        color: Colors.transparent, // Required for ripple
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          splashColor: AppStyles.goldenColor.withOpacity(0.2),
+          highlightColor: AppStyles.goldenColor.withOpacity(0.1),
+          onTap: () => _onItemTapped(index),
+          onLongPress: () {
+            HapticFeedback.mediumImpact();
+          },
+          child: Center(
+            child: AnimatedScale(
+              scale: isSelected ? 1.15 : 1.0,
+              duration: const Duration(milliseconds: 200),
+              child: Icon(
+                icon,
+                size: 26,
+                color: isSelected
+                    ? AppStyles.goldenColor
+                    : Theme.of(context).brightness == Brightness.dark
+                        ? const Color.fromARGB(255, 185, 185, 185)
+                        : const Color.fromARGB(255, 104, 104, 104),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

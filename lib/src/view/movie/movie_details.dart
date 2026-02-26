@@ -76,6 +76,29 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                     FadeIn(child: _buildMovieWebView()),
 
                   if (!isWatchClicked) _buildMovieBanner(isDark),
+
+                  // Back Button
+                  Positioned(
+                    top: 55,
+                    left: 20,
+                    child: FadeIn(
+                      child: Container(
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.5),
+                          shape: BoxShape.circle,
+                        ),
+                        child: IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: const Icon(Icons.arrow_back),
+                          padding: EdgeInsets.zero
+                        ),
+                      ),
+                    )
+                  )
                 ],
               ),
               Expanded(child: FadeInUp(child: _buildMovieDetails(isDark))),
@@ -213,28 +236,6 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
             ),
           ),
         ),
-        // Back Button
-        Positioned(
-          top: 45,
-          left: 10,
-          child: FadeIn(
-            child: Container(
-              height: 40,
-              width: 40,
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.5),
-                shape: BoxShape.circle,
-              ),
-              child: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: const Icon(Icons.arrow_back),
-                padding: EdgeInsets.zero
-              ),
-            ),
-          )
-        )
       ],
     );
   }
