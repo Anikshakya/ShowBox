@@ -2,6 +2,21 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
+/// Singleton Custom Cache Manager
+class MyCacheManager {
+  static const key = 'myCustomCacheKey';
+
+  static final CacheManager instance = CacheManager(
+    Config(
+      key,
+      stalePeriod: const Duration(days: 3),
+      maxNrOfCacheObjects: 50,
+      repo: JsonCacheInfoRepository(databaseName: key),
+      fileService: HttpFileService(),
+    ),
+  );
+}
+
 class CustomImageNetworkWidget extends StatelessWidget {
   const CustomImageNetworkWidget({
     super.key,
@@ -21,71 +36,56 @@ class CustomImageNetworkWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (imagePath.isEmpty || imagePath == "null") {
-      return _placeholder();
+      return _buildErrorWidget();
     }
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius),
-      child: CachedNetworkImage(
-        imageUrl: imagePath,
-        cacheManager: myCacheManager, // <-- Use the custom cache manager here
+      child: SizedBox(
         width: width,
         height: height,
-        fit: fit ?? BoxFit.cover,
-        placeholder: (context, url) => _placeholder(),
-        errorWidget: (context, url, error) => _errorPlaceholder(),
-      ),
-    );
-  }
-
-  Widget _placeholder() {
-    return SizedBox(
-      width: width,
-      height: height,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(borderRadius),
-          gradient: LinearGradient(
-            colors: [Colors.grey.withOpacity(0.3), Colors.transparent],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
+        child: CachedNetworkImage(
+          imageUrl: imagePath,
+          cacheManager: MyCacheManager.instance,
+          fit: fit ?? BoxFit.cover,
+          fadeInDuration: const Duration(milliseconds: 200),
+          fadeOutDuration: const Duration(milliseconds: 100),
+          placeholder: (context, url) => _buildPlaceholder(),
+          errorWidget: (context, url, error) => _buildErrorWidget(),
         ),
       ),
     );
   }
 
-  Widget _errorPlaceholder() {
-    return SizedBox(
-      width: width,
-      height: height,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.asset(
-            "assets/images/app_logo.png",
-            fit: BoxFit.fill,
-          ),
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.grey.withOpacity(0.3), Colors.red],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-            ),
-          ),
-        ],
+  Widget _buildPlaceholder() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(borderRadius),
+        gradient: LinearGradient(
+          colors: [
+            Colors.grey.shade300,
+            Colors.grey.shade100,
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorWidget() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(borderRadius),
+        color: Colors.grey.shade200,
+      ),
+      child: Center(
+        child: Icon(
+          Icons.broken_image_outlined,
+          color: Colors.grey.shade500,
+          size: 40,
+        ),
       ),
     );
   }
 }
-
-/// Custom cache manager to limit memory/disk usage
-final myCacheManager = CacheManager(
-  Config(
-    'myCacheKey', // Unique key
-    stalePeriod: const Duration(days: 3), // Cache lifetime
-    maxNrOfCacheObjects: 50, // Max number of images
-  ),
-);

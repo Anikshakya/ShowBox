@@ -177,6 +177,8 @@ class SeriesListPage extends StatelessWidget {
                           year: series["first_air_date"]?.split("-")[0] ?? "",
                           rating: series["vote_average"] ?? "",
                           image: series["poster_path"] ?? "",
+                          type: "series",
+                          id: series["id"],
                         ),
                       );
                     },
@@ -224,6 +226,8 @@ class SeriesListPage extends StatelessWidget {
                           year: "",
                           rating: series.voteAverage?.toDouble() ?? 0.0,
                           image: '${AppConstants.imageUrl}${series.posterPath}',
+                          type: "series",
+                          id: series.id,
                         ),
                       );
                     },
@@ -282,6 +286,8 @@ class SeriesListPage extends StatelessWidget {
                         year: series["first_air_date"]?.split("-")[0] ?? "",
                         rating: series["vote_average"] ?? "",
                         image: series["poster_path"] ?? "",
+                        type: "series",
+                        id: series["id"]
                       ),
                     );
                   },

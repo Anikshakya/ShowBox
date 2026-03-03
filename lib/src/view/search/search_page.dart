@@ -261,6 +261,8 @@ class _SearchPageState extends State<SearchPage> with SingleTickerProviderStateM
                                         rating: (movie['vote_average'] ?? 0).toDouble(),
                                         image: movie['poster_path'] ?? '',
                                         width: MediaQuery.of(context).size.width / 2 - 16,
+                                        type: "movie",
+                                        id:movie["id"]
                                       ),
                                     );
                                   },
@@ -347,6 +349,8 @@ class _SearchPageState extends State<SearchPage> with SingleTickerProviderStateM
                                         rating: (series['vote_average'] ?? 0).toDouble(),
                                         image: series['poster_path'] ?? '',
                                         width: MediaQuery.of(context).size.width / 2 - 16,
+                                        type: "series",
+                                        id:series["id"]
                                       ),
                                     );
                                   },

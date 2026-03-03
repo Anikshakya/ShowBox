@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:showbox/src/app_config/styles.dart';
 import 'package:showbox/src/controller/bottom_nav_controller.dart';
+import 'package:showbox/src/view/fav/favourite_list.dart';
 import 'package:showbox/src/view/home.dart';
 import 'package:showbox/src/view/movie/movies_list.dart';
 import 'package:showbox/src/view/search/search_page.dart';
@@ -87,6 +88,12 @@ class _BottomNavState extends State<BottomNav> {
                       Get.isDarkMode ? Icons.wb_sunny_outlined : Icons.nights_stay_outlined,
                     ),
                     onPressed: _toggleTheme,
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.favorite,
+                    ),
+                    onPressed: () => Get.to(() => FavoritesPage()),
                   ),
                 ],
               ),

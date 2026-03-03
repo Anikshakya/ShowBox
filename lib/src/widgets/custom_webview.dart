@@ -1,20 +1,22 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:url_launcher/url_launcher.dart';
+
+class MyChromeSafariBrowser extends ChromeSafariBrowser {
+  @override
+  void onOpened() => debugPrint("Safari Browser: Opened");
+  @override
+  void onClosed() => debugPrint("Safari Browser: Closed");
+}
 
 class CustomWebView extends StatefulWidget {
   final String initialUrl;
   final bool showAppBar;
-  final String? errorImageUrl;
 
   const CustomWebView({
     super.key,
     required this.initialUrl,
     this.showAppBar = false,
-    this.errorImageUrl,
   });
 
   @override
@@ -23,160 +25,111 @@ class CustomWebView extends StatefulWidget {
 
 class _CustomWebViewState extends State<CustomWebView> {
   InAppWebViewController? webViewController;
-  PullToRefreshController? pullToRefreshController;
+  final MyChromeSafariBrowser safariBrowser = MyChromeSafariBrowser();
 
-  bool isError = false;
   bool isLoading = true;
-  bool lockNavigation = false; // 🔥 lock after first interaction
-
   late String mainHost;
+
+  @override
+  void didUpdateWidget(covariant CustomWebView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    /// Extra safety reload (not strictly needed because we use ValueKey)
+    if (oldWidget.initialUrl != widget.initialUrl) {
+      _isPlayerUrl(WebUri(widget.initialUrl));
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-
-    // If iOS, auto-launch Safari and close this view
-    if (Platform.isIOS) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _launchInSafari(widget.initialUrl);
-        Navigator.of(context).pop();
-      });
-    }
-
-
     mainHost = Uri.parse(widget.initialUrl).host;
-
-    options = InAppWebViewGroupOptions(
-      crossPlatform: InAppWebViewOptions(
-        javaScriptEnabled: true,
-        mediaPlaybackRequiresUserGesture: false,
-        useShouldOverrideUrlLoading: true,
-      ),
-      android: AndroidInAppWebViewOptions(
-        useHybridComposition: true,
-        mixedContentMode:
-            AndroidMixedContentMode.MIXED_CONTENT_ALWAYS_ALLOW,
-      ),
-      ios: IOSInAppWebViewOptions(
-        allowsInlineMediaPlayback: true,
-      ),
-    );
-
-    pullToRefreshController = PullToRefreshController(
-      settings: PullToRefreshSettings(color: Colors.deepPurple),
-      onRefresh: () async {
-        webViewController?.reload();
-      },
-    );
   }
 
-  Future<void> _launchInSafari(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+  // Detects if the URL is a video file or an embed page like vsembed
+  bool _isPlayerUrl(WebUri? uri) {
+    if (uri == null) return false;
+    final String urlString = uri.toString().toLowerCase();
+    
+    return urlString.contains("vsembed.ru") || 
+           urlString.contains("/embed/") ||
+           urlString.endsWith(".mp4") || 
+           urlString.endsWith(".m3u8");
+  }
+
+  Future<void> _launchSafari(WebUri uri) async {
+    if (!safariBrowser.isOpened()) {
+      await safariBrowser.open(
+        url: uri,
+        settings: ChromeSafariBrowserSettings(
+          presentationStyle: ModalPresentationStyle.FULL_SCREEN,
+          // shareable: true,
+        ),
+      );
     }
-  }
-
-  late InAppWebViewGroupOptions options;
-
-  bool _isMainDomain(Uri uri) {
-    return uri.host == mainHost;
   }
 
   @override
   Widget build(BuildContext context) {
-    if (Platform.isIOS) return const SizedBox.shrink();
-
     return Scaffold(
+      appBar: widget.showAppBar ? AppBar(title: const Text("Video Player")) : null,
       body: Stack(
         children: [
           InAppWebView(
-            initialUrlRequest:
-                URLRequest(url: WebUri(widget.initialUrl)),
-            initialOptions: options,
-            pullToRefreshController: pullToRefreshController,
-
+            initialUrlRequest: URLRequest(url: WebUri(widget.initialUrl)),
+            initialSettings: InAppWebViewSettings(
+              javaScriptEnabled: true,
+              useShouldOverrideUrlLoading: true,
+              // Required for iOS video handling
+              allowsInlineMediaPlayback: true, 
+              // Setting a real Safari User Agent helps with sites like vsembed
+              userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
+            ),
+            
             onWebViewCreated: (controller) {
               webViewController = controller;
+              
+              // This bridge allows JS to talk to Flutter
+              controller.addJavaScriptHandler(handlerName: 'onVideoDetected', callback: (args) {
+                final String videoUrl = args[0];
+                _launchSafari(WebUri(videoUrl));
+              });
             },
 
-            shouldOverrideUrlLoading:
-                (controller, navigationAction) async {
+            // Intercept direct clicks/navigations
+            shouldOverrideUrlLoading: (controller, navigationAction) async {
               final uri = navigationAction.request.url;
-              if (uri == null) {
+              
+              if (Platform.isIOS && _isPlayerUrl(uri)) {
+                await _launchSafari(uri!);
                 return NavigationActionPolicy.CANCEL;
               }
-
-              // Block external schemes
-              if (uri.scheme != "http" &&
-                  uri.scheme != "https") {
-                return NavigationActionPolicy.CANCEL;
-              }
-
-              // 🔥 If locked → only allow same domain
-              if (lockNavigation) {
-                if (_isMainDomain(uri)) {
-                  return NavigationActionPolicy.ALLOW;
-                } else {
-                  return NavigationActionPolicy.CANCEL;
-                }
-              }
-
               return NavigationActionPolicy.ALLOW;
             },
 
-            // 🔥 Block popup windows
-            onCreateWindow:
-                (controller, createWindowRequest) async {
-              return false;
-            },
-
-            onLoadStart: (controller, url) {
-              setState(() {
-                isLoading = true;
-                isError = false;
-              });
-            },
-
+            // Injects JS to find the hidden video source when someone hits play
             onLoadStop: (controller, url) async {
-              pullToRefreshController?.endRefreshing();
-              setState(() {
-                isLoading = false;
-              });
-
-              // 🔥 After first full load, lock navigation
-              if (!lockNavigation) {
-                lockNavigation = true;
-              }
+              setState(() => isLoading = false);
+              
+              await controller.evaluateJavascript(source: """
+                (function() {
+                  const observer = new MutationObserver((mutations) => {
+                    const video = document.querySelector('video');
+                    if (video && video.src) {
+                      window.flutter_inappwebview.callHandler('onVideoDetected', video.src);
+                      observer.disconnect();
+                    }
+                  });
+                  observer.observe(document.body, { childList: true, subtree: true });
+                })();
+              """);
             },
 
-            onLoadError:
-                (controller, url, code, message) {
-              pullToRefreshController?.endRefreshing();
-              setState(() {
-                isError = true;
-                isLoading = false;
-              });
-            },
-
-            androidOnPermissionRequest:
-                (controller, origin, resources) async {
-              return PermissionRequestResponse(
-                resources: resources,
-                action:
-                    PermissionRequestResponseAction.GRANT,
-              );
-            },
+            onLoadStart: (controller, url) => setState(() => isLoading = true),
           ),
 
           if (isLoading)
-            Container(
-              color: Colors.black.withOpacity(0.4),
-              child: const Center(
-                child: CircularProgressIndicator(
-                    color: Colors.white),
-              ),
-            ),
+            const Center(child: CircularProgressIndicator(color: Colors.deepPurple)),
         ],
       ),
     );

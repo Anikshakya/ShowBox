@@ -139,9 +139,9 @@ class _SeriesDetailPageState extends State<SeriesDetailPage> {
                           : SizedBox(
                               height: 300,
                               child: CustomWebView(
-                                initialUrl: "${AppConstants.showEmbedUrl}?tmdb=${seriesCon.seriesDetail.id}&season=$selectedSeason&episode=$selectedEpisode",
+                                key: ValueKey("$selectedSeason-$selectedEpisode"), // IMPORTANT FIX
+                                initialUrl:"${AppConstants.showEmbedUrl}?tmdb=${seriesCon.seriesDetail.id}&season=$selectedSeason&episode=$selectedEpisode",
                                 showAppBar: false,
-                                errorImageUrl: "${AppConstants.imageUrl}${seriesCon.seriesDetail.backdropPath}",
                               ),
                             ),
                 const SizedBox(height: 10),

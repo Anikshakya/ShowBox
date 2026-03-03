@@ -164,7 +164,7 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
       child: CustomWebView(
         initialUrl: "${AppConstants.movieEmbedUrl}/${movie.imdbId}",
         showAppBar: false,
-        errorImageUrl: "${AppConstants.imageUrl}${movie.backdropPath}",
+        // errorImageUrl: "${AppConstants.imageUrl}${movie.backdropPath}",
       ),
     );
   }

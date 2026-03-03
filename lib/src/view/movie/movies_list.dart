@@ -175,6 +175,8 @@ class MovieList extends StatelessWidget {
                           year: movie["release_date"].split("-")[0], // Extract year
                           rating: movie["vote_average"],
                           image: movie["poster_path"],
+                          type: "movie",
+                          id: movie["id"],
                         ),
                       );
                     },
@@ -227,6 +229,8 @@ class MovieList extends StatelessWidget {
                               year: "", // You can customize to show release year if needed
                               rating: movie.voteAverage?.toDouble() ?? 0.0,
                               image: '${AppConstants.imageUrl}${movie.posterPath}',
+                              type: "movie",
+                              id: movie.id,
                             ),
                           );
                         },
@@ -285,6 +289,8 @@ class MovieList extends StatelessWidget {
                           year: movie["release_date"].toString().split("-")[0],
                           rating: movie["vote_average"].toDouble() ?? 0.0,
                           image: '${AppConstants.imageUrl}${movie["poster_path"]}',
+                          type: "movie",
+                          id: movie["id"],
                         ),
                       );
                     },

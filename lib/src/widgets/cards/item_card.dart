@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:showbox/src/app_config/styles.dart';
 import 'package:showbox/src/constant/constants.dart';
+import 'package:showbox/src/controller/favourite_controller.dart';
 import 'package:showbox/src/widgets/custom_image_widget.dart';
 
 class ItemCard extends StatelessWidget {
@@ -9,18 +11,24 @@ class ItemCard extends StatelessWidget {
   final double rating;
   final String image;
   final dynamic width;
+  final String type;
+  final int id;
 
   const ItemCard({
     super.key,
+    required this.id,
     required this.title,
     required this.year,
     required this.rating,
     required this.image, 
-    required this.width,
+    required this.width, 
+    required this.type,
   });
 
   @override
   Widget build(BuildContext context) {
+    final favController = Get.put(FavoritesController()); // Get the controller for managing favorites
+
     return Container(
       width: width?.toDouble(),
       decoration: BoxDecoration(
@@ -75,6 +83,31 @@ class ItemCard extends StatelessWidget {
                   style: const TextStyle(color: Colors.white, fontSize: 12),
                 ),
               ),
+            ),
+            // Favorite Button
+            Positioned(
+              bottom: 6,
+              right: 6,
+              child: Obx(() {
+                final isFav = favController.isFavorite(id);
+
+                return GestureDetector(
+                  onTap: () {
+                    favController.toggleFavorite(
+                      FavoriteItem(
+                        id: id,
+                        title: title,
+                        image: "${AppConstants.imageUrl}$image",
+                        type: type,
+                      ),
+                    );
+                  },
+                  child: Icon(
+                    isFav ? Icons.favorite : Icons.favorite_border,
+                    color: isFav ? Colors.red : Colors.white,
+                  ),
+                );
+              }),
             ),
           ],
         ),

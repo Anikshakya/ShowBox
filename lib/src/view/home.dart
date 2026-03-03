@@ -212,8 +212,9 @@ class HomePage extends StatelessWidget {
                               title: data["title"],
                               year: "", // You can customize to show release year if needed
                               rating: data["vote_average"]?.toDouble() ?? 0.0,
-                              image:
-                                  '${AppConstants.imageUrl}${data["poster_path"]}',
+                              image:'${AppConstants.imageUrl}${data["poster_path"]}',
+                              type: "movies",
+                              id: data["id"]
                             ),
                           );
                         },
@@ -268,8 +269,9 @@ class HomePage extends StatelessWidget {
                               title: movie.name,
                               year: "", // You can customize to show release year if needed
                               rating: movie.voteAverage.toDouble(),
-                              image:
-                                  '${AppConstants.imageUrl}${movie.posterPath}',
+                              image:'${AppConstants.imageUrl}${movie.posterPath}',
+                              type: "series",
+                              id: movie.id,
                             ),
                           );
                         },
@@ -324,8 +326,9 @@ class HomePage extends StatelessWidget {
                               title: movie.title,
                               year: "", // You can customize to show release year if needed
                               rating: movie.voteAverage.toDouble(),
-                              image:
-                                  '${AppConstants.imageUrl}${movie.posterPath}',
+                              image:'${AppConstants.imageUrl}${movie.posterPath}',
+                              type: "movies",
+                              id: movie.id
                             ),
                           );
                         },
