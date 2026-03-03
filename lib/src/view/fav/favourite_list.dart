@@ -20,7 +20,7 @@ class FavoritesPage extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Center(
                   child: Text(
-                    "❤️ ${favController.favorites.length}",
+                    "Total: ${favController.favorites.length}",
                     style: const TextStyle(fontSize: 16),
                   ),
                 ),
